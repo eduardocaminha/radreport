@@ -1,76 +1,101 @@
-'use client';
+"use client"
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { motion } from "motion/react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { LogIn, Loader2 } from "lucide-react"
 
 export default function LoginPage() {
-  const [senha, setSenha] = useState('');
-  const [erro, setErro] = useState('');
-  const [carregando, setCarregando] = useState(false);
-  const router = useRouter();
+  const [senha, setSenha] = useState("")
+  const [erro, setErro] = useState("")
+  const [carregando, setCarregando] = useState(false)
+  const router = useRouter()
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setErro('');
-    setCarregando(true);
+    e.preventDefault()
+    setErro("")
+    setCarregando(true)
 
     try {
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ senha }),
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (!response.ok) {
-        setErro(data.erro || 'Erro ao fazer login');
-        return;
+        setErro(data.erro || "Erro ao fazer login")
+        return
       }
 
-      router.push('/');
-      router.refresh();
+      router.push("/")
+      router.refresh()
     } catch {
-      setErro('Erro de conexão');
+      setErro("Erro de conexão")
     } finally {
-      setCarregando(false);
+      setCarregando(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-sm bg-white border-gray-200 shadow-sm">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-gray-900">
-            RadReport
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="w-full max-w-sm"
+      >
+        <div className="bg-card rounded-xl border border-border p-8 shadow-sm">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              RadReport
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Sistema de laudos radiológicos
+            </p>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               type="password"
               placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
-              className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-400"
+              className="bg-input border-border text-foreground placeholder:text-muted-foreground/50"
               autoFocus
             />
+
             {erro && (
-              <p className="text-sm text-red-600 text-center">{erro}</p>
+              <motion.p
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-sm text-destructive text-center"
+              >
+                {erro}
+              </motion.p>
             )}
-            <Button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700"
-              disabled={carregando || !senha}
-            >
-              {carregando ? 'Entrando...' : 'Entrar'}
-            </Button>
+
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                type="submit"
+                className="w-full gap-2"
+                disabled={carregando || !senha}
+              >
+                {carregando ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <LogIn className="w-4 h-4" />
+                )}
+                {carregando ? "Entrando..." : "Entrar"}
+              </Button>
+            </motion.div>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </motion.div>
     </div>
-  );
+  )
 }
