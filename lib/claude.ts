@@ -11,6 +11,25 @@ export interface ResultadoLaudo {
   erro: string | null;
 }
 
+function limparRespostaJSON(resposta: string): string {
+  // Remove markdown code blocks se existirem
+  let limpo = resposta.trim();
+  
+  // Remove ```json no início
+  if (limpo.startsWith('```json')) {
+    limpo = limpo.slice(7);
+  } else if (limpo.startsWith('```')) {
+    limpo = limpo.slice(3);
+  }
+  
+  // Remove ``` no final
+  if (limpo.endsWith('```')) {
+    limpo = limpo.slice(0, -3);
+  }
+  
+  return limpo.trim();
+}
+
 export async function gerarLaudo(texto: string, modoPS: boolean): Promise<ResultadoLaudo> {
   const systemPrompt = montarSystemPrompt(modoPS);
   
@@ -23,7 +42,8 @@ export async function gerarLaudo(texto: string, modoPS: boolean): Promise<Result
     ],
   });
   
-  const resposta = message.content[0].type === 'text' ? message.content[0].text : '';
+  const respostaRaw = message.content[0].type === 'text' ? message.content[0].text : '';
+  const resposta = limparRespostaJSON(respostaRaw);
   
   // Tentar parsear como JSON
   try {
@@ -36,7 +56,7 @@ export async function gerarLaudo(texto: string, modoPS: boolean): Promise<Result
   } catch {
     // Se não for JSON válido, assume que é o laudo direto
     return {
-      laudo: resposta,
+      laudo: respostaRaw,
       sugestoes: [],
       erro: null,
     };
