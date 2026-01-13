@@ -15,7 +15,7 @@ export async function gerarLaudo(texto: string, modoPS: boolean): Promise<Result
   const systemPrompt = montarSystemPrompt(modoPS);
   
   const message = await client.messages.create({
-    model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514',
+    model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5-20250929',
     max_tokens: 4096,
     system: systemPrompt,
     messages: [
