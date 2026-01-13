@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 const AUTH_COOKIE_NAME = 'meuslaudos_auth';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const authCookie = request.cookies.get(AUTH_COOKIE_NAME);
   const isLoginPage = request.nextUrl.pathname === '/login';
   const isApiAuth = request.nextUrl.pathname.startsWith('/api/auth');
