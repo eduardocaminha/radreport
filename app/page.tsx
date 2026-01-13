@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Editor } from '@/components/Editor';
-import { Resultado } from '@/components/Resultado';
-import { Sugestoes } from '@/components/Sugestoes';
-import { CopyButtons } from '@/components/CopyButtons';
-import { Historico, useHistorico } from '@/components/Historico';
+import { Editor } from '@/components/editor';
+import { Resultado } from '@/components/resultado';
+import { Sugestoes } from '@/components/sugestoes';
+import { CopyButtons } from '@/components/copy-buttons';
+import { Historico, useHistorico } from '@/components/historico';
 
 interface ResultadoAPI {
   laudo: string | null;
