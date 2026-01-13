@@ -9,6 +9,7 @@ import { Editor } from '@/components/Editor';
 import { Resultado } from '@/components/Resultado';
 import { Sugestoes } from '@/components/Sugestoes';
 import { CopyButtons } from '@/components/CopyButtons';
+import { Historico, useHistorico } from '@/components/Historico';
 
 interface ResultadoAPI {
   laudo: string | null;
@@ -25,6 +26,7 @@ export default function HomePage() {
     sugestoes: [],
     erro: null,
   });
+  const { adicionarAoHistorico } = useHistorico();
 
   // Carregar modo PS do localStorage
   useEffect(() => {
@@ -61,6 +63,11 @@ export default function HomePage() {
 
       const data = await response.json();
       setResultado(data);
+      
+      // Adicionar ao histórico se gerou laudo com sucesso
+      if (data.laudo) {
+        adicionarAoHistorico(texto, data.laudo);
+      }
     } catch {
       setResultado({
         laudo: null,
@@ -121,7 +128,10 @@ export default function HomePage() {
         {/* Input */}
         <Card className="bg-zinc-900 border-zinc-800">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg text-zinc-100">Texto ditado</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg text-zinc-100">Texto ditado</CardTitle>
+              <Historico onSelecionar={setTexto} />
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <Editor
