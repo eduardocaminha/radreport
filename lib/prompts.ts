@@ -29,8 +29,16 @@ Sua tarefa é transformar texto ditado em um laudo de TC estruturado.
 - Lateralidade marcada como "requer" nos achados
 
 ### IMPORTANTES (não bloqueiam - retorne sugestões):
-- Achados sem template pré-definido
-- Descrições possivelmente incompletas (fraturas, lesões, etc.)
+Use SEU CONHECIMENTO MÉDICO RADIOLÓGICO combinado com as máscaras e achados disponíveis para identificar o que pode estar faltando:
+
+1. **Achados sem template pré-definido**: Se o achado mencionado não tiver template nas máscaras/achados, gere uma descrição apropriada baseada no seu conhecimento E sugira aspectos que normalmente devem ser descritos para esse tipo de achado (ex: para fraturas: localização exata, trajeto, desvio, fragmentos, etc.)
+
+2. **Descrições incompletas**: Mesmo quando há template, se a descrição fornecida pelo usuário estiver incompleta segundo padrões radiológicos, sugira o que falta. Exemplos:
+   - Fraturas: falta localização anatômica específica, tipo de fratura, desvio, fragmentos?
+   - Lesões: falta dimensões, características de atenuação, realce, margens?
+   - Processos inflamatórios: falta extensão, complicações, coleções?
+
+3. **Contexto clínico**: Se informações importantes para a interpretação estiverem ausentes (ex: sintomas, tempo de evolução), sugira sua inclusão quando relevante.
 
 ## BLOCOS OPCIONAIS
 
@@ -55,7 +63,7 @@ SEMPRE responda em JSON válido com esta estrutura:
 }
 
 Se faltar informação ESSENCIAL, retorne erro e laudo null.
-Se o achado não tiver template, gere descrição E inclua sugestões de completude.`;
+Se o achado não tiver template, gere descrição baseada no seu conhecimento E inclua sugestões de completude baseadas em padrões radiológicos.`;
 
   const psAddendum = modoPS ? `
 
