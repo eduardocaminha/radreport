@@ -3,8 +3,6 @@
 import { motion } from "motion/react"
 import { LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Toggle } from "@/components/ui/toggle"
-import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
@@ -17,10 +15,10 @@ interface HeaderProps {
 
 export function Header({ reportMode, onReportModeChange }: HeaderProps) {
   const router = useRouter()
-  const modes: { value: ReportMode; label: string; key: string }[] = [
-    { value: "ps", label: "PS", key: "p" },
-    { value: "eletivo", label: "Eletivo", key: "e" },
-    { value: "comparativo", label: "Comparativo", key: "c" },
+  const modes: { value: ReportMode; label: string }[] = [
+    { value: "ps", label: "PS" },
+    { value: "eletivo", label: "Eletivo" },
+    { value: "comparativo", label: "Comparativo" },
   ]
 
   useEffect(() => {
@@ -68,38 +66,40 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
         <span className="text-lg font-semibold tracking-tight text-foreground">RadReport</span>
 
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+          <div className="flex items-center gap-1 bg-muted rounded-lg p-1 relative">
             {modes.map((mode) => (
-              <Toggle
+              <button
                 key={mode.value}
-                pressed={reportMode === mode.value}
-                onPressedChange={() => onReportModeChange(mode.value)}
-                aria-label={mode.label}
-                variant="outline"
-                size="sm"
-                className="px-3 py-1.5 text-sm font-medium data-[state=on]:bg-card data-[state=on]:shadow-sm"
+                onClick={() => onReportModeChange(mode.value)}
+                className="relative px-3 py-1.5 text-sm font-medium rounded-md transition-colors z-10"
               >
-                <span className="relative z-10">{mode.label}</span>
-                <KbdGroup className="ml-1.5 hidden sm:inline-flex">
-                  <Kbd className="text-[10px]">Ctrl</Kbd>
-                  <span className="text-muted-foreground text-[10px]">+</span>
-                  <Kbd className="text-[10px]">Shift</Kbd>
-                  <span className="text-muted-foreground text-[10px]">+</span>
-                  <Kbd className="text-[10px]">{mode.key.toUpperCase()}</Kbd>
-                </KbdGroup>
-              </Toggle>
+                {reportMode === mode.value && (
+                  <motion.div
+                    layoutId="activeMode"
+                    className="absolute inset-0 bg-card shadow-sm rounded-md"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                  />
+                )}
+                <span
+                  className={`relative z-10 ${
+                    reportMode === mode.value ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {mode.label}
+                </span>
+              </button>
             ))}
           </div>
 
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="text-muted-foreground hover:text-foreground gap-2"
-            onClick={handleLogout}
-          >
-            <LogOut className="w-4 h-4" />
-            Sair
-          </Button>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button 
+              onClick={handleLogout}
+              className="gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              Sair
+            </Button>
+          </motion.div>
         </div>
       </div>
     </motion.header>

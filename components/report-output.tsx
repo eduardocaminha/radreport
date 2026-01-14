@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Copy, FileText, Check } from "lucide-react"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 
 // Função para formatar laudo no cliente (duplicada da lib/formatador para uso no cliente)
 function formatarLaudoHTMLCliente(texto: string): string {
@@ -104,6 +104,7 @@ interface ReportOutputProps {
 export function ReportOutput({ report, isGenerating }: ReportOutputProps) {
   const [copiedHtml, setCopiedHtml] = useState(false)
   const [copiedText, setCopiedText] = useState(false)
+  const previousReportRef = useRef<string>("")
 
   // O laudo já vem formatado em HTML do backend, mas vamos garantir formatação correta
   const reportHtml = useMemo(() => {
@@ -117,6 +118,23 @@ export function ReportOutput({ report, isGenerating }: ReportOutputProps) {
     // Formata o texto (pode ser texto plano ou HTML mal formatado)
     return formatarLaudoHTMLCliente(report)
   }, [report])
+
+  // Copiar automaticamente quando um novo laudo é gerado
+  useEffect(() => {
+    // Copia quando a geração termina (isGenerating muda de true para false) e há um novo laudo
+    if (!isGenerating && report && reportHtml && !report.includes('class="text-destructive"')) {
+      // Verifica se é realmente um novo laudo (diferente do anterior)
+      if (previousReportRef.current !== report) {
+        navigator.clipboard.writeText(reportHtml).then(() => {
+          setCopiedHtml(true)
+          setTimeout(() => setCopiedHtml(false), 2000)
+        }).catch(() => {
+          // Silenciosamente falha se não conseguir copiar
+        })
+        previousReportRef.current = report
+      }
+    }
+  }, [report, isGenerating, reportHtml])
 
   // Texto plano com quebras de linha preservadas
   const plainText = useMemo(() => {
