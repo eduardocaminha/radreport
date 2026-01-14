@@ -103,7 +103,7 @@ export function identificarContextoExame(texto: string): ContextoExame {
   // Identificar tipo de exame
   if (textoLower.match(/\b(tc|tomo|tomografia)\s*(abdome|abd[oô]men|abdominal)\b/)) {
     contexto.tipo = 'tc-abdome';
-    contexto.regioesRelevantes = ['rins', 'apendice', 'rim', 'pelve', 'bexiga', 'colon', 'intestino'];
+    contexto.regioesRelevantes = ['rins', 'apendice', 'rim', 'pelve', 'bexiga', 'colon', 'intestino', 'figado', 'vesicula-biliar'];
   } else if (textoLower.match(/\b(tc|tomo|tomografia)\s*(tor[áa]x|t[óo]rax)\b/)) {
     contexto.tipo = 'tc-torax';
     contexto.regioesRelevantes = [];
