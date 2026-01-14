@@ -167,10 +167,15 @@ ${templatesContext}
 
 SEMPRE responda em JSON válido com esta estrutura:
 {
-  "laudo": "texto completo do laudo ou null se houver erro",
+  "laudo": "texto completo do laudo em texto plano (sem HTML) ou null se houver erro",
   "sugestoes": ["lista de aspectos que poderiam ser melhor descritos"],
   "erro": "mensagem de erro ou null se não houver erro"
 }
+
+**IMPORTANTE:**
+- Retorne o laudo em texto plano, com quebras de linha (\n)
+- O sistema irá formatar automaticamente o HTML com os estilos corretos
+- Use o formato padrão: título em maiúsculas, linha de urgência (se aplicável), seção TÉCNICA, seção ANÁLISE
 
 Se faltar informação ESSENCIAL, retorne erro e laudo null.
 Se o achado não tiver template, gere descrição baseada no seu conhecimento E inclua sugestões de completude baseadas em padrões radiológicos.${usarPesquisa ? ' Quando a pesquisa estiver ativada, USE A FERRAMENTA de pesquisa no Radiopaedia para buscar informações reais e fazer sugestões baseadas no conteúdo encontrado.' : ''}`;

@@ -14,21 +14,21 @@ export function ReportOutput({ report, isGenerating }: ReportOutputProps) {
   const [copiedHtml, setCopiedHtml] = useState(false)
   const [copiedText, setCopiedText] = useState(false)
 
-  // Converte texto com \n para HTML com parágrafos
+  // O laudo já vem formatado em HTML do backend
   const reportHtml = useMemo(() => {
     if (!report) return ""
     
-    // Se já tem tags HTML, retorna como está
+    // Se já tem tags HTML formatadas, retorna como está
     if (report.includes("<") && report.includes(">")) {
       return report
     }
     
-    // Converte quebras de linha duplas em parágrafos e simples em <br>
+    // Fallback: se vier texto plano, formata básico (não deveria acontecer)
     const paragraphs = report.split(/\n\n+/)
     return paragraphs
       .map((p) => {
         const lines = p.split(/\n/)
-        return `<p>${lines.join("<br>")}</p>`
+        return `<p class="laudo-texto">${lines.join("<br>")}</p>`
       })
       .join("")
   }, [report])
@@ -144,10 +144,10 @@ export function ReportOutput({ report, isGenerating }: ReportOutputProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className={`text-sm leading-relaxed ${
+              className={`${
                 isError 
                   ? "text-destructive" 
-                  : "text-foreground [&_p]:mb-3 [&_p:last-child]:mb-0"
+                  : "text-foreground [&_.laudo-texto]:mb-0 [&_.laudo-texto+br]:block"
               }`}
               dangerouslySetInnerHTML={{ __html: reportHtml }}
             />

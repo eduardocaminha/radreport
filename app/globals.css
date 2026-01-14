@@ -124,3 +124,45 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Estilos para formatação de laudos */
+.laudo-titulo {
+  font-family: Arial, sans-serif;
+  font-size: 12pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+}
+
+.laudo-urgencia {
+  font-family: Arial, sans-serif;
+  font-size: 12pt;
+  font-style: italic;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+}
+
+.laudo-secao {
+  font-family: Arial, sans-serif;
+  font-size: 12pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+}
+
+.laudo-texto {
+  font-family: Arial, sans-serif;
+  font-size: 12pt;
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+}
+
+.laudo-texto em {
+  font-style: italic;
+}

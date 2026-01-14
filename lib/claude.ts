@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { montarSystemPrompt } from './prompts';
+import { formatarLaudoHTML } from './formatador';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -233,15 +234,22 @@ export async function gerarLaudo(
     // Tentar parsear como JSON
     try {
       const resultado = JSON.parse(resposta);
+      const laudoTexto = resultado.laudo || null;
+      
+      // Formatar laudo em HTML se existir
+      const laudoFormatado = laudoTexto ? formatarLaudoHTML(laudoTexto) : null;
+      
       return {
-        laudo: resultado.laudo || null,
+        laudo: laudoFormatado,
         sugestoes: resultado.sugestoes || [],
         erro: resultado.erro || null,
       };
     } catch {
-      // Se não for JSON válido, assume que é o laudo direto
+      // Se não for JSON válido, assume que é o laudo direto e formata
+      const laudoFormatado = respostaRaw ? formatarLaudoHTML(respostaRaw) : null;
+      
       return {
-        laudo: respostaRaw,
+        laudo: laudoFormatado,
         sugestoes: [],
         erro: null,
       };
