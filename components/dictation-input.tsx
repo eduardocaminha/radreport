@@ -82,11 +82,10 @@ export function DictationInput({
         // Terminou de digitar, segura a frase completa por 2 segundos
         state.timeoutId = setTimeout(() => {
           // Apaga tudo de uma vez e passa para próxima frase
-          setAnimatedPlaceholder("")
           state.currentPhraseIndex = (state.currentPhraseIndex + 1) % placeholderPhrases.length
           state.currentCharIndex = 0
-          // Espera um pouco antes de começar a próxima frase
-          state.timeoutId = setTimeout(typeWriter, 300)
+          // Inicia imediatamente a próxima frase (sem deixar vazio)
+          typeWriter()
         }, 2000)
       }
     }
@@ -168,7 +167,7 @@ export function DictationInput({
       </div>
 
       <Textarea
-        placeholder={animatedPlaceholder || "Cole ou digite o texto ditado aqui..."}
+        placeholder={animatedPlaceholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
