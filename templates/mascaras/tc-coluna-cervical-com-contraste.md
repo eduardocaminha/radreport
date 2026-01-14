@@ -15,6 +15,7 @@ Aquisição volumétrica multislice, antes e após a administração endovenosa 
 ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
+
 <!-- REGIAO:transicao_craniovertebral -->
 Transição craniovertebral sem alterações.
 <!-- /REGIAO:transicao_craniovertebral -->

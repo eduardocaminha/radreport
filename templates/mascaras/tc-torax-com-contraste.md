@@ -15,6 +15,7 @@ Exame realizado em aparelho multislice, antes e após a injeção endovenosa do 
 ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
+
 <!-- REGIAO:parenquima_pulmonar -->
 Parênquima pulmonar com coeficientes de atenuação preservados.
 <!-- /REGIAO:parenquima_pulmonar -->

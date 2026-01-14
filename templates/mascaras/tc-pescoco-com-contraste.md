@@ -16,6 +16,7 @@ Aquisição volumétrica multislice, antes e após a administração endovenosa 
 ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
+
 <!-- REGIAO:musculatura_espaco_mastigador -->
 Musculatura do espaço mastigador com morfologia habitual.
 <!-- /REGIAO:musculatura_espaco_mastigador -->

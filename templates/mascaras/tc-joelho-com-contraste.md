@@ -16,6 +16,7 @@ Aquisição volumétrica multislice, antes e após a administração endovenosa 
 ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
+
 <!-- REGIAO:estruturas_osseas -->
 Estruturas ósseas de morfologia e textura habitual.
 <!-- /REGIAO:estruturas_osseas -->

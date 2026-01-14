@@ -16,6 +16,7 @@ Exame realizado em aparelho multislice, após a injeção do meio de contraste i
 ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
+
 <!-- REGIAO:troncos_supraaorticos -->
 Segmento proximal dos troncos supra-aórticos pérvios, com anatomia habitual e calibre preservado.
 <!-- /REGIAO:troncos_supraaorticos -->

@@ -16,6 +16,7 @@ Aquisição volumétrica multislice, antes e após a administração endovenosa 
 ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
+
 <!-- REGIAO:septo_nasal -->
 Septo nasal centrado.
 <!-- /REGIAO:septo_nasal -->

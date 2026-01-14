@@ -17,6 +17,7 @@ Exame realizado em aparelho multislice, sem a injeção endovenosa do meio de co
 ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
+
 <!-- REGIAO:calota -->
 Calota craniana íntegra.
 <!-- /REGIAO:calota -->

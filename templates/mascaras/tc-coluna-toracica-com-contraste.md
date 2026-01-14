@@ -15,6 +15,7 @@ Aquisição volumétrica multislice, antes e após a administração endovenosa 
 ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
+
 <!-- REGIAO:corpos_vertebrais -->
 Corpos vertebrais alinhados e com alturas preservadas.
 <!-- /REGIAO:corpos_vertebrais -->

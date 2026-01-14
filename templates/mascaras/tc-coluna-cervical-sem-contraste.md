@@ -15,6 +15,7 @@ Aquisição volumétrica multislice, sem a administração endovenosa de meio de
 ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
+
 <!-- REGIAO:transicao_craniovertebral -->
 Transição craniovertebral sem alterações.
 <!-- /REGIAO:transicao_craniovertebral -->

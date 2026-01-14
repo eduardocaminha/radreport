@@ -15,6 +15,7 @@ Exame realizado em aparelho multislice, antes e após a injeção endovenosa do 
 ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
+
 <!-- REGIAO:calota -->
 Calota craniana íntegra.
 <!-- /REGIAO:calota -->

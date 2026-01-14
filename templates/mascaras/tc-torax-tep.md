@@ -17,6 +17,7 @@ Exame realizado em aparelho multislice, após a injeção do meio de contraste i
 ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
+
 <!-- REGIAO:tep -->
 Não há sinais de tromboembolismo pulmonar.
 <!-- /REGIAO:tep -->

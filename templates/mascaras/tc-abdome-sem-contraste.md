@@ -15,6 +15,7 @@ Exame realizado em aparelho multislice, sem a injeção endovenosa do meio de co
 ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
+
 <!-- REGIAO:figado -->
 Fígado de dimensões normais, contornos regulares e bordas finas. Parênquima com coeficiente de atenuação preservado no protocolo realizado.
 <!-- /REGIAO:figado -->
