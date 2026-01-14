@@ -9,8 +9,19 @@ export function formatarLaudoHTML(texto: string): string {
     return texto;
   }
   
+  // Remove HTML existente se houver (caso venha mal formatado)
+  let textoLimpo = texto;
+  if (texto.includes('<p>') || texto.includes('<br>')) {
+    // Remove tags HTML mas preserva quebras de linha
+    textoLimpo = texto
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/p>/gi, '\n')
+      .replace(/<p[^>]*>/gi, '')
+      .replace(/<[^>]+>/g, '');
+  }
+  
   // Remove linhas vazias múltiplas e normaliza quebras
-  const linhas = texto
+  const linhas = textoLimpo
     .split('\n')
     .map(l => l.trim())
     .filter(l => l.length > 0);

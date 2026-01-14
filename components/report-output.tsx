@@ -5,6 +5,97 @@ import { Button } from "@/components/ui/button"
 import { Copy, FileText, Check } from "lucide-react"
 import { useState, useMemo } from "react"
 
+// Função para formatar laudo no cliente (duplicada da lib/formatador para uso no cliente)
+function formatarLaudoHTMLCliente(texto: string): string {
+  if (!texto) return ''
+  
+  // Se já tem HTML formatado corretamente, retorna como está
+  if (texto.includes('class="laudo-titulo"') || texto.includes('class="laudo-secao"')) {
+    return texto
+  }
+  
+  // Remove HTML existente se houver (caso venha mal formatado)
+  let textoLimpo = texto
+  if (texto.includes('<p>') || texto.includes('<br>')) {
+    textoLimpo = texto
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/p>/gi, '\n')
+      .replace(/<p[^>]*>/gi, '')
+      .replace(/<[^>]+>/g, '')
+  }
+  
+  const linhas = textoLimpo.split('\n').map(l => l.trim()).filter(l => l.length > 0)
+  if (linhas.length === 0) return ''
+  
+  let html = ''
+  let i = 0
+  let emAnalise = false
+  
+  // Título
+  if (i < linhas.length) {
+    html += `<h1 class="laudo-titulo">${linhas[i].toUpperCase()}</h1>`
+    i++
+  }
+  
+  // Urgência
+  if (i < linhas.length) {
+    const linha = linhas[i].toLowerCase()
+    if (linha.includes('urgência') || linha.includes('urgencia') || linha.includes('eletivo')) {
+      html += `<p class="laudo-urgencia">${linhas[i]}</p>`
+      i++
+    }
+  }
+  
+  html += '<br>'
+  
+  // Processar seções
+  while (i < linhas.length) {
+    const linha = linhas[i]
+    const linhaUpper = linha.toUpperCase().trim()
+    
+    if (linhaUpper.startsWith('TÉCNICA:') || linhaUpper.startsWith('TECNICA:')) {
+      html += `<p class="laudo-secao">TÉCNICA:</p>`
+      i++
+      emAnalise = false
+      
+      if (i < linhas.length) {
+        const textoTecnica = linhas[i].replace(/\b(multislice|multidetector|helical|spiral|contrast|enhancement|attenuation|hounsfield|mip|mpr|vr|3d)\b/gi, '<em>$1</em>')
+        html += `<p class="laudo-texto">${textoTecnica}</p>`
+        i++
+      }
+      
+      html += '<br>'
+    } else if (linhaUpper.startsWith('ANÁLISE:') || linhaUpper.startsWith('ANALISE:')) {
+      html += `<p class="laudo-secao">ANÁLISE:</p>`
+      i++
+      emAnalise = true
+      
+      while (i < linhas.length) {
+        const linhaAnalise = linhas[i]
+        const linhaAnaliseUpper = linhaAnalise.toUpperCase().trim()
+        
+        if (linhaAnaliseUpper.startsWith('TÉCNICA:') || 
+            linhaAnaliseUpper.startsWith('TECNICA:') ||
+            linhaAnaliseUpper.startsWith('ANÁLISE:') ||
+            linhaAnaliseUpper.startsWith('ANALISE:')) {
+          break
+        }
+        
+        html += `<p class="laudo-texto">${linhaAnalise}</p>`
+        i++
+      }
+    } else if (emAnalise) {
+      html += `<p class="laudo-texto">${linha}</p>`
+      i++
+    } else {
+      html += `<p class="laudo-texto">${linha}</p>`
+      i++
+    }
+  }
+  
+  return html
+}
+
 interface ReportOutputProps {
   report: string
   isGenerating: boolean
@@ -14,23 +105,17 @@ export function ReportOutput({ report, isGenerating }: ReportOutputProps) {
   const [copiedHtml, setCopiedHtml] = useState(false)
   const [copiedText, setCopiedText] = useState(false)
 
-  // O laudo já vem formatado em HTML do backend
+  // O laudo já vem formatado em HTML do backend, mas vamos garantir formatação correta
   const reportHtml = useMemo(() => {
     if (!report) return ""
     
-    // Se já tem tags HTML formatadas, retorna como está
-    if (report.includes("<") && report.includes(">")) {
+    // Se já tem HTML formatado com as classes corretas, retorna como está
+    if (report.includes('class="laudo-titulo"') || report.includes('class="laudo-secao"')) {
       return report
     }
     
-    // Fallback: se vier texto plano, formata básico (não deveria acontecer)
-    const paragraphs = report.split(/\n\n+/)
-    return paragraphs
-      .map((p) => {
-        const lines = p.split(/\n/)
-        return `<p class="laudo-texto">${lines.join("<br>")}</p>`
-      })
-      .join("")
+    // Formata o texto (pode ser texto plano ou HTML mal formatado)
+    return formatarLaudoHTMLCliente(report)
   }, [report])
 
   // Texto plano com quebras de linha preservadas
