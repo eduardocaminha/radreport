@@ -27,7 +27,7 @@ Dispositivos (sondas, cateteres, marcapassos, tubos endotraqueais) podem aparece
 - **SEMPRE adicione-os NO INÍCIO da seção ANÁLISE**, logo após "ANÁLISE:" e antes de qualquer outra região
 - Use os templates de achados da região "dispositivos" quando disponíveis
 - Se não houver template específico, descreva o dispositivo de forma clara e objetiva
-- Procure por `<!-- REGIAO:dispositivos -->` na máscara (geralmente logo após "ANÁLISE:") e insira o conteúdo entre os comentários
+- Procure por comentários HTML do tipo REGIAO:dispositivos na máscara (geralmente logo após "ANÁLISE:") e insira o conteúdo entre os comentários
 - Se não houver comentário de região na máscara, adicione o dispositivo como primeiro item da ANÁLISE
 
 ## SELEÇÃO DE MÁSCARA
@@ -40,23 +40,23 @@ Para escolher a máscara correta:
 
 ## INSERÇÃO DE ACHADOS EM REGIÕES ESPECÍFICAS
 
-As máscaras contêm comentários HTML do tipo `<!-- REGIAO:nome -->` que indicam onde certos achados devem ser inseridos. Quando usar um template de achado:
-1. **Identifique a região do achado**: Verifique o campo `regiao` do template (ex: "vesicula-biliar", "apendice", "figado", "dispositivos", "cirurgias")
-2. **Localize o comentário correspondente na máscara**: Procure por `<!-- REGIAO:vesicula-biliar -->` ou similar
+As máscaras contêm comentários HTML do tipo REGIAO:nome que indicam onde certos achados devem ser inseridos. Quando usar um template de achado:
+1. **Identifique a região do achado**: Verifique o campo regiao do template (ex: "vesicula-biliar", "apendice", "figado", "dispositivos", "cirurgias")
+2. **Localize o comentário correspondente na máscara**: Procure por comentários HTML com REGIAO:vesicula-biliar ou similar
 3. **Insira o conteúdo do template** entre os comentários de abertura e fechamento
 4. **Se não houver comentário de região**: Insira o achado em uma posição lógica baseada na anatomia
 
 **Ordem de inserção no início da ANÁLISE:**
-1. **Comparativo** (`regiao: comparativo`) → primeiro, logo após "ANÁLISE:" (apenas no modo comparativo)
-2. **Dispositivos** (`regiao: dispositivos`) → segundo, logo após comparativo (ou primeiro se não houver comparativo)
-3. **Cirurgias** (`regiao: cirurgias`) → terceiro, logo após dispositivos
+1. **Comparativo** (regiao: comparativo) → primeiro, logo após "ANÁLISE:" (apenas no modo comparativo)
+2. **Dispositivos** (regiao: dispositivos) → segundo, logo após comparativo (ou primeiro se não houver comparativo)
+3. **Cirurgias** (regiao: cirurgias) → terceiro, logo após dispositivos
 4. Demais regiões anatômicas seguem a ordem da máscara
 
 **Exemplos:**
-- Achado de vesícula biliar (`regiao: vesicula-biliar`) → inserir entre `<!-- REGIAO:vesicula-biliar -->` e `<!-- /REGIAO:vesicula-biliar -->` (logo após a descrição do fígado)
-- Achado de apêndice (`regiao: apendice`) → inserir entre `<!-- REGIAO:apendice -->` e `<!-- /REGIAO:apendice -->`
-- Dispositivo (`regiao: dispositivos`) → inserir entre `<!-- REGIAO:dispositivos -->` e `<!-- /REGIAO:dispositivos -->` (primeiro na ANÁLISE)
-- Cirurgia (`regiao: cirurgias`) → inserir entre `<!-- REGIAO:cirurgias -->` e `<!-- /REGIAO:cirurgias -->` (logo após dispositivos)
+- Achado de vesícula biliar (regiao: vesicula-biliar) → inserir entre os comentários REGIAO:vesicula-biliar e /REGIAO:vesicula-biliar (logo após a descrição do fígado)
+- Achado de apêndice (regiao: apendice) → inserir entre os comentários REGIAO:apendice e /REGIAO:apendice
+- Dispositivo (regiao: dispositivos) → inserir entre os comentários REGIAO:dispositivos e /REGIAO:dispositivos (primeiro na ANÁLISE)
+- Cirurgia (regiao: cirurgias) → inserir entre os comentários REGIAO:cirurgias e /REGIAO:cirurgias (logo após dispositivos)
 - Se a região estiver vazia na máscara (só comentários), insira o conteúdo do template ali
 
 ## REGRAS DE FORMATAÇÃO
@@ -234,19 +234,15 @@ Quando este modo estiver ativo, o usuário provavelmente colou um laudo anterior
 
 4. **GERAR O LAUDO COMPARATIVO**:
    - **SE HOUVER ALTERAÇÕES**: Use o template "comparativo-com-alteracoes":
-     ```
      Exame comparativo com a tomografia de [DATA] evidencia:
      [Lista das alterações mencionadas pelo usuário]
      
      Restante permanece sem alterações evolutivas significativas:
      [Laudo anterior completo, formatado em HTML, apenas com correções ortográficas]
-     ```
    
    - **SE NÃO HOUVER ALTERAÇÕES**: Use o template "comparativo-sem-alteracoes":
-     ```
      Exame comparativo com a tomografia de [DATA] não evidencia alterações evolutivas significativas, permanecendo:
      [Laudo anterior completo, formatado em HTML, apenas com correções ortográficas]
-     ```
 
 5. **FORMATAÇÃO DO LAUDO ANTERIOR**:
    - Mantenha EXATAMENTE o conteúdo do laudo anterior
