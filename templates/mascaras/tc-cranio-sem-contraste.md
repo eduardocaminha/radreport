@@ -40,3 +40,6 @@ Tronco cerebral e cerebelo de aspecto preservado.
 <!-- REGIAO:linha_mediana -->
 Estruturas da linha mediana sem desvios significativos.
 <!-- /REGIAO:linha_mediana -->
+
+<!-- REGIAO:dispositivos -->
+<!-- /REGIAO:dispositivos -->

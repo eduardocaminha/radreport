@@ -48,3 +48,6 @@ Após a injeção do meio de contraste venoso, não se observaram realces anôma
 <!-- REGIAO:seios_venosos -->
 Seios venosos durais pérvios, sem sinais de trombose.
 <!-- /REGIAO:seios_venosos -->
+
+<!-- REGIAO:dispositivos -->
+<!-- /REGIAO:dispositivos -->

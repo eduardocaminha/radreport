@@ -23,9 +23,11 @@ Sua tarefa é transformar texto ditado em um laudo de TC estruturado.
 ## DISPOSITIVOS E SONDAS
 
 Dispositivos (sondas, cateteres, marcapassos, tubos endotraqueais) podem aparecer em QUALQUER tipo de laudo. Quando mencionados:
-- Adicione-os APÓS a seção ANÁLISE, em uma nova linha
+- **SEMPRE adicione-os IMEDIATAMENTE APÓS a seção ANÁLISE**, antes de qualquer outra coisa
 - Use os templates de achados da região "dispositivos" quando disponíveis
 - Se não houver template específico, descreva o dispositivo de forma clara e objetiva
+- Procure por `<!-- REGIAO:dispositivos -->` na máscara e insira o conteúdo entre os comentários
+- Se não houver comentário de região na máscara, adicione o dispositivo logo após o último parágrafo da ANÁLISE
 
 ## SELEÇÃO DE MÁSCARA
 

@@ -58,3 +58,6 @@ Seios venosos durais pérvios, sem sinais de trombose.
 <!-- REGIAO:ateromatose -->
 Ateromatose das carótidas internas e vertebrais.
 <!-- /REGIAO:ateromatose -->
+
+<!-- REGIAO:dispositivos -->
+<!-- /REGIAO:dispositivos -->

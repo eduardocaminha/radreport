@@ -33,3 +33,6 @@ Artérias renais únicas, pérvias e com calibre preservado.
 <!-- REGIAO:iliacas_femorais -->
 Artérias ilíacas comuns, externas e internas, femorais comuns e segmento proximal das femorais superficiais e profundas pérvios, sem alterações significativas de calibre.
 <!-- /REGIAO:iliacas_femorais -->
+
+<!-- REGIAO:dispositivos -->
+<!-- /REGIAO:dispositivos -->

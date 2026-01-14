@@ -40,3 +40,6 @@ Parede torácica sem alterações significativas.
 <!-- REGIAO:transicao -->
 Transição toracoabdominal sem alterações significativas.
 <!-- /REGIAO:transicao -->
+
+<!-- REGIAO:dispositivos -->
+<!-- /REGIAO:dispositivos -->

@@ -29,3 +29,6 @@ Não há sinais de derrame articular.
 <!-- REGIAO:planos_musculares -->
 Planos musculares sem alterações detectáveis ao método.
 <!-- /REGIAO:planos_musculares -->
+
+<!-- REGIAO:dispositivos -->
+<!-- /REGIAO:dispositivos -->

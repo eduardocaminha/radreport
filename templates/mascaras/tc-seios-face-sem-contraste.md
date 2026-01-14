@@ -41,3 +41,6 @@ Rinofaringe e fossas pterigopalatinas de aspecto preservado.
 <!-- REGIAO:arcabouco_osseo -->
 Arcabouço ósseo da face sem alterações significativas.
 <!-- /REGIAO:arcabouco_osseo -->
+
+<!-- REGIAO:dispositivos -->
+<!-- /REGIAO:dispositivos -->

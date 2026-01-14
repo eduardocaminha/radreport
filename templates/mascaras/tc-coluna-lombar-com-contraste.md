@@ -54,3 +54,6 @@ Dimensões normais do canal vertebral e dos forames intervertebrais.
 <!-- REGIAO:planos_musculares -->
 Planos musculares paravertebrais sem alterações significativas ao método.
 <!-- /REGIAO:planos_musculares -->
+
+<!-- REGIAO:dispositivos -->
+<!-- /REGIAO:dispositivos -->

@@ -42,3 +42,6 @@ Estruturas vasculares mediastinais tópicas, com calibre preservado.
 <!-- REGIAO:parede_toracica -->
 Parede torácica sem alterações significativas.
 <!-- /REGIAO:parede_toracica -->
+
+<!-- REGIAO:dispositivos -->
+<!-- /REGIAO:dispositivos -->
