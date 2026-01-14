@@ -34,7 +34,11 @@ async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function chamarClaudeComRetry(systemPrompt: string, texto: string, maxRetries = 3): Promise<Anthropic.Message> {
+async function chamarClaudeComRetry(
+  systemPrompt: string, 
+  texto: string, 
+  maxRetries = 3
+): Promise<Anthropic.Message> {
   let lastError: Error | null = null;
   
   for (let attempt = 0; attempt < maxRetries; attempt++) {
@@ -69,13 +73,25 @@ async function chamarClaudeComRetry(systemPrompt: string, texto: string, maxRetr
   throw lastError;
 }
 
-export async function gerarLaudo(texto: string, modoPS: boolean): Promise<ResultadoLaudo> {
-  const systemPrompt = montarSystemPrompt(modoPS);
+export async function gerarLaudo(
+  texto: string, 
+  modoPS: boolean, 
+  usarPesquisa: boolean = false
+): Promise<ResultadoLaudo> {
+  const systemPrompt = montarSystemPrompt(modoPS, usarPesquisa);
   
   try {
     const message = await chamarClaudeComRetry(systemPrompt, texto);
     
-    const respostaRaw = message.content[0].type === 'text' ? message.content[0].text : '';
+    // Extrair texto da resposta final
+    let respostaRaw = '';
+    for (const content of message.content) {
+      if (content.type === 'text') {
+        respostaRaw = content.text;
+        break;
+      }
+    }
+    
     const resposta = limparRespostaJSON(respostaRaw);
     
     // Tentar parsear como JSON

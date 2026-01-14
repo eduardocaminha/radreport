@@ -3,7 +3,7 @@ import { gerarLaudo } from '@/lib/claude';
 
 export async function POST(request: Request) {
   try {
-    const { texto, modoPS } = await request.json();
+    const { texto, modoPS, usarPesquisa } = await request.json();
     
     if (!texto || typeof texto !== 'string' || texto.trim() === '') {
       return NextResponse.json(
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       );
     }
     
-    const resultado = await gerarLaudo(texto.trim(), modoPS ?? false);
+    const resultado = await gerarLaudo(texto.trim(), modoPS ?? false, usarPesquisa ?? false);
     
     return NextResponse.json(resultado);
   } catch (error) {

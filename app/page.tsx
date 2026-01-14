@@ -26,6 +26,7 @@ export default function Home() {
   const [erro, setErro] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [reportMode, setReportMode] = useState<ReportMode>("ps")
+  const [usarPesquisa, setUsarPesquisa] = useState(false)
   const [historico, setHistorico] = useState<ItemHistorico[]>([])
 
   useEffect(() => {
@@ -69,6 +70,7 @@ export default function Home() {
         body: JSON.stringify({
           texto: dictatedText,
           modoPS: reportMode === "ps",
+          usarPesquisa,
         }),
       })
 
@@ -138,6 +140,8 @@ export default function Home() {
             isGenerating={isGenerating}
             historico={historico}
             onLimparHistorico={limparHistorico}
+            usarPesquisa={usarPesquisa}
+            onUsarPesquisaChange={setUsarPesquisa}
           />
         </motion.div>
 

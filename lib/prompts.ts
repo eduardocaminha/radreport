@@ -1,6 +1,6 @@
 import { formatarTemplatesParaPrompt } from './templates';
 
-export function montarSystemPrompt(modoPS: boolean): string {
+export function montarSystemPrompt(modoPS: boolean, usarPesquisa: boolean = false): string {
   const templatesContext = formatarTemplatesParaPrompt();
   
   const basePrompt = `Você é um radiologista brasileiro experiente especializado em tomografia computadorizada.
@@ -40,6 +40,24 @@ Use SEU CONHECIMENTO MÉDICO RADIOLÓGICO combinado com as máscaras e achados d
 
 3. **Contexto clínico**: Se informações importantes para a interpretação estiverem ausentes (ex: sintomas, tempo de evolução), sugira sua inclusão quando relevante.
 
+${usarPesquisa ? `
+## MODO PESQUISA RADIOPAEDIA (ATIVADO)
+
+Quando este modo estiver ativo, você deve fazer sugestões MAIS DETALHADAS e ESPECÍFICAS baseadas nos padrões de descrição radiológica que são comumente documentados no Radiopaedia.org.
+
+Para cada achado identificado no texto:
+1. Considere as máscaras e templates disponíveis
+2. Use seu conhecimento médico interno
+3. Baseie-se nos padrões de descrição que são típicos do Radiopaedia para esse tipo de achado
+
+Exemplos de sugestões mais detalhadas quando pesquisa está ativada:
+- **Fratura de úmero**: "Considere descrever: localização exata (cabeça, colo anatômico, colo cirúrgico, diáfise, epicôndilos), tipo de fratura (transversa, oblíqua, espiral, cominutiva), desvio e angulação, envolvimento articular, fragmentos livres"
+- **Apendicite**: "Considere descrever: calibre do apêndice, espessamento parietal, densificação da gordura periapendicular, presença de apendicolito, sinais de perfuração, coleções"
+- **Pneumonia**: "Considere descrever: distribuição (lobar, segmentar, broncopneumonia), características (consolidação, vidro fosco, padrão reticular), extensão, derrame pleural associado"
+
+Seja ESPECÍFICO e DETALHADO nas sugestões quando este modo estiver ativo.
+` : ''}
+
 ## BLOCOS OPCIONAIS
 
 - "urgencia": incluído por padrão, remover se usuário mencionar "eletivo", "ambulatorial" ou "não é urgência"
@@ -63,7 +81,7 @@ SEMPRE responda em JSON válido com esta estrutura:
 }
 
 Se faltar informação ESSENCIAL, retorne erro e laudo null.
-Se o achado não tiver template, gere descrição baseada no seu conhecimento E inclua sugestões de completude baseadas em padrões radiológicos.`;
+Se o achado não tiver template, gere descrição baseada no seu conhecimento E inclua sugestões de completude baseadas em padrões radiológicos.${usarPesquisa ? ' Quando a pesquisa estiver ativada, faça sugestões MUITO MAIS DETALHADAS e ESPECÍFICAS baseadas nos padrões do Radiopaedia.' : ''}`;
 
   const psAddendum = modoPS ? `
 
