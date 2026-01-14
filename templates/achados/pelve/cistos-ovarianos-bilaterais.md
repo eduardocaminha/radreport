@@ -1,5 +1,5 @@
 ---
-regiao: bacia
+regiao: pelve
 palavras_chave: [cistos ovarianos bilaterais, formacoes cisticas anexiais bilaterais]
 requer: [tamanho_direito, tamanho_esquerdo]
 ---

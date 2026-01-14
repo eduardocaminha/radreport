@@ -1,5 +1,5 @@
 ---
-regiao: bacia
+regiao: pelve
 palavras_chave: [cisto ovariano direito, formacao cistica anexial direita, cisto anexial direito]
 requer: [tamanho]
 ---

@@ -1,5 +1,5 @@
 ---
-regiao: bacia
+regiao: pelve
 palavras_chave: [flebólitos pélvicos, flebolitos pelvicos, calcificações pélvicas]
 ---
 
