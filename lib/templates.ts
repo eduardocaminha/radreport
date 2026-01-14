@@ -5,8 +5,10 @@ import matter from 'gray-matter';
 export interface Mascara {
   arquivo: string;
   tipo: string;
+  subtipo?: string;
   contraste: string;
   urgencia_padrao: boolean;
+  palavras_chave?: string[];
   conteudo: string;
 }
 
@@ -38,8 +40,10 @@ export function carregarMascaras(): Mascara[] {
     return {
       arquivo,
       tipo: data.tipo || '',
+      subtipo: data.subtipo,
       contraste: data.contraste || '',
       urgencia_padrao: data.urgencia_padrao ?? true,
+      palavras_chave: data.palavras_chave || [],
       conteudo: content.trim(),
     };
   });
@@ -94,9 +98,13 @@ export function formatarTemplatesParaPrompt(): string {
   for (const mascara of mascaras) {
     prompt += `### ${mascara.arquivo}\n`;
     prompt += `- Tipo: ${mascara.tipo}\n`;
+    if (mascara.subtipo) prompt += `- Subtipo: ${mascara.subtipo}\n`;
     prompt += `- Contraste: ${mascara.contraste}\n`;
-    prompt += `- Urgência padrão: ${mascara.urgencia_padrao ? 'sim' : 'não'}\n\n`;
-    prompt += '```\n' + mascara.conteudo + '\n```\n\n';
+    prompt += `- Urgência padrão: ${mascara.urgencia_padrao ? 'sim' : 'não'}\n`;
+    if (mascara.palavras_chave && mascara.palavras_chave.length > 0) {
+      prompt += `- Palavras-chave: ${mascara.palavras_chave.join(', ')}\n`;
+    }
+    prompt += '\n```\n' + mascara.conteudo + '\n```\n\n';
   }
   
   prompt += '## ACHADOS DISPONÍVEIS\n\n';
