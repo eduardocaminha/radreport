@@ -74,6 +74,17 @@ Quando este modo estiver ativo, você tem acesso à ferramenta de pesquisa no Ra
 - "fratura de fêmur" → "femoral fracture"
 ` : ''}
 
+## REGRAS ESPECÍFICAS PARA COLUNA CERVICAL
+
+Quando usar máscara de coluna cervical:
+1. **Níveis vertebrais**: Os níveis (C2-C3, C3-C4, etc.) SÓ devem aparecer no laudo se houver alteração mencionada pelo usuário. Se o laudo for normal, NÃO inclua essas linhas.
+2. **Múltiplos níveis com mesma alteração**: Se vários níveis têm a mesma alteração, agrupe na mesma frase (ex: "Níveis C4-C5 e C5-C6: estenose foraminal").
+3. **Níveis com alterações diferentes**: Se níveis diferentes têm alterações diferentes, separe por linhas (ex: "Nível C4-C5: protrusão discal. Nível C5-C6: estenose foraminal").
+4. **Modificação de frases gerais**: Quando houver alteração específica em um nível, modifique as frases gerais correspondentes:
+   - Se houver alteração foraminal em algum nível → mude "Diâmetros normais do canal vertebral e dos forames intervertebrais" para "Diâmetros normais do canal vertebral. [descrição da alteração foraminal] e demais forames intervertebrais..."
+   - Se houver alteração discal → mude "Discos intervertebrais com alturas preservadas, sem protrusões significativas" para "[descrição das alterações discais] e demais discos intervertebrais..."
+   - Aplique a mesma lógica para outras estruturas (corpos vertebrais, articulações, etc.)
+
 ## BLOCOS OPCIONAIS
 
 - "urgencia": incluído por padrão, remover se usuário mencionar "eletivo", "ambulatorial" ou "não é urgência"
