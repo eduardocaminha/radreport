@@ -95,7 +95,7 @@ export function DictationInput({
                           variant="ghost"
                           size="sm"
                           onClick={onLimparHistorico}
-                          className="text-xs text-muted-foreground hover:text-destructive h-6 px-2"
+                          className="text-xs text-muted-foreground hover:bg-destructive hover:text-destructive-foreground h-6 px-2"
                         >
                           Limpar
                         </Button>

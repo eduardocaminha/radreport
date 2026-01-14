@@ -3,8 +3,10 @@
 import { motion } from "motion/react"
 import { LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 type ReportMode = "ps" | "eletivo" | "comparativo"
 
@@ -15,11 +17,17 @@ interface HeaderProps {
 
 export function Header({ reportMode, onReportModeChange }: HeaderProps) {
   const router = useRouter()
-  const modes: { value: ReportMode; label: string }[] = [
-    { value: "ps", label: "PS" },
-    { value: "eletivo", label: "Eletivo" },
-    { value: "comparativo", label: "Comparativo" },
+  const [isMac, setIsMac] = useState(false)
+  
+  const modes: { value: ReportMode; label: string; key: string }[] = [
+    { value: "ps", label: "PS", key: "p" },
+    { value: "eletivo", label: "Eletivo", key: "e" },
+    { value: "comparativo", label: "Comparativo", key: "o" },
   ]
+
+  useEffect(() => {
+    setIsMac(navigator.platform.toUpperCase().indexOf('MAC') >= 0 || navigator.userAgent.toUpperCase().indexOf('MAC') >= 0)
+  }, [])
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -31,7 +39,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
         } else if (e.key.toLowerCase() === "e") {
           e.preventDefault()
           onReportModeChange("eletivo")
-        } else if (e.key.toLowerCase() === "c") {
+        } else if (e.key.toLowerCase() === "o") {
           e.preventDefault()
           onReportModeChange("comparativo")
         }
@@ -68,26 +76,41 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-1 bg-muted rounded-lg p-1 relative">
             {modes.map((mode) => (
-              <button
-                key={mode.value}
-                onClick={() => onReportModeChange(mode.value)}
-                className="relative px-3 py-1.5 text-sm font-medium rounded-md transition-colors z-10"
-              >
-                {reportMode === mode.value && (
-                  <motion.div
-                    layoutId="activeMode"
-                    className="absolute inset-0 bg-card shadow-sm rounded-md"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
-                  />
-                )}
-                <span
-                  className={`relative z-10 ${
-                    reportMode === mode.value ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {mode.label}
-                </span>
-              </button>
+              <Tooltip key={mode.value}>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => onReportModeChange(mode.value)}
+                    className="relative px-3 py-1.5 text-sm font-medium rounded-md transition-colors z-10"
+                  >
+                    {reportMode === mode.value && (
+                      <motion.div
+                        layoutId="activeMode"
+                        className="absolute inset-0 bg-card shadow-sm rounded-md"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                      />
+                    )}
+                    <span
+                      className={`relative z-10 ${
+                        reportMode === mode.value ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {mode.label}
+                    </span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="flex items-center gap-2">
+                    <span>{mode.label}</span>
+                    <KbdGroup>
+                      <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
+                      <span>+</span>
+                      <Kbd>Shift</Kbd>
+                      <span>+</span>
+                      <Kbd>{mode.key.toUpperCase()}</Kbd>
+                    </KbdGroup>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
             ))}
           </div>
 
