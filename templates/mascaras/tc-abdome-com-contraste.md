@@ -16,6 +16,9 @@ ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
 
+<!-- REGIAO:cirurgias -->
+<!-- /REGIAO:cirurgias -->
+
 <!-- REGIAO:figado -->
 Fígado de dimensões preservadas, contornos regulares e bordas finas. Parênquima com coeficiente de atenuação preservado. Não há sinais de dilatação das vias biliares intra ou extra-hepáticas.
 <!-- /REGIAO:figado -->

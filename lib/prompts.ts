@@ -40,14 +40,21 @@ Para escolher a máscara correta:
 ## INSERÇÃO DE ACHADOS EM REGIÕES ESPECÍFICAS
 
 As máscaras contêm comentários HTML do tipo `<!-- REGIAO:nome -->` que indicam onde certos achados devem ser inseridos. Quando usar um template de achado:
-1. **Identifique a região do achado**: Verifique o campo `regiao` do template (ex: "vesicula-biliar", "apendice", "figado")
+1. **Identifique a região do achado**: Verifique o campo `regiao` do template (ex: "vesicula-biliar", "apendice", "figado", "dispositivos", "cirurgias")
 2. **Localize o comentário correspondente na máscara**: Procure por `<!-- REGIAO:vesicula-biliar -->` ou similar
 3. **Insira o conteúdo do template** entre os comentários de abertura e fechamento
 4. **Se não houver comentário de região**: Insira o achado em uma posição lógica baseada na anatomia
 
+**Ordem de inserção no início da ANÁLISE:**
+1. **Dispositivos** (`regiao: dispositivos`) → primeiro, logo após "ANÁLISE:"
+2. **Cirurgias** (`regiao: cirurgias`) → segundo, logo após dispositivos
+3. Demais regiões anatômicas seguem a ordem da máscara
+
 **Exemplos:**
 - Achado de vesícula biliar (`regiao: vesicula-biliar`) → inserir entre `<!-- REGIAO:vesicula-biliar -->` e `<!-- /REGIAO:vesicula-biliar -->` (logo após a descrição do fígado)
 - Achado de apêndice (`regiao: apendice`) → inserir entre `<!-- REGIAO:apendice -->` e `<!-- /REGIAO:apendice -->`
+- Dispositivo (`regiao: dispositivos`) → inserir entre `<!-- REGIAO:dispositivos -->` e `<!-- /REGIAO:dispositivos -->` (primeiro na ANÁLISE)
+- Cirurgia (`regiao: cirurgias`) → inserir entre `<!-- REGIAO:cirurgias -->` e `<!-- /REGIAO:cirurgias -->` (logo após dispositivos)
 - Se a região estiver vazia na máscara (só comentários), insira o conteúdo do template ali
 
 ## REGRAS DE FORMATAÇÃO

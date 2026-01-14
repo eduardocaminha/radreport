@@ -16,6 +16,9 @@ ANÁLISE:
 <!-- REGIAO:dispositivos -->
 <!-- /REGIAO:dispositivos -->
 
+<!-- REGIAO:cirurgias -->
+<!-- /REGIAO:cirurgias -->
+
 <!-- REGIAO:figado -->
 Fígado de dimensões normais, contornos regulares e bordas finas. Parênquima com coeficiente de atenuação preservado no protocolo realizado.
 <!-- /REGIAO:figado -->
