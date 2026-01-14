@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -54,74 +54,67 @@ export function DictationInput({
     setIsMac(navigator.platform.toUpperCase().indexOf('MAC') >= 0 || navigator.userAgent.toUpperCase().indexOf('MAC') >= 0)
   }, [])
 
+  const typewriterRef = useRef({
+    currentPhraseIndex: 0,
+    currentCharIndex: 0,
+    isDeleting: false,
+    timeoutId: null as ReturnType<typeof setTimeout> | null,
+  })
+
   useEffect(() => {
     if (value.trim()) {
+      if (typewriterRef.current.timeoutId) {
+        clearTimeout(typewriterRef.current.timeoutId)
+      }
       setAnimatedPlaceholder("")
       return
     }
 
-    let currentPhraseIndex = 0
-    let currentCharIndex = 0
-    let isDeleting = false
-    let timeoutId: NodeJS.Timeout
-
     const typeWriter = () => {
-      const currentPhrase = placeholderPhrases[currentPhraseIndex]
+      const state = typewriterRef.current
+      const currentPhrase = placeholderPhrases[state.currentPhraseIndex]
 
-      if (isDeleting) {
-        setAnimatedPlaceholder(currentPhrase.substring(0, currentCharIndex - 1))
-        currentCharIndex--
-        timeoutId = setTimeout(typeWriter, 30)
+      if (state.isDeleting) {
+        if (state.currentCharIndex > 0) {
+          setAnimatedPlaceholder(currentPhrase.substring(0, state.currentCharIndex - 1))
+          state.currentCharIndex--
+          state.timeoutId = setTimeout(typeWriter, 30)
+        } else {
+          // Terminou de apagar, passa para próxima frase
+          state.isDeleting = false
+          state.currentPhraseIndex = (state.currentPhraseIndex + 1) % placeholderPhrases.length
+          state.timeoutId = setTimeout(typeWriter, 300)
+        }
       } else {
-        setAnimatedPlaceholder(currentPhrase.substring(0, currentCharIndex + 1))
-        currentCharIndex++
-        timeoutId = setTimeout(typeWriter, 50)
-      }
-
-      if (!isDeleting && currentCharIndex === currentPhrase.length) {
-        // Pausa após completar a frase
-        timeoutId = setTimeout(() => {
-          isDeleting = true
-          typeWriter()
-        }, 2000)
-      } else if (isDeleting && currentCharIndex === 0) {
-        // Passa para a próxima frase
-        isDeleting = false
-        currentPhraseIndex = (currentPhraseIndex + 1) % placeholderPhrases.length
-        timeoutId = setTimeout(typeWriter, 300)
+        if (state.currentCharIndex < currentPhrase.length) {
+          setAnimatedPlaceholder(currentPhrase.substring(0, state.currentCharIndex + 1))
+          state.currentCharIndex++
+          state.timeoutId = setTimeout(typeWriter, 50)
+        } else {
+          // Terminou de digitar, espera e começa a apagar
+          state.timeoutId = setTimeout(() => {
+            state.isDeleting = true
+            typeWriter()
+          }, 2000)
+        }
       }
     }
 
+    // Inicia a animação
     typeWriter()
 
     return () => {
-      if (timeoutId) clearTimeout(timeoutId)
+      if (typewriterRef.current.timeoutId) {
+        clearTimeout(typewriterRef.current.timeoutId)
+      }
     }
-  }, [value, placeholderPhrases])
+  }, [value])
 
   return (
     <section className="bg-card rounded-xl border border-border p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-medium text-foreground">Texto ditado</h2>
-        <div className="flex items-center gap-4">
-          {/* Checkbox de pesquisa */}
-          <div className="flex items-center gap-2">
-            <Switch
-              id="pesquisa-radiopaedia"
-              checked={usarPesquisa}
-              onCheckedChange={onUsarPesquisaChange}
-              disabled={isGenerating}
-            />
-            <Label
-              htmlFor="pesquisa-radiopaedia"
-              className="text-xs text-muted-foreground cursor-pointer flex items-center gap-1.5"
-            >
-              <Search className="w-3.5 h-3.5" />
-              Pesquisar Radiopaedia
-            </Label>
-          </div>
-
-          {historico.length > 0 && (
+        {historico.length > 0 && (
             <div className="relative">
               <button
                 onClick={() => setHistoricoAberto(!historicoAberto)}
@@ -203,12 +196,31 @@ export function DictationInput({
           {" "}para gerar
         </span>
 
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Button onClick={onGenerate} disabled={isGenerating || !value.trim()} className="gap-2">
-            {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            Gerar Laudo
-          </Button>
-        </motion.div>
+        <div className="flex items-center gap-4">
+          {/* Checkbox de pesquisa */}
+          <div className="flex items-center gap-2">
+            <Switch
+              id="pesquisa-radiopaedia"
+              checked={usarPesquisa}
+              onCheckedChange={onUsarPesquisaChange}
+              disabled={isGenerating}
+            />
+            <Label
+              htmlFor="pesquisa-radiopaedia"
+              className="text-xs text-muted-foreground cursor-pointer flex items-center gap-1.5"
+            >
+              <Search className="w-3.5 h-3.5" />
+              Pesquisar Radiopaedia
+            </Label>
+          </div>
+
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button onClick={onGenerate} disabled={isGenerating || !value.trim()} className="gap-2">
+              {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              Gerar Laudo
+            </Button>
+          </motion.div>
+        </div>
       </div>
     </section>
   )
