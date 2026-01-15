@@ -57,6 +57,7 @@
 | `liquido-livre-moderado.md` | líquido livre moderado | ✅ Pronto |
 | `liquido-livre-volumoso.md` | líquido livre volumoso | ✅ Pronto |
 | `espondilose-dorsal.md` | espondilose dorsal | ✅ Pronto |
+| `paniculite-mesenterica.md` | paniculite mesentérica, densificação mesentérica | ✅ Pronto |
 
 ### Apêndice (`achados/apendice/`)
 
