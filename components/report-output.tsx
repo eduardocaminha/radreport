@@ -125,19 +125,36 @@ export function ReportOutput({ report, isGenerating, tokenUsage, model }: Report
   // Copiar automaticamente quando um novo laudo é gerado
   useEffect(() => {
     // Copia quando a geração termina (isGenerating muda de true para false) e há um novo laudo
-    if (!isGenerating && report && reportHtml && !report.includes('class="text-destructive"')) {
+    if (!isGenerating && report && reportHtml && htmlCompleto && !report.includes('class="text-destructive"')) {
       // Verifica se é realmente um novo laudo (diferente do anterior)
       if (previousReportRef.current !== report) {
-        navigator.clipboard.writeText(reportHtml).then(() => {
-          setCopiedHtml(true)
-          setTimeout(() => setCopiedHtml(false), 2000)
-        }).catch(() => {
-          // Silenciosamente falha se não conseguir copiar
-        })
+        // Usa a mesma lógica do handleCopyHtml para manter formatação
+        const copiarHtmlFormatado = async () => {
+          try {
+            const htmlBlob = new Blob([htmlCompleto], { type: 'text/html' })
+            const plainBlob = new Blob([plainTextFromHtml], { type: 'text/plain' })
+            
+            const clipboardItem = new ClipboardItem({
+              'text/html': htmlBlob,
+              'text/plain': plainBlob,
+            })
+            
+            await navigator.clipboard.write([clipboardItem])
+            setCopiedHtml(true)
+            setTimeout(() => setCopiedHtml(false), 2000)
+          } catch (error) {
+            // Fallback: se ClipboardItem não for suportado, usa texto simples
+            await navigator.clipboard.writeText(plainTextFromHtml)
+            setCopiedHtml(true)
+            setTimeout(() => setCopiedHtml(false), 2000)
+          }
+        }
+        
+        copiarHtmlFormatado()
         previousReportRef.current = report
       }
     }
-  }, [report, isGenerating, reportHtml])
+  }, [report, isGenerating, reportHtml, htmlCompleto, plainTextFromHtml])
 
   // Texto plano com quebras de linha preservadas
   const plainText = useMemo(() => {
@@ -154,10 +171,55 @@ export function ReportOutput({ report, isGenerating, tokenUsage, model }: Report
     return report
   }, [report])
 
+  // Extrair texto puro do HTML formatado
+  const plainTextFromHtml = useMemo(() => {
+    if (!reportHtml) return ""
+    const tempDiv = document.createElement("div")
+    tempDiv.innerHTML = reportHtml
+    return tempDiv.textContent || tempDiv.innerText || ""
+  }, [reportHtml])
+
+  // Criar HTML completo com estilos inline para manter formatação ao colar
+  const htmlCompleto = useMemo(() => {
+    if (!reportHtml) return ""
+    
+    // Se já tem estilos inline, retorna como está
+    if (reportHtml.includes('style=')) {
+      return reportHtml
+    }
+    
+    // Adiciona estilos inline baseados nas classes CSS
+    let htmlComEstilos = reportHtml
+      .replace(/class="laudo-titulo"/g, 'style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold; text-align: center; text-transform: uppercase;"')
+      .replace(/class="laudo-urgencia"/g, 'style="font-family: Arial, sans-serif; font-size: 12pt; font-style: italic; text-align: center;"')
+      .replace(/class="laudo-secao"/g, 'style="font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold; text-transform: uppercase;"')
+      .replace(/class="laudo-texto"/g, 'style="font-family: Arial, sans-serif; font-size: 12pt; margin: 0; padding: 0;"')
+    
+    return htmlComEstilos
+  }, [reportHtml])
+
   const handleCopyHtml = async () => {
-    await navigator.clipboard.writeText(reportHtml)
-    setCopiedHtml(true)
-    setTimeout(() => setCopiedHtml(false), 2000)
+    try {
+      // Copia HTML formatado para o clipboard usando ClipboardItem
+      // Isso permite que editores que suportam HTML mantenham a formatação
+      const htmlBlob = new Blob([htmlCompleto], { type: 'text/html' })
+      const plainBlob = new Blob([plainTextFromHtml], { type: 'text/plain' })
+      
+      const clipboardItem = new ClipboardItem({
+        'text/html': htmlBlob,
+        'text/plain': plainBlob,
+      })
+      
+      await navigator.clipboard.write([clipboardItem])
+      setCopiedHtml(true)
+      setTimeout(() => setCopiedHtml(false), 2000)
+    } catch (error) {
+      // Fallback: se ClipboardItem não for suportado, usa texto simples
+      console.error('Erro ao copiar HTML formatado:', error)
+      await navigator.clipboard.writeText(plainTextFromHtml)
+      setCopiedHtml(true)
+      setTimeout(() => setCopiedHtml(false), 2000)
+    }
   }
 
   const handleCopyText = async () => {

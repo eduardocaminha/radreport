@@ -72,7 +72,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
       className="border-b border-border bg-card sticky top-0 z-50"
     >
       <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-        <span className="text-lg font-semibold tracking-tight text-foreground">RadReport</span>
+        <span className="text-lg font-semibold tracking-tight text-foreground font-[family-name:var(--font-outfit)]">RadReport</span>
 
         <div className="flex items-center gap-2 sm:gap-6">
           {/* Desktop: Tabs com animação */}
