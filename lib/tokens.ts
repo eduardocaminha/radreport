@@ -15,6 +15,9 @@ export interface CostInfo {
   model: string;
 }
 
+// Taxa de câmbio USD para BRL (pode ser ajustada conforme necessário)
+const TAXA_CAMBIO_USD_BRL = 5.5;
+
 // Tabela de preços por modelo (preços por milhão de tokens)
 const PRICING: Record<string, { input: number; output: number }> = {
   'claude-opus-4.5': { input: 5, output: 25 },
@@ -51,7 +54,7 @@ function identificarModelo(modelName: string): string {
 }
 
 /**
- * Calcula o custo baseado nos tokens e modelo
+ * Calcula o custo baseado nos tokens e modelo (em reais brasileiros)
  */
 export function calcularCusto(
   inputTokens: number,
@@ -61,10 +64,15 @@ export function calcularCusto(
   const model = identificarModelo(modelName);
   const pricing = PRICING[model] || PRICING['claude-sonnet-4.5'];
   
-  // Converter tokens para milhões e calcular custo
-  const inputCost = (inputTokens / 1_000_000) * pricing.input;
-  const outputCost = (outputTokens / 1_000_000) * pricing.output;
-  const totalCost = inputCost + outputCost;
+  // Converter tokens para milhões e calcular custo em USD
+  const inputCostUSD = (inputTokens / 1_000_000) * pricing.input;
+  const outputCostUSD = (outputTokens / 1_000_000) * pricing.output;
+  const totalCostUSD = inputCostUSD + outputCostUSD;
+  
+  // Converter de USD para BRL
+  const inputCost = inputCostUSD * TAXA_CAMBIO_USD_BRL;
+  const outputCost = outputCostUSD * TAXA_CAMBIO_USD_BRL;
+  const totalCost = totalCostUSD * TAXA_CAMBIO_USD_BRL;
   
   return {
     inputCost,
@@ -75,19 +83,20 @@ export function calcularCusto(
 }
 
 /**
- * Formata número para exibição (com casas decimais apropriadas)
+ * Formata número para exibição em reais brasileiros (com casas decimais apropriadas)
  */
 export function formatarCusto(valor: number): string {
   if (valor < 0.0001) {
-    return '< $0.0001';
+    return '< R$ 0,00';
   }
   if (valor < 0.01) {
-    return `$${valor.toFixed(4)}`;
+    return `R$ ${valor.toFixed(4).replace('.', ',')}`;
   }
   if (valor < 1) {
-    return `$${valor.toFixed(3)}`;
+    return `R$ ${valor.toFixed(3).replace('.', ',')}`;
   }
-  return `$${valor.toFixed(2)}`;
+  // Para valores >= 1, usar 2 casas decimais e separador decimal brasileiro
+  return `R$ ${valor.toFixed(2).replace('.', ',')}`;
 }
 
 /**

@@ -6,6 +6,43 @@ import { Copy, FileText, Check, DollarSign } from "lucide-react"
 import { useState, useMemo, useEffect, useRef } from "react"
 import { calcularCusto, formatarCusto, formatarTokens, type TokenUsage } from "@/lib/tokens"
 
+// Função para formatar linha do modo comparativo no cliente
+function formatarLinhaComparativoCliente(linha: string): string {
+  const linhaUpper = linha.toUpperCase()
+  
+  // Detectar "Exame comparativo com a tomografia de [data] evidencia:"
+  if (linhaUpper.includes('EXAME COMPARATIVO') && linhaUpper.includes('EVIDENCIA:')) {
+    const indiceEvidencia = linha.toLowerCase().indexOf('evidencia:')
+    const parteInicial = linha.substring(0, indiceEvidencia + 'evidencia:'.length)
+    const parteFinal = linha.substring(indiceEvidencia + 'evidencia:'.length).trim()
+    
+    let resultado = `<strong>${parteInicial}</strong>`
+    if (parteFinal) {
+      resultado += ` ${parteFinal}`
+    }
+    return resultado
+  }
+  
+  // Detectar "Restante permanece sem alterações evolutivas significativas:"
+  if (linhaUpper.includes('RESTANTE PERMANECE SEM ALTERAÇÕES EVOLUTIVAS SIGNIFICATIVAS:') || 
+      linhaUpper.includes('RESTANTE PERMANECE SEM ALTERACOES EVOLUTIVAS SIGNIFICATIVAS:')) {
+    const indiceDoisPontos = linha.indexOf(':')
+    if (indiceDoisPontos !== -1) {
+      const parteInicial = linha.substring(0, indiceDoisPontos + 1)
+      const parteFinal = linha.substring(indiceDoisPontos + 1).trim()
+      
+      let resultado = `<strong>${parteInicial}</strong>`
+      if (parteFinal) {
+        resultado += ` ${parteFinal}`
+      }
+      return resultado
+    }
+    return `<strong>${linha}</strong>`
+  }
+  
+  return linha
+}
+
 // Função para formatar laudo no cliente (duplicada da lib/formatador para uso no cliente)
 function formatarLaudoHTMLCliente(texto: string): string {
   if (!texto) return ''
@@ -82,7 +119,16 @@ function formatarLaudoHTMLCliente(texto: string): string {
           break
         }
         
-        html += `<p class="laudo-texto">${linhaAnalise}</p>`
+        // Detectar frases do modo comparativo para negrito
+        const linhaFormatada = formatarLinhaComparativoCliente(linhaAnalise)
+        
+        html += `<p class="laudo-texto">${linhaFormatada}</p>`
+        
+        // Adicionar linha de espaço após frase de "evidencia:"
+        if (linhaAnaliseUpper.includes('EVIDENCIA:') || linhaAnaliseUpper.includes('EVIDÊNCIA:')) {
+          html += '<br>'
+        }
+        
         i++
       }
     } else if (emAnalise) {

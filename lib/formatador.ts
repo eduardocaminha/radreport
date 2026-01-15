@@ -119,7 +119,16 @@ export function formatarLaudoHTML(texto: string): string {
           break;
         }
         
-        html += `<p class="laudo-texto">${linhaAnalise}</p>`;
+        // Detectar frases do modo comparativo que precisam estar em negrito
+        const linhaFormatada = formatarLinhaComparativo(linhaAnalise);
+        
+        html += `<p class="laudo-texto">${linhaFormatada}</p>`;
+        
+        // Adicionar linha de espaço após frase de "evidencia:"
+        if (linhaAnaliseUpper.includes('EVIDENCIA:') || linhaAnaliseUpper.includes('EVIDÊNCIA:')) {
+          html += '<br>';
+        }
+        
         i++;
       }
     }
@@ -150,6 +159,48 @@ export function formatarLaudoHTML(texto: string): string {
   }
   
   return html;
+}
+
+/**
+ * Formata linha da análise detectando frases do modo comparativo para negrito
+ */
+function formatarLinhaComparativo(linha: string): string {
+  const linhaUpper = linha.toUpperCase();
+  
+  // Detectar "Exame comparativo com a tomografia de [data] evidencia:"
+  if (linhaUpper.includes('EXAME COMPARATIVO') && linhaUpper.includes('EVIDENCIA:')) {
+    // Separar a parte "Exame comparativo... evidencia:" do resto
+    const indiceEvidencia = linhaUpper.indexOf('EVIDENCIA:');
+    const parteInicial = linha.substring(0, linha.toLowerCase().indexOf('evidencia:') + 'evidencia:'.length);
+    const parteFinal = linha.substring(linha.toLowerCase().indexOf('evidencia:') + 'evidencia:'.length).trim();
+    
+    let resultado = `<strong>${parteInicial}</strong>`;
+    if (parteFinal) {
+      resultado += ` ${parteFinal}`;
+    }
+    return resultado;
+  }
+  
+  // Detectar "Restante permanece sem alterações evolutivas significativas:"
+  if (linhaUpper.includes('RESTANTE PERMANECE SEM ALTERAÇÕES EVOLUTIVAS SIGNIFICATIVAS:') || 
+      linhaUpper.includes('RESTANTE PERMANECE SEM ALTERACOES EVOLUTIVAS SIGNIFICATIVAS:')) {
+    // Separar a parte da frase até os dois pontos do resto
+    const indiceDoisPontos = linha.indexOf(':');
+    if (indiceDoisPontos !== -1) {
+      const parteInicial = linha.substring(0, indiceDoisPontos + 1);
+      const parteFinal = linha.substring(indiceDoisPontos + 1).trim();
+      
+      let resultado = `<strong>${parteInicial}</strong>`;
+      if (parteFinal) {
+        resultado += ` ${parteFinal}`;
+      }
+      return resultado;
+    }
+    return `<strong>${linha}</strong>`;
+  }
+  
+  // Se não for frase comparativa, retorna como está
+  return linha;
 }
 
 /**

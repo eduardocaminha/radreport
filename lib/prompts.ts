@@ -10,8 +10,17 @@ export function montarSystemPrompt(
   const contexto = textoUsuario ? identificarContextoExame(textoUsuario) : undefined;
   const templatesContext = formatarTemplatesParaPrompt(contexto);
   
+  // Obter data atual no formato brasileiro
+  const dataAtual = new Date().toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+  
   const basePrompt = `Você é um radiologista brasileiro experiente especializado em tomografia computadorizada.
 Sua tarefa é transformar texto ditado em um laudo de TC estruturado.
+
+**DATA ATUAL: ${dataAtual}** - Use esta data como referência para corrigir datas mencionadas pelo usuário.
 
 ## REGRAS GERAIS
 
