@@ -199,7 +199,7 @@ export function DictationInput({
               className="text-xs text-muted-foreground cursor-pointer flex items-center gap-1.5"
             >
               <Search className="w-3.5 h-3.5" />
-              Pesquisar Radiopaedia
+              Radiopaedia
             </Label>
           </div>
 
