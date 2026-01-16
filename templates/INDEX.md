@@ -45,8 +45,7 @@
 
 | Arquivo | Palavras-chave | Status |
 |---------|----------------|--------|
-| `alargamento-inguinal-direito.md` | alargamento inguinal, hérnia inguinal direita | ✅ Pronto |
-| `alargamento-inguinal-esquerdo.md` | alargamento inguinal, hérnia inguinal esquerda | ✅ Pronto |
+| `alargamento-inguinal-lateral.md` | alargamento inguinal, canal inguinal | ✅ Pronto |
 | `alargamento-inguinal-bilateral.md` | alargamento inguinal bilateral | ✅ Pronto |
 | `hernia-umbilical.md` | hérnia umbilical | ✅ Pronto |
 | `ateromatose-aortica.md` | ateromatose aórtica | ✅ Pronto |
@@ -92,6 +91,14 @@
 
 | Arquivo | Palavras-chave | Status |
 |---------|----------------|--------|
+| `abaulamento-discal-sem-reducao.md` | abaulamento discal, abaulamento, discopatia | ✅ Pronto |
+| `abaulamento-discal-discreta-reducao-canal.md` | abaulamento discal, discreta redução canal | ✅ Pronto |
+| `abaulamento-discal-reducao-anteroposterior.md` | abaulamento discal, redução diâmetro anteroposterior | ✅ Pronto |
+| `abaulamento-discal-reducao-canal-forame-lateral.md` | abaulamento discal, redução canal, redução foraminal | ✅ Pronto |
+| `abaulamento-discal-reducao-canal-forames-bilateral.md` | abaulamento discal, redução canal, redução foraminal bilateral | ✅ Pronto |
+| `abaulamento-discal-reducao-forames-bilateral.md` | abaulamento discal, redução foraminal bilateral | ✅ Pronto |
+| `abaulamento-discal-reducao-forame-lateral.md` | abaulamento discal, redução foraminal | ✅ Pronto |
+| `abaulamento-discal-sem-estenose.md` | abaulamento discal, sem estenose | ✅ Pronto |
 | `protrusao-discal.md` | protrusão discal | ✅ Pronto |
 | `estenose-canal.md` | estenose canal vertebral | ✅ Pronto |
 | `estenose-foraminal.md` | estenose foraminal | ✅ Pronto |
@@ -100,6 +107,14 @@
 
 | Arquivo | Palavras-chave | Status |
 |---------|----------------|--------|
+| `abaulamento-discal-sem-reducao.md` | abaulamento discal, abaulamento, discopatia | ✅ Pronto |
+| `abaulamento-discal-discreta-reducao-canal.md` | abaulamento discal, discreta redução canal | ✅ Pronto |
+| `abaulamento-discal-reducao-anteroposterior.md` | abaulamento discal, redução diâmetro anteroposterior | ✅ Pronto |
+| `abaulamento-discal-reducao-canal-forame-lateral.md` | abaulamento discal, redução canal, redução foraminal | ✅ Pronto |
+| `abaulamento-discal-reducao-canal-forames-bilateral.md` | abaulamento discal, redução canal, redução foraminal bilateral | ✅ Pronto |
+| `abaulamento-discal-reducao-forames-bilateral.md` | abaulamento discal, redução foraminal bilateral | ✅ Pronto |
+| `abaulamento-discal-reducao-forame-lateral.md` | abaulamento discal, redução foraminal | ✅ Pronto |
+| `abaulamento-discal-sem-estenose.md` | abaulamento discal, sem estenose | ✅ Pronto |
 | `protrusao-discal.md` | protrusão discal | ✅ Pronto |
 | `estenose-canal.md` | estenose canal vertebral | ✅ Pronto |
 | `estenose-foraminal.md` | estenose foraminal | ✅ Pronto |
@@ -108,6 +123,14 @@
 
 | Arquivo | Palavras-chave | Status |
 |---------|----------------|--------|
+| `abaulamento-discal-sem-reducao.md` | abaulamento discal, abaulamento, discopatia | ✅ Pronto |
+| `abaulamento-discal-discreta-reducao-canal.md` | abaulamento discal, discreta redução canal | ✅ Pronto |
+| `abaulamento-discal-reducao-anteroposterior.md` | abaulamento discal, redução diâmetro anteroposterior | ✅ Pronto |
+| `abaulamento-discal-reducao-canal-forame-lateral.md` | abaulamento discal, redução canal, redução foraminal | ✅ Pronto |
+| `abaulamento-discal-reducao-canal-forames-bilateral.md` | abaulamento discal, redução canal, redução foraminal bilateral | ✅ Pronto |
+| `abaulamento-discal-reducao-forames-bilateral.md` | abaulamento discal, redução foraminal bilateral | ✅ Pronto |
+| `abaulamento-discal-reducao-forame-lateral.md` | abaulamento discal, redução foraminal | ✅ Pronto |
+| `abaulamento-discal-sem-estenose.md` | abaulamento discal, sem estenose | ✅ Pronto |
 | `protrusao-discal.md` | protrusão discal | ✅ Pronto |
 | `estenose-canal.md` | estenose canal vertebral | ✅ Pronto |
 | `estenose-foraminal.md` | estenose foraminal | ✅ Pronto |
@@ -169,8 +192,7 @@
 
 | Arquivo | Palavras-chave | Status |
 |---------|----------------|--------|
-| `cisto-ovariano-direito.md` | cisto ovariano direito | ✅ Pronto |
-| `cisto-ovariano-esquerdo.md` | cisto ovariano esquerdo | ✅ Pronto |
+| `cisto-ovariano-lateral.md` | cisto ovariano, formacao cistica anexial, cisto anexial | ✅ Pronto |
 | `cistos-ovarianos-bilaterais.md` | cistos ovarianos bilaterais | ✅ Pronto |
 | `flebolito-pelvico.md` | flebólito pélvico | ✅ Pronto |
 | `flebolitos-pelvicos.md` | flebólitos pélvicos | ✅ Pronto |
