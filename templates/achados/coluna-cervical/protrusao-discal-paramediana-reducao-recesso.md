@@ -1,7 +1,7 @@
 ---
 regiao: coluna-cervical
-palavras_chave: [protrusão discal posterior paramediana, protrusão paramediana, redução recesso lateral]
+palavras_chave: [protrusão discal posterior paramediana, protrusão paramediana, redução forame neural]
 requer: [nivel, lateralidade]
 ---
 
-Nível {{nivel}}: protrusão discal posterior paramediana {{lateralidade}}, reduzindo o recesso lateral {{lateralidade}}.
+Nível {{nivel}}: protrusão discal posterior paramediana {{lateralidade}}, reduzindo o forame neural {{lateralidade}}.
