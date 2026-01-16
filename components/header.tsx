@@ -76,13 +76,13 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
 
         <div className="flex items-center gap-2 sm:gap-6">
           {/* Desktop: Tabs customizados com animação */}
-          <div className="hidden sm:flex items-center gap-1 bg-muted rounded-lg p-1 relative">
+          <div className="hidden sm:flex items-center gap-1 bg-muted rounded-lg p-[3px] relative h-8">
             {modes.map((mode) => (
               <Tooltip key={mode.value}>
                 <TooltipTrigger asChild>
                   <button
                     onClick={() => onReportModeChange(mode.value)}
-                    className="relative px-3 py-1.5 text-sm font-medium rounded-md transition-colors z-10"
+                    className="relative h-[calc(100%-1px)] px-3 text-sm font-medium rounded-md transition-colors z-10"
                   >
                     {reportMode === mode.value && (
                       <motion.div
