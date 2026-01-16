@@ -65,7 +65,7 @@ export default function LoginPage() {
               placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
-              className="bg-input border-border text-foreground placeholder:text-muted-foreground/50"
+              className="h-8 bg-input border-border text-foreground placeholder:text-muted-foreground/50"
               autoFocus
             />
 
@@ -82,6 +82,7 @@ export default function LoginPage() {
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
                 type="submit"
+                size="sm"
                 className="w-full gap-2"
                 disabled={carregando || !senha}
               >
