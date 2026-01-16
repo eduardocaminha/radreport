@@ -180,6 +180,9 @@
 | `complexo-disco-osteofitario-paramediano.md` | complexo disco-osteofitário posterior paramediano, redução recesso lateral | ✅ Pronto |
 | `complexo-disco-osteofitario-foraminal.md` | complexo disco-osteofitário foraminal, redução amplitude forame neural | ✅ Pronto |
 | `osteofitos-associados-protrusao.md` | osteófitos posteriores marginais protrusão discal, redução canal vertebral | ✅ Pronto |
+| `nodulo-schmorl-plato.md` | nódulo Schmorl, nódulo de Schmorl, platô superior, platô inferior | ✅ Pronto |
+| `nodulos-schmorl-ambos-platos.md` | nódulos Schmorl, nódulos de Schmorl, platôs superior inferior, ambos platôs | ✅ Pronto |
+| `nodulos-schmorl-multiplos-niveis.md` | nódulos Schmorl múltiplos níveis, nódulos de Schmorl múltiplos | ✅ Pronto |
 
 ### Colon (`achados/colon/`)
 
