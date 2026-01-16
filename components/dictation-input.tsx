@@ -106,13 +106,15 @@ export function DictationInput({
         <h2 className="text-sm font-medium text-foreground">Texto ditado</h2>
         {historico.length > 0 && (
             <div className="relative">
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setHistoricoAberto(!historicoAberto)}
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="gap-2"
               >
-          <Clock className="w-4 h-4" />
+                <Clock className="w-4 h-4" />
                 Histórico ({historico.length})
-              </button>
+              </Button>
 
               <AnimatePresence>
                 {historicoAberto && (
@@ -204,7 +206,7 @@ export function DictationInput({
           </div>
 
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button onClick={onGenerate} disabled={isGenerating || !value.trim()} className="gap-2">
+            <Button onClick={onGenerate} disabled={isGenerating || !value.trim()} size="sm" className="gap-2">
               {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
               Gerar Laudo
             </Button>

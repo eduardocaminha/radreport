@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Copy, FileText, Check } from "lucide-react"
 import { formatarLaudoHTML, removerFormatacao } from "@/lib/formatador"
 
 interface CopyButtonsProps {
@@ -46,20 +47,22 @@ export function CopyButtons({ laudo }: CopyButtonsProps) {
   return (
     <div className="flex gap-2">
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
         onClick={copiarHTML}
-        className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+        className="gap-2 text-muted-foreground hover:text-foreground"
       >
-        {copiado === "html" ? "Copiado!" : "Copiar HTML"}
+        {copiado === "html" ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
+        {copiado === "html" ? "Copiado" : "Copiar HTML"}
       </Button>
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
         onClick={copiarTexto}
-        className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+        className="gap-2 text-muted-foreground hover:text-foreground"
       >
-        {copiado === "texto" ? "Copiado!" : "Copiar Texto"}
+        {copiado === "texto" ? <Check className="w-4 h-4 text-primary" /> : <FileText className="w-4 h-4" />}
+        {copiado === "texto" ? "Copiado" : "Copiar Texto"}
       </Button>
     </div>
   )
