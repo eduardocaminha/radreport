@@ -194,8 +194,7 @@
 |---------|----------------|--------|
 | `cisto-ovariano-lateral.md` | cisto ovariano, formacao cistica anexial, cisto anexial | ✅ Pronto |
 | `cistos-ovarianos-bilaterais.md` | cistos ovarianos bilaterais | ✅ Pronto |
-| `flebolito-pelvico.md` | flebólito pélvico | ✅ Pronto |
-| `flebolitos-pelvicos.md` | flebólitos pélvicos | ✅ Pronto |
+| `flebolitos-pelvicos.md` | flebólito pélvico, flebólitos pélvicos, calcificação pélvica | ✅ Pronto |
 | `dispositivo-intrauterino.md` | DIU, dispositivo intrauterino | ✅ Pronto |
 
 ### Pescoço (`achados/pescoco/`)
@@ -211,9 +210,7 @@
 | Arquivo | Palavras-chave | Status |
 |---------|----------------|--------|
 | `calculo-calicinal.md` | cálculo calicinal | ✅ Pronto |
-| `microcalculo.md` | microcálculo | ✅ Pronto |
-| `microcalculos.md` | microcálculos | ✅ Pronto |
-| `microcalculos-bilaterais.md` | microcálculos bilaterais | ✅ Pronto |
+| `microcalculos.md` | microcálculo, microcálculos, microlitiase | ✅ Pronto |
 | `cisto-simples.md` | cisto renal simples | ✅ Pronto |
 
 ### Seios da Face (`achados/seios-face/`)
@@ -301,7 +298,8 @@
 | `{{calibre}}` | Calibre de estruturas | 0,8 cm |
 | `{{acesso}}` | Local de acesso venoso | cervical direita, subclávia esquerda |
 | `{{extremidade}}` | Extremidade de cateter | na veia cava superior, no átrio direito |
-| `{{lateralidade}}` | Lateralidade geral | direito, esquerdo, bilateral |
+| `{{lateralidade}}` | Lateralidade geral | direito, esquerdo, bilateral, à direita, à esquerda |
+| `{{quantidade}}` | Quantidade (singular/plural) | Microcálculo/Microcálculos, Flebólito/Flebólitos |
 | `{{colecao}}` | Coleção/abscesso apendicular (condicional) | Formato: dimensões + volume estimado |
 | `{{espessamento_ceco}}` | Espessamento do ceco/cólon (condicional) | Inclui apenas se mencionado |
 

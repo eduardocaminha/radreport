@@ -1,6 +1,7 @@
 ---
 regiao: pelve
-palavras_chave: [flebólitos pélvicos, flebolitos pelvicos, calcificações pélvicas]
+palavras_chave: [flebólito pélvico, flebólitos pélvicos, flebolito pelvico, flebolitos pelvicos, calcificação pélvica, calcificações pélvicas]
+requer: [quantidade]
 ---
 
-Flebólitos pélvicos.
+{{quantidade}} pélvico(s).

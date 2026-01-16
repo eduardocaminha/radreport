@@ -1,9 +1,9 @@
 ---
 regiao: rins
-palavras_chave: [microcálculos, microlitiase múltipla, cálculos pequenos]
-requer: [lado]
+palavras_chave: [microcalculo, microcálculos, microlitiase, calculo pequeno, calculos pequenos, calculozinho]
+requer: [quantidade, lateralidade]
 opcional: [medida]
-medida_default: "menores que 0,3 cm"
+medida_default: "menor que 0,3 cm"
 ---
 
-Microcálculos não obstrutivos {{lado}}, {{medida}}.
+{{quantidade}} {{lateralidade}}, {{medida}}.
