@@ -123,7 +123,7 @@ export function DictationInput({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full right-0 mt-2 w-80 bg-card border border-border/50 rounded-2xl shadow-lg z-50"
+                    className="absolute top-full right-0 mt-2 w-80 bg-card border border-border/50 rounded-2xl z-50"
                   >
                     <div className="p-4 border-b border-border/50 flex items-center justify-between">
                       <span className="text-xs font-medium text-muted-foreground">Ultimos laudos</span>
