@@ -118,10 +118,11 @@ export function DictationInput({
             checked={usarPesquisa}
             onCheckedChange={onUsarPesquisaChange}
             disabled={isGenerating}
+            className="peer"
           />
           <Label
             htmlFor="pesquisa-radiopaedia"
-            className="text-sm text-foreground/40 cursor-pointer flex items-center gap-1.5"
+            className="text-sm cursor-pointer flex items-center gap-1.5 text-foreground/40 peer-data-[state=checked]:text-foreground/70 transition-colors"
           >
             <Search className="w-3.5 h-3.5" />
             Radiopaedia
@@ -132,7 +133,7 @@ export function DictationInput({
           <div className="relative">
             <button
               onClick={() => setHistoricoAberto(!historicoAberto)}
-              className="text-sm font-medium text-foreground/40 hover:underline cursor-pointer flex items-center gap-1.5 transition-colors"
+              className="text-sm font-medium text-foreground/40 hover:text-foreground/70 hover:underline cursor-pointer flex items-center gap-1.5 transition-colors"
             >
               <Clock className="w-3.5 h-3.5" />
               Historico ({historico.length})
