@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { Clock, Sparkles, Loader2, X, Search } from "lucide-react"
 
@@ -202,28 +201,22 @@ export function DictationInput({
         rows={1}
       />
 
-      {/* Botao Gerar Laudo: canto direito inferior, abaixo do input */}
-      <div className="flex justify-end mt-4">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              onClick={onGenerate}
-              disabled={isGenerating || !value.trim()}
-              size="lg"
-              className="gap-2 bg-muted/60 text-foreground/70 hover:bg-accent hover:text-accent-foreground shadow-none"
-            >
-              {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-              Gerar Laudo
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <KbdGroup>
-              <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
-              <span>+</span>
-              <Kbd>Enter</Kbd>
-            </KbdGroup>
-          </TooltipContent>
-        </Tooltip>
+      {/* Botao Gerar Laudo + Kbd: canto direito inferior, abaixo do input */}
+      <div className="flex items-center justify-end gap-3 mt-4">
+        <Button
+          onClick={onGenerate}
+          disabled={isGenerating || !value.trim()}
+          size="lg"
+          className="gap-2 bg-muted/60 text-foreground/70 hover:bg-accent hover:text-accent-foreground shadow-none"
+        >
+          {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+          Gerar Laudo
+        </Button>
+        <KbdGroup>
+          <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
+          <span className="text-muted-foreground/40 text-xs">+</span>
+          <Kbd>Enter</Kbd>
+        </KbdGroup>
       </div>
     </section>
   )
