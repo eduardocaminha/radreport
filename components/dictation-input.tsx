@@ -203,6 +203,11 @@ export function DictationInput({
 
       {/* Botao Gerar Laudo + Kbd: canto direito inferior, abaixo do input */}
       <div className="flex items-center justify-end gap-3 mt-4">
+        <KbdGroup>
+          <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
+          <span className="text-muted-foreground/40 text-xs">+</span>
+          <Kbd>Enter</Kbd>
+        </KbdGroup>
         <Button
           onClick={onGenerate}
           disabled={isGenerating || !value.trim()}
@@ -212,11 +217,6 @@ export function DictationInput({
           {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
           Gerar Laudo
         </Button>
-        <KbdGroup>
-          <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
-          <span className="text-muted-foreground/40 text-xs">+</span>
-          <Kbd>Enter</Kbd>
-        </KbdGroup>
       </div>
     </section>
   )
