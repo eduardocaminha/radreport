@@ -76,13 +76,13 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
 
         <div className="flex items-center gap-3 sm:gap-6">
           {/* Desktop: Tabs customizados com animação pill-shaped */}
-          <div className="hidden sm:flex items-center gap-1 bg-muted/60 rounded-full p-1.5 relative">
+          <div className="hidden sm:flex items-center gap-1 bg-muted/60 rounded-full p-1 relative">
             {modes.map((mode) => (
               <Tooltip key={mode.value}>
                 <TooltipTrigger asChild>
                   <button
                     onClick={() => onReportModeChange(mode.value)}
-                    className="relative h-10 px-6 text-base font-medium rounded-full transition-colors z-10"
+                    className="relative h-8 px-4 text-sm font-medium rounded-full transition-colors z-10"
                   >
                     {reportMode === mode.value && (
                       <motion.div
@@ -123,8 +123,8 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                 onReportModeChange(modes[nextIndex].value)
               }}
               variant="outline"
-              size="lg"
-              className="rounded-full px-6 text-base font-medium data-[state=on]:bg-card"
+              size="sm"
+              className="rounded-full px-4 py-1.5 text-sm font-medium data-[state=on]:bg-card"
             >
               {modes.find(m => m.value === reportMode)?.label}
             </Toggle>
@@ -133,7 +133,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
           <Button 
             onClick={handleLogout}
             variant="ghost"
-            size="lg"
+            size="sm"
             className="gap-2 text-muted-foreground hover:text-foreground"
           >
             <LogOut className="w-4 h-4" />
