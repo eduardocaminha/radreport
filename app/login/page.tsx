@@ -49,23 +49,23 @@ export default function LoginPage() {
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="w-full max-w-sm"
       >
-        <div className="bg-card rounded-xl border border-border p-8 shadow-sm">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+        <div className="bg-card rounded-2xl border border-border/40 p-10 shadow-lg">
+          <div className="text-center mb-10">
+            <h1 className="text-2xl font-medium tracking-tight text-foreground">
               RadReport
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Sistema de laudos radiológicos
+            <p className="text-sm text-muted-foreground mt-2">
+              Sistema de laudos radiologicos
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <Input
               type="password"
               placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
-              className="h-8 bg-input border-border text-foreground placeholder:text-muted-foreground/50"
+              className="h-12 rounded-full bg-input/50 border-border/50 text-foreground placeholder:text-muted-foreground/40 px-5"
               autoFocus
             />
 
@@ -79,21 +79,19 @@ export default function LoginPage() {
               </motion.p>
             )}
 
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                type="submit"
-                size="sm"
-                className="w-full gap-2"
-                disabled={carregando || !senha}
-              >
-                {carregando ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <LogIn className="w-4 h-4" />
-                )}
-                {carregando ? "Entrando..." : "Entrar"}
-              </Button>
-            </motion.div>
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full gap-2"
+              disabled={carregando || !senha}
+            >
+              {carregando ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <LogIn className="w-4 h-4" />
+              )}
+              {carregando ? "Entrando..." : "Entrar"}
+            </Button>
           </form>
         </div>
       </motion.div>

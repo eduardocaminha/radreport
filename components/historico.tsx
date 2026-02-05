@@ -61,20 +61,20 @@ export function Historico({ onSelecionar }: HistoricoProps) {
         variant="ghost"
         size="sm"
         onClick={() => setAberto(!aberto)}
-        className="text-zinc-500 hover:text-zinc-300 text-xs"
+        className="text-muted-foreground hover:text-foreground text-xs"
       >
-        Histórico ({historico.length})
+        Historico ({historico.length})
       </Button>
 
       {aberto && (
-        <div className="absolute top-full right-0 mt-1 w-72 bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg z-10">
-          <div className="p-2 border-b border-zinc-700 flex items-center justify-between">
-            <span className="text-xs text-zinc-400">Últimos laudos</span>
+        <div className="absolute top-full right-0 mt-2 w-80 bg-card border border-border/50 rounded-2xl shadow-lg z-10">
+          <div className="p-4 border-b border-border/30 flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Ultimos laudos</span>
             <Button
               variant="ghost"
               size="sm"
               onClick={limparHistorico}
-              className="text-xs text-zinc-500 hover:text-red-400 h-6 px-2"
+              className="text-xs text-muted-foreground hover:text-destructive h-7 px-3"
             >
               Limpar
             </Button>
@@ -87,10 +87,10 @@ export function Historico({ onSelecionar }: HistoricoProps) {
                   onSelecionar(item.texto);
                   setAberto(false);
                 }}
-                className="w-full text-left p-2 hover:bg-zinc-700 border-b border-zinc-700 last:border-0"
+                className="w-full text-left p-4 hover:bg-muted/50 border-b border-border/30 last:border-0 transition-colors"
               >
-                <p className="text-xs text-zinc-300 truncate">{item.texto}</p>
-                <p className="text-xs text-zinc-500">{item.data}</p>
+                <p className="text-sm text-foreground truncate">{item.texto}</p>
+                <p className="text-xs text-muted-foreground mt-1.5">{item.data}</p>
               </button>
             ))}
           </div>

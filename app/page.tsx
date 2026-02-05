@@ -132,7 +132,7 @@ export default function Home() {
             transition: { staggerChildren: 0.1 },
           },
         }}
-        className="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-6"
+        className="max-w-4xl mx-auto px-6 py-12 flex flex-col gap-8"
       >
         <motion.div
           variants={{
@@ -158,7 +158,7 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-destructive/10 border border-destructive/50 rounded-xl p-4"
+            className="bg-destructive/5 border border-destructive/30 rounded-2xl p-5"
           >
             <p className="text-sm font-medium text-destructive">{erro}</p>
           </motion.div>

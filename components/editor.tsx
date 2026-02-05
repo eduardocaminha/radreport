@@ -20,7 +20,7 @@ Exemplos:
       value={valor}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="min-h-[200px] bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 resize-none"
+      className="min-h-[200px] bg-input/50 border-border/50 text-foreground placeholder:text-muted-foreground/40 resize-none"
     />
   );
 }

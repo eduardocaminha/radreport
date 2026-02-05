@@ -101,16 +101,16 @@ export function DictationInput({
   }, [value])
 
   return (
-    <section className="bg-card rounded-xl border border-border p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-medium text-foreground">Texto ditado</h2>
+    <section className="bg-card rounded-2xl border border-border/50 p-8 shadow-sm">
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-sm font-medium text-muted-foreground">Texto ditado</h2>
         {historico.length > 0 && (
             <div className="relative">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setHistoricoAberto(!historicoAberto)}
-                className="gap-2"
+                className="gap-2 text-muted-foreground"
               >
                 <Clock className="w-4 h-4" />
                 Histórico ({historico.length})
@@ -123,16 +123,16 @@ export function DictationInput({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full right-0 mt-2 w-80 bg-card border border-border rounded-xl shadow-lg z-50"
+                    className="absolute top-full right-0 mt-2 w-80 bg-card border border-border/50 rounded-2xl shadow-lg z-50"
                   >
-                    <div className="p-3 border-b border-border flex items-center justify-between">
-                      <span className="text-xs font-medium text-muted-foreground">Últimos laudos</span>
+                    <div className="p-4 border-b border-border/50 flex items-center justify-between">
+                      <span className="text-xs font-medium text-muted-foreground">Ultimos laudos</span>
                       <div className="flex items-center gap-1">
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={onLimparHistorico}
-                          className="text-xs text-muted-foreground hover:bg-destructive hover:text-destructive-foreground h-6 px-2"
+                          className="text-xs text-muted-foreground hover:bg-destructive hover:text-destructive-foreground h-7 px-3"
                         >
                           Limpar
                         </Button>
@@ -140,9 +140,9 @@ export function DictationInput({
                           variant="ghost"
                           size="sm"
                           onClick={() => setHistoricoAberto(false)}
-                          className="h-6 w-6 p-0"
+                          className="h-7 w-7 p-0"
                         >
-                          <X className="w-3 h-3" />
+                          <X className="w-3.5 h-3.5" />
                         </Button>
                       </div>
                     </div>
@@ -154,11 +154,11 @@ export function DictationInput({
                             onChange(item.texto)
                             setHistoricoAberto(false)
                           }}
-                          className="w-full text-left p-3 hover:bg-muted/50 border-b border-border last:border-0 transition-colors"
+                          className="w-full text-left p-4 hover:bg-muted/50 border-b border-border/30 last:border-0 transition-colors"
                         >
                           <p className="text-sm text-foreground truncate">{item.texto}</p>
-                          <p className="text-xs text-muted-foreground mt-1">{item.data}</p>
-        </button>
+                          <p className="text-xs text-muted-foreground mt-1.5">{item.data}</p>
+                        </button>
                       ))}
                     </div>
                   </motion.div>
@@ -173,23 +173,23 @@ export function DictationInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
-        className="min-h-[2.5rem] bg-input border-border resize-none text-sm leading-relaxed placeholder:text-muted-foreground/50 overflow-hidden"
+        className="min-h-10 bg-input/40 border-border/50 resize-none text-sm leading-relaxed placeholder:text-muted-foreground/40 overflow-hidden"
         rows={1}
       />
 
-      <div className="flex items-center justify-between mt-4">
-        <span className="text-xs text-muted-foreground flex items-center gap-1">
+      <div className="flex items-center justify-between mt-5">
+        <span className="text-xs text-muted-foreground/70 flex items-center gap-1">
           <KbdGroup>
             <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
-            <span className="text-muted-foreground">+</span>
+            <span className="text-muted-foreground/50">+</span>
             <Kbd>Enter</Kbd>
           </KbdGroup>
           {" "}para gerar
         </span>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
           {/* Checkbox de pesquisa */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <Switch
               id="pesquisa-radiopaedia"
               checked={usarPesquisa}
@@ -205,12 +205,10 @@ export function DictationInput({
             </Label>
           </div>
 
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button onClick={onGenerate} disabled={isGenerating || !value.trim()} size="sm" className="gap-2">
-              {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-              Gerar Laudo
-            </Button>
-          </motion.div>
+          <Button onClick={onGenerate} disabled={isGenerating || !value.trim()} size="sm" className="gap-2">
+            {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+            Gerar Laudo
+          </Button>
         </div>
       </div>
     </section>

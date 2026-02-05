@@ -21,15 +21,15 @@ export function Sugestoes({ sugestoes }: SugestoesProps) {
         exit={{ opacity: 0, y: 10 }}
         transition={{ duration: 0.3 }}
       >
-        <Alert className="bg-accent/50 border-accent">
+        <Alert className="bg-accent/30 border-accent/40">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Sugestões de completude:</AlertTitle>
+          <AlertTitle className="text-accent-foreground/80">Sugestoes de completude:</AlertTitle>
           <AlertDescription className="mt-2">
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {sugestoes.map((sugestao, index) => (
-                <li key={index} className="flex items-start gap-2">
-                  <span className="text-accent-foreground mt-1 shrink-0">•</span>
-                  <span>{sugestao}</span>
+                <li key={index} className="flex items-start gap-2.5">
+                  <span className="text-accent-foreground/60 mt-0.5 shrink-0">•</span>
+                  <span className="text-accent-foreground/70">{sugestao}</span>
                 </li>
               ))}
             </ul>

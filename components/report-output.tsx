@@ -328,9 +328,9 @@ export function ReportOutput({ report, isGenerating, tokenUsage, model }: Report
   }, [tokenUsage, model])
 
   return (
-    <section className="bg-card rounded-xl border border-border p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-medium text-foreground">Resultado</h2>
+    <section className="bg-card rounded-2xl border border-border/50 p-8 shadow-sm">
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-sm font-medium text-muted-foreground">Resultado</h2>
         <AnimatePresence>
           {report && !isError && (
             <motion.div
@@ -338,39 +338,35 @@ export function ReportOutput({ report, isGenerating, tokenUsage, model }: Report
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
               transition={{ duration: 0.2 }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-1"
             >
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleCopyHtml}
-                  className="gap-2 text-muted-foreground hover:text-foreground"
-                >
-                  {copiedHtml ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
-                  {copiedHtml ? "Copiado" : "Copiar HTML"}
-                </Button>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleCopyText}
-                  className="gap-2 text-muted-foreground hover:text-foreground"
-                >
-                  {copiedText ? <Check className="w-4 h-4 text-primary" /> : <FileText className="w-4 h-4" />}
-                  {copiedText ? "Copiado" : "Copiar Texto"}
-                </Button>
-              </motion.div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopyHtml}
+                className="gap-2 text-muted-foreground hover:text-foreground"
+              >
+                {copiedHtml ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
+                {copiedHtml ? "Copiado" : "Copiar HTML"}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopyText}
+                className="gap-2 text-muted-foreground hover:text-foreground"
+              >
+                {copiedText ? <Check className="w-4 h-4 text-primary" /> : <FileText className="w-4 h-4" />}
+                {copiedText ? "Copiado" : "Copiar Texto"}
+              </Button>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      <div className={`min-h-[220px] rounded-lg border p-4 overflow-hidden ${
+      <div className={`min-h-[220px] rounded-xl border p-5 overflow-hidden ${
         isError 
           ? "bg-destructive/5 border-destructive/20" 
-          : "bg-muted/50 border-border"
+          : "bg-muted/30 border-border/40"
       }`}>
         <AnimatePresence mode="wait">
           {isGenerating ? (
@@ -382,21 +378,21 @@ export function ReportOutput({ report, isGenerating, tokenUsage, model }: Report
               transition={{ duration: 0.2 }}
               className="h-full min-h-[188px] flex flex-col items-center justify-center gap-3 text-muted-foreground"
             >
-              <div className="flex gap-1">
+              <div className="flex gap-1.5">
                 <motion.span
                   animate={{ y: [0, -6, 0] }}
                   transition={{ duration: 0.6, repeat: Number.POSITIVE_INFINITY, delay: 0 }}
-                  className="w-2 h-2 rounded-full bg-primary"
+                  className="w-2 h-2 rounded-full bg-primary/60"
                 />
                 <motion.span
                   animate={{ y: [0, -6, 0] }}
                   transition={{ duration: 0.6, repeat: Number.POSITIVE_INFINITY, delay: 0.15 }}
-                  className="w-2 h-2 rounded-full bg-primary"
+                  className="w-2 h-2 rounded-full bg-primary/60"
                 />
                 <motion.span
                   animate={{ y: [0, -6, 0] }}
                   transition={{ duration: 0.6, repeat: Number.POSITIVE_INFINITY, delay: 0.3 }}
-                  className="w-2 h-2 rounded-full bg-primary"
+                  className="w-2 h-2 rounded-full bg-primary/60"
                 />
               </div>
               <span className="text-sm">Gerando laudo...</span>
@@ -424,25 +420,24 @@ export function ReportOutput({ report, isGenerating, tokenUsage, model }: Report
               transition={{ duration: 0.2 }}
               className="h-full min-h-[188px] flex items-center justify-center"
             >
-              <span className="text-sm text-muted-foreground">O laudo gerado aparecerá aqui</span>
+              <span className="text-sm text-muted-foreground/60">O laudo gerado aparecera aqui</span>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
       
-      {/* Informações de tokens e custo - na parte inferior, similar ao botão Gerar Laudo */}
       {tokenUsage && costInfo && (
-        <div className="mt-4 pt-4 border-t border-border">
-          <div className="flex items-center justify-end gap-4 text-xs text-muted-foreground">
-            <div className="flex items-center gap-1">
+        <div className="mt-5 pt-5 border-t border-border/30">
+          <div className="flex items-center justify-end gap-5 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5">
               <span>Tokens:</span>
-              <span className="font-medium text-foreground">
+              <span className="font-medium text-foreground/70">
                 {formatarTokens(tokenUsage.inputTokens)} in + {formatarTokens(tokenUsage.outputTokens)} out = {formatarTokens(tokenUsage.totalTokens)}
               </span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <DollarSign className="w-3.5 h-3.5" />
-              <span className="font-medium text-foreground">{formatarCusto(costInfo.totalCost)}</span>
+              <span className="font-medium text-foreground/70">{formatarCusto(costInfo.totalCost)}</span>
             </div>
           </div>
         </div>
