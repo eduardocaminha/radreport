@@ -93,7 +93,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                     )}
                     <span
                       className={`relative z-10 ${
-                        reportMode === mode.value ? "text-foreground" : "text-foreground/70 hover:text-foreground"
+                        reportMode === mode.value ? "text-foreground" : "text-foreground/40 hover:text-foreground"
                       }`}
                     >
                       {mode.label}
@@ -134,7 +134,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
             onClick={handleLogout}
             variant="ghost"
             size="sm"
-            className="gap-2 text-foreground/70 hover:text-foreground"
+            className="gap-2 text-foreground/40 hover:text-foreground"
           >
             <LogOut className="w-4 h-4" />
             Sair
