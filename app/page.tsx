@@ -132,7 +132,7 @@ export default function Home() {
             transition: { staggerChildren: 0.1 },
           },
         }}
-        className="max-w-6xl lg:max-w-7xl mx-auto px-8 sm:px-12 py-10 flex flex-col"
+        className="max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 py-10 flex flex-col"
       >
         <div className="flex flex-col lg:flex-row lg:gap-8">
           {/* Coluna esquerda - Input */}
