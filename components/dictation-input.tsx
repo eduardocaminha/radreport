@@ -39,6 +39,7 @@ export function DictationInput({
 }: DictationInputProps) {
   const [historicoAberto, setHistoricoAberto] = useState(false)
   const [audioGravando, setAudioGravando] = useState(false)
+  const [audioTempo, setAudioTempo] = useState(0)
   const [isMac, setIsMac] = useState(false)
   const [animatedPlaceholder, setAnimatedPlaceholder] = useState("")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -52,6 +53,18 @@ export function DictationInput({
   useEffect(() => {
     setIsMac(navigator.platform.toUpperCase().indexOf('MAC') >= 0 || navigator.userAgent.toUpperCase().indexOf('MAC') >= 0)
   }, [])
+
+  // Timer para gravação de áudio
+  useEffect(() => {
+    if (!audioGravando) {
+      setAudioTempo(0)
+      return
+    }
+    const interval = setInterval(() => {
+      setAudioTempo((prev) => prev + 1)
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [audioGravando])
 
   // Auto-resize textarea to fit content
   const adjustHeight = useCallback(() => {
@@ -124,7 +137,7 @@ export function DictationInput({
               <div className="-translate-x-[calc(100%+0.75rem)] opacity-0 group-hover/audio:translate-x-0 group-hover/audio:opacity-100 transition-all duration-300 ease-out ml-3">
                 <KbdGroup>
                   <Kbd className="group-hover/audio:bg-foreground/80 group-hover/audio:text-background">{isMac ? '⌘' : 'Ctrl'}</Kbd>
-                  <span className="text-xs text-foreground/30 group-hover/audio:text-background/50">+</span>
+                  <span className="text-xs text-foreground/30 group-hover/audio:text-foreground">+</span>
                   <Kbd className="group-hover/audio:bg-foreground/80 group-hover/audio:text-background">G</Kbd>
                 </KbdGroup>
               </div>
@@ -221,8 +234,8 @@ export function DictationInput({
             className="overflow-hidden mb-6"
           >
             <div className="flex items-center gap-4 bg-muted/40 rounded-full px-5 py-3 h-12">
-              {/* Fake waveform bars */}
-              <div className="flex items-center gap-[2px] h-6 flex-1">
+              {/* Waveform: cresce da direita para a esquerda */}
+              <div className="flex items-center justify-end gap-[2px] h-6 flex-1 overflow-hidden">
                 {Array.from({ length: 80 }).map((_, i) => {
                   const heights = [3, 6, 4, 10, 14, 8, 18, 12, 5, 20, 16, 7, 22, 9, 4, 15, 11, 6, 19, 13, 3, 8, 17, 10, 5, 14, 21, 7, 12, 6, 16, 9, 4, 18, 11, 8, 3, 13, 20, 6, 15, 10, 7, 4, 9, 17, 12, 5, 11, 8, 6, 14, 3, 19, 10, 7, 22, 5, 16, 8, 12, 4, 18, 9, 13, 6, 20, 11, 3, 15, 7, 10, 17, 5, 14, 8, 21, 6, 9, 12]
                   return (
@@ -237,7 +250,11 @@ export function DictationInput({
                 })}
               </div>
 
-              <div className="flex items-center gap-1 shrink-0">
+              {/* Timer + botões */}
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs text-muted-foreground font-medium tabular-nums min-w-[40px]">
+                  {Math.floor(audioTempo / 60).toString().padStart(1, '0')}:{(audioTempo % 60).toString().padStart(2, '0')}
+                </span>
                 <Button
                   variant="ghost"
                   size="sm"
