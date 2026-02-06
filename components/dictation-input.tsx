@@ -202,13 +202,17 @@ export function DictationInput({
         rows={1}
       />
 
-      {/* Botao Gerar Laudo + Kbd: canto direito inferior, abaixo do input */}
-      <div className="flex items-center justify-end gap-3 mt-4">
-        <KbdGroup>
-          <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
-          <span className="text-muted-foreground/40 text-xs">+</span>
-          <Kbd>Enter</Kbd>
-        </KbdGroup>
+      {/* Botao Gerar Laudo + Kbd animado: canto direito inferior */}
+      <div className="flex items-center justify-end mt-4 group/gerar">
+        <div className="flex items-center overflow-hidden">
+          <div className="translate-x-[calc(100%+0.75rem)] opacity-0 group-hover/gerar:translate-x-0 group-hover/gerar:opacity-100 transition-all duration-300 ease-out mr-3">
+            <KbdGroup>
+              <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
+              <span className="text-foreground/30 text-xs">+</span>
+              <Kbd>Enter</Kbd>
+            </KbdGroup>
+          </div>
+        </div>
         <Button
           onClick={onGenerate}
           disabled={isGenerating || !value.trim()}
