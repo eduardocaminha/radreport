@@ -111,80 +111,25 @@ export function DictationInput({
     <section>
       {/* Top bar: Audio à esquerda, Radiopaedia + Historico à direita */}
       <div className="flex items-center justify-between mb-6">
-        {/* Audio button / waveform */}
-        <div className="flex items-center">
-          <AnimatePresence mode="wait">
-            {!audioGravando ? (
-              <motion.div
-                key="mic-button"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.2 }}
-                className="flex items-center group/audio"
-              >
-                <button
-                  onClick={() => setAudioGravando(true)}
-                  className="w-10 h-10 rounded-full bg-muted text-foreground/70 flex items-center justify-center hover:bg-accent hover:text-accent-foreground transition-colors"
-                >
-                  <AudioLines className="w-5 h-5" />
-                </button>
-                <div className="flex items-center overflow-hidden">
-                  <div className="-translate-x-[calc(100%+0.75rem)] opacity-0 group-hover/audio:translate-x-0 group-hover/audio:opacity-100 transition-all duration-300 ease-out ml-3">
-                    <KbdGroup>
-                      <Kbd className="group-hover/audio:bg-accent group-hover/audio:text-accent-foreground">{isMac ? '⌘' : 'Ctrl'}</Kbd>
-                      <span className="text-xs text-foreground/30 group-hover/audio:text-accent-foreground/50">+</span>
-                      <Kbd className="group-hover/audio:bg-accent group-hover/audio:text-accent-foreground">G</Kbd>
-                    </KbdGroup>
-                  </div>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="waveform-bar"
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: "auto" }}
-                exit={{ opacity: 0, width: 0 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                className="flex items-center gap-3 bg-background rounded-full px-4 py-2 h-10 overflow-hidden"
-              >
-                {/* Fake waveform bars */}
-                <div className="flex items-center gap-[2px] h-6 min-w-[200px]">
-                  {Array.from({ length: 50 }).map((_, i) => {
-                    const heights = [3, 6, 4, 10, 14, 8, 18, 12, 5, 20, 16, 7, 22, 9, 4, 15, 11, 6, 19, 13, 3, 8, 17, 10, 5, 14, 21, 7, 12, 6, 16, 9, 4, 18, 11, 8, 3, 13, 20, 6, 15, 10, 7, 4, 9, 17, 12, 5, 11, 8]
-                    return (
-                      <motion.div
-                        key={i}
-                        className="w-[2px] rounded-full bg-foreground/70 shrink-0"
-                        initial={{ height: 2 }}
-                        animate={{ height: heights[i] }}
-                        transition={{ duration: 0.4, delay: i * 0.015 }}
-                      />
-                    )
-                  })}
-                </div>
-
-                <div className="flex items-center gap-1 shrink-0">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setAudioGravando(false)}
-                    className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive h-7 w-7 p-0"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setAudioGravando(false)}
-                    className="text-muted-foreground hover:bg-accent hover:text-accent-foreground h-7 w-7 p-0"
-                  >
-                    <Check className="w-3.5 h-3.5" />
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+        {/* Audio button */}
+        <div className="flex items-center group/audio">
+          <button
+            onClick={() => setAudioGravando(!audioGravando)}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${audioGravando ? "bg-foreground/80 text-background" : "bg-muted text-foreground/70 hover:bg-foreground/80 hover:text-background"}`}
+          >
+            <AudioLines className="w-5 h-5" />
+          </button>
+          {!audioGravando && (
+            <div className="flex items-center overflow-hidden">
+              <div className="-translate-x-[calc(100%+0.75rem)] opacity-0 group-hover/audio:translate-x-0 group-hover/audio:opacity-100 transition-all duration-300 ease-out ml-3">
+                <KbdGroup>
+                  <Kbd className="group-hover/audio:bg-foreground/80 group-hover/audio:text-background">{isMac ? '⌘' : 'Ctrl'}</Kbd>
+                  <span className="text-xs text-foreground/30 group-hover/audio:text-background/50">+</span>
+                  <Kbd className="group-hover/audio:bg-foreground/80 group-hover/audio:text-background">G</Kbd>
+                </KbdGroup>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Radiopaedia + Historico */}
@@ -264,6 +209,56 @@ export function DictationInput({
         )}
         </div>
       </div>
+
+      {/* Waveform bar: linha full-width quando gravando */}
+      <AnimatePresence>
+        {audioGravando && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="overflow-hidden mb-6"
+          >
+            <div className="flex items-center gap-4 bg-muted/40 rounded-full px-5 py-3 h-12">
+              {/* Fake waveform bars */}
+              <div className="flex items-center gap-[2px] h-6 flex-1">
+                {Array.from({ length: 80 }).map((_, i) => {
+                  const heights = [3, 6, 4, 10, 14, 8, 18, 12, 5, 20, 16, 7, 22, 9, 4, 15, 11, 6, 19, 13, 3, 8, 17, 10, 5, 14, 21, 7, 12, 6, 16, 9, 4, 18, 11, 8, 3, 13, 20, 6, 15, 10, 7, 4, 9, 17, 12, 5, 11, 8, 6, 14, 3, 19, 10, 7, 22, 5, 16, 8, 12, 4, 18, 9, 13, 6, 20, 11, 3, 15, 7, 10, 17, 5, 14, 8, 21, 6, 9, 12]
+                  return (
+                    <motion.div
+                      key={i}
+                      className="w-[2px] rounded-full bg-foreground/60 shrink-0"
+                      initial={{ height: 2 }}
+                      animate={{ height: heights[i] }}
+                      transition={{ duration: 0.4, delay: i * 0.01 }}
+                    />
+                  )
+                })}
+              </div>
+
+              <div className="flex items-center gap-1 shrink-0">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setAudioGravando(false)}
+                  className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive h-7 w-7 p-0"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setAudioGravando(false)}
+                  className="text-muted-foreground hover:bg-accent hover:text-accent-foreground h-7 w-7 p-0"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Textarea auto-grow: comeca com 1 linha, expande com wrap */}
       <textarea
