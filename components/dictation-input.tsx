@@ -207,9 +207,9 @@ export function DictationInput({
         <div className="flex items-center overflow-hidden">
           <div className="translate-x-[calc(100%+0.75rem)] opacity-0 group-hover/gerar:translate-x-0 group-hover/gerar:opacity-100 transition-all duration-300 ease-out mr-3">
             <KbdGroup>
-              <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
-              <span className="text-foreground/30 text-xs">+</span>
-              <Kbd>Enter</Kbd>
+              <Kbd className={value.trim() ? "bg-accent text-accent-foreground" : ""}>{isMac ? '⌘' : 'Ctrl'}</Kbd>
+              <span className={`text-xs ${value.trim() ? "text-accent-foreground/50" : "text-foreground/30"}`}>+</span>
+              <Kbd className={value.trim() ? "bg-accent text-accent-foreground" : ""}>Enter</Kbd>
             </KbdGroup>
           </div>
         </div>
