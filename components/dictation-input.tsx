@@ -4,8 +4,6 @@ import type React from "react"
 import { useState, useEffect, useRef, useCallback } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { Clock, Sparkles, Loader2, X, Search } from "lucide-react"
 
@@ -112,22 +110,16 @@ export function DictationInput({
     <section>
       {/* Top bar: Radiopaedia + Historico no canto superior direito */}
       <div className="flex items-center justify-end gap-4 mb-6">
-        <div className="flex items-center gap-2.5">
-          <Switch
-            id="pesquisa-radiopaedia"
-            checked={usarPesquisa}
-            onCheckedChange={onUsarPesquisaChange}
-            disabled={isGenerating}
-            className="peer"
-          />
-          <Label
-            htmlFor="pesquisa-radiopaedia"
-            className="text-sm cursor-pointer flex items-center gap-1.5 text-foreground/40 peer-data-[state=checked]:text-foreground/70 transition-colors"
-          >
-            <Search className="w-3.5 h-3.5" />
-            Radiopaedia
-          </Label>
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onUsarPesquisaChange(!usarPesquisa)}
+          disabled={isGenerating}
+          className={`gap-1.5 ${usarPesquisa ? "bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background" : "text-foreground/40 hover:text-foreground"}`}
+        >
+          <Search className="w-3.5 h-3.5" />
+          Radiopaedia
+        </Button>
 
         {historico.length > 0 && (
           <div className="relative">
