@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Copy, FileText, Check, DollarSign } from "lucide-react"
 import { useState, useMemo, useEffect, useRef, useCallback } from "react"
-import { calcularCusto, formatarCusto, formatarTokens, type TokenUsage } from "@/lib/tokens"
+import { calcularCusto, formatarCusto, type TokenUsage } from "@/lib/tokens"
 import { parseReportBlocks, blocksToHtml, type ReportBlock } from "@/lib/report-blocks"
 import { DraggableReport } from "@/components/draggable-report"
 
@@ -334,9 +334,9 @@ export function ReportOutput({ report, streamedText, isStreaming, isGenerating, 
   }, [tokenUsage, model])
 
   return (
-    <section className="border-t border-border/30 pt-10">
+    <section>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-sm font-medium text-muted-foreground/60">Resultado</h2>
+        <div />
         <AnimatePresence>
           {report && !isError && !isStreaming && (
             <motion.div
@@ -378,26 +378,22 @@ export function ReportOutput({ report, streamedText, isStreaming, isGenerating, 
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="min-h-[120px] flex flex-col items-center justify-center gap-3 text-muted-foreground"
+              className="space-y-4"
             >
-              <div className="flex gap-1.5">
-                <motion.span
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{ duration: 0.6, repeat: Number.POSITIVE_INFINITY, delay: 0 }}
-                  className="w-2 h-2 rounded-full bg-primary/60"
-                />
-                <motion.span
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{ duration: 0.6, repeat: Number.POSITIVE_INFINITY, delay: 0.15 }}
-                  className="w-2 h-2 rounded-full bg-primary/60"
-                />
-                <motion.span
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{ duration: 0.6, repeat: Number.POSITIVE_INFINITY, delay: 0.3 }}
-                  className="w-2 h-2 rounded-full bg-primary/60"
-                />
+              <div className="h-5 w-3/5 mx-auto rounded bg-muted animate-pulse" />
+              <div className="h-4 w-2/5 mx-auto rounded bg-muted animate-pulse" />
+              <div className="h-4 w-1/4 rounded bg-muted/70 animate-pulse mt-6" />
+              <div className="space-y-2.5">
+                <div className="h-3.5 w-full rounded bg-muted/50 animate-pulse" />
+                <div className="h-3.5 w-11/12 rounded bg-muted/50 animate-pulse" />
               </div>
-              <span className="text-sm">Gerando laudo...</span>
+              <div className="h-4 w-1/4 rounded bg-muted/70 animate-pulse mt-4" />
+              <div className="space-y-2.5">
+                <div className="h-3.5 w-full rounded bg-muted/50 animate-pulse" />
+                <div className="h-3.5 w-10/12 rounded bg-muted/50 animate-pulse" />
+                <div className="h-3.5 w-full rounded bg-muted/50 animate-pulse" />
+                <div className="h-3.5 w-9/12 rounded bg-muted/50 animate-pulse" />
+              </div>
             </motion.div>
           ) : isStreaming && streamedText ? (
             <motion.div
@@ -409,7 +405,6 @@ export function ReportOutput({ report, streamedText, isStreaming, isGenerating, 
               className="text-foreground [&_.laudo-texto]:mb-0 [&_.laudo-texto+br]:block"
             >
               <div dangerouslySetInnerHTML={{ __html: streamingHtml }} />
-              <span className="inline-block w-0.5 h-4 bg-primary/60 animate-pulse ml-0.5 align-text-bottom" />
             </motion.div>
           ) : report ? (
             <motion.div
@@ -445,15 +440,9 @@ export function ReportOutput({ report, streamedText, isStreaming, isGenerating, 
         </AnimatePresence>
       </div>
 
-      {tokenUsage && costInfo && (
+      {costInfo && (
         <div className="mt-6 pt-5 border-t border-border/20">
-          <div className="flex items-center justify-end gap-5 text-xs text-muted-foreground/60">
-            <div className="flex items-center gap-1.5">
-              <span>Tokens:</span>
-              <span className="font-medium text-foreground/50">
-                {formatarTokens(tokenUsage.inputTokens)} in + {formatarTokens(tokenUsage.outputTokens)} out = {formatarTokens(tokenUsage.totalTokens)}
-              </span>
-            </div>
+          <div className="flex items-center justify-end text-xs text-muted-foreground/60">
             <div className="flex items-center gap-1.5">
               <DollarSign className="w-3.5 h-3.5" />
               <span className="font-medium text-foreground/50">{formatarCusto(costInfo.totalCost)}</span>
