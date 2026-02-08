@@ -59,7 +59,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
     >
       <div className="max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 h-[72px] flex items-center justify-between">
         <div className="h-6 overflow-hidden group/logo cursor-default select-none">
-          <div className="transition-transform duration-300 ease-out group-hover/logo:-translate-y-full">
+          <div className="transition-transform duration-300 ease-out group-hover/logo:-translate-y-1/2">
             <span className="block h-6 text-lg font-medium tracking-tight text-foreground leading-6">
               Reporter&#8482;
             </span>
