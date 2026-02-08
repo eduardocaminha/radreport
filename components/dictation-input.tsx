@@ -125,21 +125,23 @@ export function DictationInput({
       {/* Top bar: Audio à esquerda, Radiopaedia + Historico à direita */}
       <div className="flex items-center justify-between mb-6">
         {/* Audio button */}
-        <div className="flex items-center">
+        <div className="group/audio relative">
           <button
             onClick={() => setAudioGravando(!audioGravando)}
-            className={`group/audio w-10 h-10 rounded-full flex items-center justify-center transition-colors ${audioGravando ? "bg-foreground/80 text-background" : "bg-muted text-foreground/70 hover:bg-foreground/80 hover:text-background"}`}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${audioGravando ? "bg-foreground/80 text-background" : "bg-muted text-foreground/70 hover:bg-foreground/80 hover:text-background"}`}
           >
             <AudioLines className="w-5 h-5" />
           </button>
           {!audioGravando && (
-            <div className="flex items-center overflow-hidden pointer-events-none">
-              <div className="-translate-x-[calc(100%+0.75rem)] opacity-0 group-hover/audio:translate-x-0 group-hover/audio:opacity-100 transition-all duration-300 ease-out ml-3">
-                <KbdGroup>
-                  <Kbd className="group-hover/audio:bg-foreground/80 group-hover/audio:text-background">{isMac ? '⌘' : 'Ctrl'}</Kbd>
-                  <span className="text-xs text-foreground/30 group-hover/audio:text-foreground">+</span>
-                  <Kbd className="group-hover/audio:bg-foreground/80 group-hover/audio:text-background">G</Kbd>
-                </KbdGroup>
+            <div className="absolute left-full top-1/2 -translate-y-1/2 pointer-events-none">
+              <div className="flex items-center overflow-hidden">
+                <div className="-translate-x-[calc(100%+0.75rem)] opacity-0 group-hover/audio:translate-x-0 group-hover/audio:opacity-100 transition-all duration-300 ease-out ml-3">
+                  <KbdGroup>
+                    <Kbd className="group-hover/audio:bg-foreground/80 group-hover/audio:text-background">{isMac ? '⌘' : 'Ctrl'}</Kbd>
+                    <span className="text-xs text-foreground/30 group-hover/audio:text-foreground">+</span>
+                    <Kbd className="group-hover/audio:bg-foreground/80 group-hover/audio:text-background">G</Kbd>
+                  </KbdGroup>
+                </div>
               </div>
             </div>
           )}
@@ -292,24 +294,28 @@ export function DictationInput({
 
       {/* Botao Gerar Laudo + Kbd animado: canto direito inferior */}
       <div className="flex items-center justify-end mt-4">
-        <div className="flex items-center overflow-hidden pointer-events-none">
-          <div className="translate-x-[calc(100%+0.75rem)] opacity-0 group-hover/gerar:translate-x-0 group-hover/gerar:opacity-100 transition-all duration-300 ease-out mr-3">
-            <KbdGroup>
-              <Kbd className={value.trim() ? "bg-accent text-accent-foreground" : ""}>{isMac ? '⌘' : 'Ctrl'}</Kbd>
-              <span className={`text-xs ${value.trim() ? "text-accent-foreground/50" : "text-foreground/30"}`}>+</span>
-              <Kbd className={value.trim() ? "bg-accent text-accent-foreground" : ""}>{isMac ? 'Return' : 'Enter'}</Kbd>
-            </KbdGroup>
+        <div className="group/gerar relative">
+          <div className="absolute right-full top-1/2 -translate-y-1/2 pointer-events-none">
+            <div className="flex items-center overflow-hidden">
+              <div className="translate-x-[calc(100%+0.75rem)] opacity-0 group-hover/gerar:translate-x-0 group-hover/gerar:opacity-100 transition-all duration-300 ease-out mr-3">
+                <KbdGroup>
+                  <Kbd className={value.trim() ? "bg-accent text-accent-foreground" : ""}>{isMac ? '⌘' : 'Ctrl'}</Kbd>
+                  <span className={`text-xs ${value.trim() ? "text-accent-foreground/50" : "text-foreground/30"}`}>+</span>
+                  <Kbd className={value.trim() ? "bg-accent text-accent-foreground" : ""}>{isMac ? 'Return' : 'Enter'}</Kbd>
+                </KbdGroup>
+              </div>
+            </div>
           </div>
+          <Button
+            onClick={onGenerate}
+            disabled={isGenerating || !value.trim()}
+            size="lg"
+            className="gap-2 bg-muted text-foreground/70 hover:bg-accent hover:text-accent-foreground shadow-none"
+          >
+            {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+            Gerar laudo
+          </Button>
         </div>
-        <Button
-          onClick={onGenerate}
-          disabled={isGenerating || !value.trim()}
-          size="lg"
-          className="group/gerar gap-2 bg-muted text-foreground/70 hover:bg-accent hover:text-accent-foreground shadow-none"
-        >
-          {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-          Gerar laudo
-        </Button>
       </div>
     </section>
   )
