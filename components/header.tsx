@@ -101,7 +101,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <Avatar size="lg">
+          <Avatar size="default">
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
           <Button
