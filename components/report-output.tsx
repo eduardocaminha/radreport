@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
-import { Copy, FileText, Check, DollarSign } from "lucide-react"
+import { Copy, Check, DollarSign } from "lucide-react"
 import { useState, useMemo, useEffect, useRef, useCallback } from "react"
 import { calcularCusto, formatarCusto, type TokenUsage } from "@/lib/tokens"
 import { parseReportBlocks, blocksToHtml, type ReportBlock } from "@/lib/report-blocks"
@@ -190,7 +190,6 @@ interface ReportOutputProps {
 
 export function ReportOutput({ report, streamedText, isStreaming, isGenerating, tokenUsage, model }: ReportOutputProps) {
   const [copiedHtml, setCopiedHtml] = useState(false)
-  const [copiedText, setCopiedText] = useState(false)
   const [blocks, setBlocks] = useState<ReportBlock[]>([])
   const previousReportRef = useRef<string>("")
 
@@ -320,12 +319,6 @@ export function ReportOutput({ report, streamedText, isStreaming, isGenerating, 
     }
   }
 
-  const handleCopyText = async () => {
-    await navigator.clipboard.writeText(plainText)
-    setCopiedText(true)
-    setTimeout(() => setCopiedText(false), 2000)
-  }
-
   const isError = report.includes('class="text-destructive"') || report.includes('text-destructive')
 
   const costInfo = useMemo(() => {
@@ -348,17 +341,7 @@ export function ReportOutput({ report, streamedText, isStreaming, isGenerating, 
             className="gap-2 text-muted-foreground hover:text-foreground disabled:opacity-30"
           >
             {copiedHtml ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
-            {copiedHtml ? "Copiado" : "Copiar HTML"}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCopyText}
-            disabled={!hasContent || isError}
-            className="gap-2 text-muted-foreground hover:text-foreground disabled:opacity-30"
-          >
-            {copiedText ? <Check className="w-4 h-4 text-primary" /> : <FileText className="w-4 h-4" />}
-            {copiedText ? "Copiado" : "Copiar texto"}
+            {copiedHtml ? "Copiado" : "Copiar"}
           </Button>
         </div>
       </div>
