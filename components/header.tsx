@@ -69,23 +69,32 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
             {!logoHovered ? (
               <TextEffect
                 key="reporter"
-                preset="fade"
+                preset="blur"
                 per="word"
                 as="span"
                 className="block text-lg font-medium tracking-tight text-foreground"
+                variants={{
+                  item: {
+                    hidden: { opacity: 0, filter: 'blur(12px)' },
+                    visible: { opacity: 1, filter: 'blur(0px)', transition: { duration: 0.35 } },
+                    exit: { opacity: 0, filter: 'blur(12px)', transition: { duration: 0.35 } },
+                  },
+                }}
               >
-                Reporter
+                Reporter™
               </TextEffect>
             ) : (
-              <TextEffect
+              <motion.span
                 key="radiologic"
-                preset="fade"
-                per="word"
-                as="span"
-                className="block text-lg font-medium tracking-tight text-foreground"
+                initial={{ opacity: 0, filter: 'blur(12px)' }}
+                animate={{ opacity: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, filter: 'blur(12px)' }}
+                transition={{ duration: 0.35 }}
+                className="block text-lg tracking-tight text-foreground"
               >
-                by Radiologic
-              </TextEffect>
+                <span className="font-light">by </span>
+                <span className="font-medium">Radiologic™</span>
+              </motion.span>
             )}
           </AnimatePresence>
         </div>
