@@ -1,10 +1,11 @@
 "use client"
 
-import { motion } from "motion/react"
+import { motion, AnimatePresence } from "motion/react"
 import { LogOut } from "lucide-react"
+import { TextEffect } from "@/components/ui/text-effect"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 type ReportMode = "ps" | "eletivo" | "comparativo"
 
@@ -15,6 +16,7 @@ interface HeaderProps {
 
 export function Header({ reportMode, onReportModeChange }: HeaderProps) {
   const router = useRouter()
+  const [logoHovered, setLogoHovered] = useState(false)
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -58,15 +60,34 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
       className="bg-card/80 backdrop-blur-sm border-b border-border/30 sticky top-0 z-50"
     >
       <div className="max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 h-[72px] flex items-center justify-between">
-        <div className="h-6 overflow-hidden group/logo cursor-default select-none">
-          <div className="transition-transform duration-300 ease-out group-hover/logo:-translate-y-1/2">
-            <span className="block h-6 text-lg font-medium tracking-tight text-foreground leading-6">
-              Reporter&#8482;
-            </span>
-            <span className="block h-6 text-sm text-muted-foreground leading-6">
-              by <span className="font-bold text-foreground">Radiologic</span>&#8482;
-            </span>
-          </div>
+        <div
+          className="h-6 overflow-hidden cursor-default select-none min-w-[140px]"
+          onMouseEnter={() => setLogoHovered(true)}
+          onMouseLeave={() => setLogoHovered(false)}
+        >
+          <AnimatePresence mode="wait">
+            {!logoHovered ? (
+              <TextEffect
+                key="reporter"
+                preset="fade"
+                per="word"
+                as="span"
+                className="block text-lg font-medium tracking-tight text-foreground"
+              >
+                Reporter
+              </TextEffect>
+            ) : (
+              <TextEffect
+                key="radiologic"
+                preset="fade"
+                per="word"
+                as="span"
+                className="block text-lg font-medium tracking-tight text-foreground"
+              >
+                by Radiologic
+              </TextEffect>
+            )}
+          </AnimatePresence>
         </div>
 
         <Button
