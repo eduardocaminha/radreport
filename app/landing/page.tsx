@@ -140,7 +140,7 @@ export default function LandingPage() {
           className="mt-10 flex-1 min-h-[85vh] sm:min-h-[90vh] lg:min-h-[95vh] relative rounded-2xl overflow-hidden bg-black flex items-center justify-center"
         >
           <div
-            className="w-[45%] h-[28%]"
+            className="w-[55%] h-[36%]"
             style={{
               animation: `zoom-in-smooth ${zoomDuration}s ease-in-out infinite`,
             }}
