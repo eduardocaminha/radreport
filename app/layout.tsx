@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "RadReport",
+  title: "Reporter by Radiologic™",
   description: "Sistema pessoal para geração de laudos de TC",
 }
 

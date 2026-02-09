@@ -147,11 +147,11 @@ export default function LandingPage() {
               <Link href="/login">
                 <Button
                   size="sm"
-                  variant="ghost"
+                  variant={isStuck ? "ghost" : undefined}
                   className={`gap-2 transition-all duration-200 ${
                     isStuck
                       ? "bg-background text-muted-foreground hover:text-foreground"
-                      : "rounded-full px-6 bg-foreground text-background hover:bg-foreground/90 shadow-none"
+                      : "rounded-full px-6 bg-foreground text-background hover:bg-foreground/90 hover:text-background shadow-none"
                   }`}
                 >
                   Comece a laudar
