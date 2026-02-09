@@ -181,6 +181,6 @@
 /* Landing page: zoom in suave no vídeo */
 @keyframes zoom-in-smooth {
   0% { transform: scale(0.5); }
-  100% { transform: scale(1.15); }
+  100% { transform: scale(1); }
 }
 /* Duração aplicada via JS (vídeo.duration) para sincronizar com o loop */
