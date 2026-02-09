@@ -62,7 +62,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
     >
       <div className="max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 h-[72px] flex items-center justify-between">
         <div
-          className="h-6 overflow-hidden cursor-pointer select-none min-w-[140px]"
+          className="h-7 overflow-hidden cursor-pointer select-none min-w-[140px]"
           onMouseEnter={() => setLogoHovered(true)}
           onMouseLeave={() => setLogoHovered(false)}
         >
@@ -73,7 +73,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                 preset="blur"
                 per="word"
                 as="span"
-                className="block text-lg font-medium tracking-tight text-foreground"
+                className="block text-xl font-medium tracking-tight text-foreground"
                 variants={{
                   item: {
                     hidden: { opacity: 0, filter: 'blur(4px)' },
@@ -91,7 +91,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                 animate={{ opacity: 1, filter: 'blur(0px)' }}
                 exit={{ opacity: 0, filter: 'blur(4px)' }}
                 transition={{ duration: 0.25 }}
-                className="block text-lg tracking-tight text-foreground"
+                className="block text-xl tracking-tight text-foreground"
               >
                 <span className="font-light">by </span>
                 <span className="font-medium">Radiologic™</span>
