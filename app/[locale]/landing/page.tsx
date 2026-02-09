@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 
 const VIDEO_URLS = [
   "https://fl1j1x13akrzltef.public.blob.vercel-storage.com/abdomenmri.mp4",
@@ -19,6 +19,12 @@ export default function LandingPage() {
   const t = useTranslations("Landing")
   const [isStuck, setIsStuck] = useState(false)
   const [logoHovered, setLogoHovered] = useState(false)
+  const hasHoveredSinceStuck = useRef(false)
+
+  const handleLogoEnter = useCallback(() => {
+    setLogoHovered(true)
+    hasHoveredSinceStuck.current = true
+  }, [])
   const [zoomDuration, setZoomDuration] = useState(20)
   const [videoSrc, setVideoSrc] = useState(VIDEO_URLS[0])
   useEffect(() => {
@@ -38,7 +44,11 @@ export default function LandingPage() {
   // Detect when the sticky row reaches the top
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => setIsStuck(!entry.isIntersecting),
+      ([entry]) => {
+        const stuck = !entry.isIntersecting
+        setIsStuck(stuck)
+        if (!stuck) hasHoveredSinceStuck.current = false
+      },
       { threshold: 1 }
     )
     if (sentinelRef.current) observer.observe(sentinelRef.current)
@@ -85,32 +95,41 @@ export default function LandingPage() {
                 {isStuck ? (
                   <motion.div
                     key="stuck"
-                    initial={{ opacity: 0, filter: "blur(4px)" }}
-                    animate={{ opacity: 1, filter: "blur(0px)" }}
+                    initial={false}
                     exit={{ opacity: 0, filter: "blur(4px)" }}
                     transition={{ duration: 0.15 }}
                     className="h-7 overflow-hidden cursor-pointer select-none min-w-[140px]"
-                    onMouseEnter={() => setLogoHovered(true)}
+                    onMouseEnter={handleLogoEnter}
                     onMouseLeave={() => setLogoHovered(false)}
                   >
                     <AnimatePresence mode="wait">
                       {!logoHovered ? (
-                        <TextEffect
-                          key="reporter"
-                          preset="blur"
-                          per="word"
-                          as="span"
-                          className="block text-xl font-medium tracking-tight text-foreground"
-                          variants={{
-                            item: {
-                              hidden: { opacity: 0, filter: "blur(4px)" },
-                              visible: { opacity: 1, filter: "blur(0px)", transition: { duration: 0.25 } },
-                              exit: { opacity: 0, filter: "blur(4px)", transition: { duration: 0.25 } },
-                            },
-                          }}
-                        >
-                          Reporter
-                        </TextEffect>
+                        hasHoveredSinceStuck.current ? (
+                          <TextEffect
+                            key="reporter"
+                            preset="blur"
+                            per="word"
+                            as="span"
+                            className="block text-xl font-medium tracking-tight text-foreground"
+                            variants={{
+                              item: {
+                                hidden: { opacity: 0, filter: "blur(4px)" },
+                                visible: { opacity: 1, filter: "blur(0px)", transition: { duration: 0.25 } },
+                                exit: { opacity: 0, filter: "blur(4px)", transition: { duration: 0.25 } },
+                              },
+                            }}
+                          >
+                            Reporter
+                          </TextEffect>
+                        ) : (
+                          <motion.span
+                            key="reporter-static"
+                            exit={{ opacity: 0, filter: "blur(4px)", transition: { duration: 0.25 } }}
+                            className="block text-xl font-medium tracking-tight text-foreground"
+                          >
+                            Reporter
+                          </motion.span>
+                        )
                       ) : (
                         <motion.span
                           key="radiologic"
