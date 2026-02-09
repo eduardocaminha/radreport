@@ -107,7 +107,7 @@ export default function LandingPage() {
                           transition={{ duration: 0.25 }}
                           className="block text-xl tracking-tight text-foreground"
                         >
-                          <span className="font-light">by </span>
+                          <span className="font-medium">by </span>
                           <span className="font-medium">Radiologic™</span>
                         </motion.span>
                       )}

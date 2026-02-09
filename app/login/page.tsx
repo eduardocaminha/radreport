@@ -172,7 +172,7 @@ export default function LoginPage() {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="relative z-10 flex flex-col justify-end p-16 pb-20"
         >
-          <h2 className="text-7xl font-medium tracking-tight text-white leading-[0.45]">
+          <h2 className="text-7xl font-medium tracking-tight text-white leading-[0.85]">
             Abre,
             <br />
             lauda,
