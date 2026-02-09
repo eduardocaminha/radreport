@@ -69,7 +69,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Left — login form */}
-      <div className="w-full lg:w-1/2 flex flex-col px-8 sm:px-12 lg:px-16 py-16">
+      <div className="w-full lg:w-1/2 flex flex-col px-8 sm:px-12 lg:px-16 pt-16 sm:pt-20 pb-16">
         <div className="h-[72px] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Link href="/landing">
@@ -188,7 +188,7 @@ export default function LoginPage() {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="relative z-10 flex flex-col justify-end p-16 pb-20"
         >
-          <h2 className="text-5xl font-medium tracking-tight text-white leading-[0.85]">
+          <h2 className="text-6xl font-medium tracking-tight text-white leading-[0.85]">
             {t("tagline1")}
             <br />
             {t("tagline2")}
