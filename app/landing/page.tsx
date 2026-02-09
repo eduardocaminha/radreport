@@ -65,35 +65,54 @@ export default function LandingPage() {
 
       {/* Hero - full viewport */}
       <section className="min-h-screen flex flex-col px-8 sm:px-12 lg:px-16 pt-16 sm:pt-20 pb-10">
-        {/* Headline + sublanding — mesmo parágrafo, cores diferenciam */}
-        <div className="text-xl font-medium tracking-tight leading-tight max-w-xl">
-          <TextEffect
-            preset="blur"
-            per="word"
-            as="span"
-            className="text-foreground"
-            variants={{
-              item: {
-                hidden: { opacity: 0, filter: "blur(6px)" },
-                visible: { opacity: 1, filter: "blur(0px)", transition: { duration: 0.35 } },
-              },
-            }}
-          >
-            Reporter by Radiologic™
-          </TextEffect>
-          <motion.span
+        {/* Texto (esq) + CTA (dir) — linha acima do vídeo */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+          <div className="text-xl font-medium tracking-tight leading-tight max-w-xl">
+            <TextEffect
+              preset="blur"
+              per="word"
+              as="span"
+              className="text-foreground"
+              variants={{
+                item: {
+                  hidden: { opacity: 0, filter: "blur(6px)" },
+                  visible: { opacity: 1, filter: "blur(0px)", transition: { duration: 0.35 } },
+                },
+              }}
+            >
+              Reporter by Radiologic™
+            </TextEffect>
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="text-muted-foreground/70"
+            >
+              <br />
+              Você dita, o Reporter estrutura.
+              <br />
+              IA usada do jeito certo. Interface limpa.
+              <br />
+              Abre, lauda, ponto.
+            </motion.span>
+          </div>
+
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            className="text-muted-foreground/70"
+            transition={{ delay: 1.3, duration: 0.4 }}
+            className="shrink-0"
           >
-            <br />
-            Você dita, o Reporter estrutura.
-            <br />
-            IA usada do jeito certo. Interface limpa.
-            <br />
-            Abre, lauda, ponto.
-          </motion.span>
+            <Link href="/login">
+              <Button
+                size="lg"
+                className="gap-2 rounded-full px-8 bg-foreground text-background hover:bg-foreground/90 shadow-none"
+              >
+                Comece a laudar
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          </motion.div>
         </div>
 
         {/* Brain MRI video with subtle zoom-in */}
@@ -103,7 +122,7 @@ export default function LandingPage() {
           transition={{ delay: 0.9, duration: 0.7, ease: "easeOut" }}
           className="mt-10 flex-1 min-h-[400px] sm:min-h-[480px] lg:min-h-[520px] relative rounded-2xl overflow-hidden bg-black flex items-center justify-center"
         >
-          <div className="w-[70%] h-[40%] animate-zoom-in-smooth">
+          <div className="w-[45%] h-[28%] animate-zoom-in-smooth">
             <video
               autoPlay
               loop
@@ -117,24 +136,6 @@ export default function LandingPage() {
               />
             </video>
           </div>
-        </motion.div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.3, duration: 0.4 }}
-          className="mt-8"
-        >
-          <Link href="/login">
-            <Button
-              size="lg"
-              className="gap-2 rounded-full px-8 bg-foreground text-background hover:bg-foreground/90 shadow-none"
-            >
-              Comece a laudar
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
         </motion.div>
       </section>
 
