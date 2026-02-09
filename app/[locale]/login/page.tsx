@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState } from "react"
 
 const LOGIN_VIDEO_URL =
   "https://fl1j1x13akrzltef.public.blob.vercel-storage.com/lumbarmri.mp4"
@@ -18,25 +18,8 @@ export default function LoginPage() {
   const [senha, setSenha] = useState("")
   const [erro, setErro] = useState("")
   const [carregando, setCarregando] = useState(false)
-  const [zoomDuration, setZoomDuration] = useState(20)
-  const videoRef = useRef<HTMLVideoElement>(null)
   const router = useRouter()
   const t = useTranslations("Login")
-
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video) return
-    const onLoadedMetadata = () => {
-      if (!Number.isNaN(video.duration) && video.duration > 0) {
-        setZoomDuration(video.duration)
-      }
-    }
-    video.addEventListener("loadedmetadata", onLoadedMetadata)
-    if (video.readyState >= 1 && !Number.isNaN(video.duration)) {
-      setZoomDuration(video.duration)
-    }
-    return () => video.removeEventListener("loadedmetadata", onLoadedMetadata)
-  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -162,24 +145,16 @@ export default function LoginPage() {
       </div>
 
       {/* Right — video panel with branding */}
-      <div className="hidden lg:flex w-1/2 relative overflow-hidden rounded-l-3xl bg-black">
-        <div
-          className="absolute inset-0"
-          style={{
-            animation: `zoom-in-smooth ${zoomDuration}s ease-in-out infinite`,
-          }}
+      <div className="hidden lg:flex lg:h-screen w-1/2 relative overflow-hidden rounded-l-3xl bg-black">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
         >
-          <video
-            ref={videoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover opacity-40"
-          >
-            <source src={LOGIN_VIDEO_URL} type="video/mp4" />
-          </video>
-        </div>
+          <source src={LOGIN_VIDEO_URL} type="video/mp4" />
+        </video>
 
         {/* Text overlay */}
         <motion.div
