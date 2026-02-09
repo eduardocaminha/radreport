@@ -1,18 +1,34 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { TextEffect } from "@/components/ui/text-effect"
 import { LogIn, Loader2 } from "lucide-react"
 
 export default function LoginPage() {
   const [senha, setSenha] = useState("")
   const [erro, setErro] = useState("")
   const [carregando, setCarregando] = useState(false)
+  const [zoomDuration, setZoomDuration] = useState(20)
+  const videoRef = useRef<HTMLVideoElement>(null)
   const router = useRouter()
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    const onLoadedMetadata = () => {
+      if (!Number.isNaN(video.duration) && video.duration > 0) {
+        setZoomDuration(video.duration)
+      }
+    }
+    video.addEventListener("loadedmetadata", onLoadedMetadata)
+    if (video.readyState >= 1 && !Number.isNaN(video.duration)) {
+      setZoomDuration(video.duration)
+    }
+    return () => video.removeEventListener("loadedmetadata", onLoadedMetadata)
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -43,30 +59,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header minimalista - igual à página principal */}
-      <header className="border-b border-border/30">
-        <div className="max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 h-[72px] flex items-center">
-          <TextEffect
-            preset="blur"
-            per="word"
-            as="span"
-            className="block text-lg font-medium tracking-tight text-foreground"
-            variants={{
-              item: {
-                hidden: { opacity: 0, filter: 'blur(4px)' },
-                visible: { opacity: 1, filter: 'blur(0px)', transition: { duration: 0.25 } },
-                exit: { opacity: 0, filter: 'blur(4px)', transition: { duration: 0.25 } },
-              },
-            }}
-          >
-            Reporter by Radiologic™
-          </TextEffect>
-        </div>
-      </header>
-
-      {/* Conteúdo central */}
-      <main className="flex-1 flex items-center justify-center px-8 sm:px-12 lg:px-16 py-16">
+    <div className="min-h-screen bg-background flex">
+      {/* Left — login form */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 lg:px-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -119,7 +114,48 @@ export default function LoginPage() {
             </form>
           </div>
         </motion.div>
-      </main>
+      </div>
+
+      {/* Right — video panel with branding */}
+      <div className="hidden lg:flex w-1/2 relative overflow-hidden rounded-l-3xl bg-black">
+        <div
+          className="absolute inset-0"
+          style={{
+            animation: `zoom-in-smooth ${zoomDuration}s ease-in-out infinite`,
+          }}
+        >
+          <video
+            ref={videoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover opacity-40"
+          >
+            <source
+              src={process.env.NEXT_PUBLIC_BRAINMRI_URL || "/brainmri.mp4"}
+              type="video/mp4"
+            />
+          </video>
+        </div>
+
+        {/* Text overlay */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+          className="relative z-10 flex flex-col justify-end p-16 pb-20"
+        >
+          <h2 className="text-5xl font-medium tracking-tight text-white leading-tight">
+            Reporter
+            <br />
+            <span className="font-light">by </span>Radiologic™
+          </h2>
+          <p className="mt-4 text-lg text-white/50 tracking-tight">
+            Abre, lauda, ponto.
+          </p>
+        </motion.div>
+      </div>
     </div>
   )
 }
