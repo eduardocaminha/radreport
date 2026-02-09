@@ -13,7 +13,8 @@ import { motion } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { TextEffect } from "@/components/ui/text-effect"
-import { ArrowRight, Loader2 } from "lucide-react"
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react"
+import { Link } from "@/i18n/navigation"
 import { LocaleSwitcher } from "@/components/locale-switcher"
 
 export default function LoginPage() {
@@ -77,6 +78,16 @@ export default function LoginPage() {
       {/* Left — login form */}
       <div className="w-full lg:w-1/2 flex flex-col px-8 sm:px-16 lg:px-24 py-16">
         <div className="pt-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Link href="/landing">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground/40 hover:text-muted-foreground"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+            </Link>
           <TextEffect
             preset="blur"
             per="word"
@@ -91,6 +102,7 @@ export default function LoginPage() {
           >
             Reporter by Radiologic™
           </TextEffect>
+          </div>
           <LocaleSwitcher />
         </div>
 
