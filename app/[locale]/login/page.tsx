@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 
 const LOGIN_VIDEO_URL =
-  "https://fl1j1x13akrzltef.public.blob.vercel-storage.com/abdomenmri.mp4"
+  "https://fl1j1x13akrzltef.public.blob.vercel-storage.com/lumbarmri.mp4"
 import { useRouter } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 import { motion } from "motion/react"
