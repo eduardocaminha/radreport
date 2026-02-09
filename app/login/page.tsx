@@ -61,71 +61,65 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Left — login form */}
-      <div className="w-full lg:w-1/2 flex flex-col px-8 sm:px-16 lg:px-24">
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 lg:px-24 py-16">
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4 }}
-          className="pt-10"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="w-full max-w-sm"
         >
-          <span className="text-xl font-medium tracking-tight text-foreground">
-            Reporter by Radiologic™
-          </span>
-        </motion.div>
+          <div className="space-y-6">
+            <h1 className="text-xl font-medium tracking-tight text-foreground">
+              Entrar
+            </h1>
 
-        <div className="flex-1 flex items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
-            className="w-full max-w-sm"
-          >
-            <div className="space-y-6">
-              <div>
-                <h1 className="text-xl font-medium tracking-tight text-foreground">
-                  Entrar
-                </h1>
-                <p className="text-sm text-muted-foreground/60 mt-1">
-                  Insira a senha para acessar o sistema
-                </p>
-              </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <Input
+                type="password"
+                placeholder="Senha"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                className="h-11 rounded-full bg-muted border-border/50 text-foreground placeholder:text-muted-foreground/40 px-5 shadow-none"
+                autoFocus
+              />
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <Input
-                  type="password"
-                  placeholder="Senha"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  className="h-11 rounded-full bg-muted border-border/50 text-foreground placeholder:text-muted-foreground/40 px-5 shadow-none"
-                  autoFocus
-                />
-
-                {erro && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-destructive/5 border border-destructive/30 rounded-2xl p-4"
-                  >
-                    <p className="text-sm font-medium text-destructive">{erro}</p>
-                  </motion.div>
-                )}
-
-                <Button
-                  type="submit"
-                  className="w-full gap-2 rounded-full bg-foreground text-background hover:bg-foreground/90 shadow-none"
-                  disabled={carregando || !senha}
+              {erro && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-destructive/5 border border-destructive/30 rounded-2xl p-4"
                 >
-                  {carregando ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <ArrowRight className="w-4 h-4" />
-                  )}
-                  {carregando ? "Entrando..." : "Entrar"}
-                </Button>
-              </form>
-            </div>
-          </motion.div>
-        </div>
+                  <p className="text-sm font-medium text-destructive">{erro}</p>
+                </motion.div>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full gap-2 rounded-full bg-foreground text-background hover:bg-foreground/90 shadow-none"
+                disabled={carregando || !senha}
+              >
+                {carregando ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <ArrowRight className="w-4 h-4" />
+                )}
+                {carregando ? "Entrando..." : "Entrar"}
+              </Button>
+            </form>
+
+            <p className="text-xs text-muted-foreground/40 leading-relaxed">
+              Ao entrar, você concorda com os{" "}
+              <a href="/termos" className="underline hover:text-muted-foreground/60">
+                Termos de Uso
+              </a>{" "}
+              e a{" "}
+              <a href="/privacidade" className="underline hover:text-muted-foreground/60">
+                Política de Privacidade
+              </a>
+              .
+            </p>
+          </div>
+        </motion.div>
       </div>
 
       {/* Right — video panel with branding */}
@@ -163,9 +157,9 @@ export default function LoginPage() {
             <br />
             <span className="text-white">by Radiologic™</span>
             <br />
-            <span className="text-white/30">Abre, lauda,</span>
+            <span className="text-neutral-500">Abre, lauda,</span>
             <br />
-            <span className="text-white/30">ponto.</span>
+            <span className="text-neutral-500">ponto.</span>
           </h2>
         </motion.div>
       </div>
