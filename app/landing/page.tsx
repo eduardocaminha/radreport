@@ -103,7 +103,7 @@ export default function LandingPage() {
           transition={{ delay: 0.9, duration: 0.7, ease: "easeOut" }}
           className="mt-10 flex-1 min-h-[400px] sm:min-h-[480px] lg:min-h-[520px] relative rounded-2xl overflow-hidden bg-black flex items-center justify-center"
         >
-          <div className="w-[70%] h-[70%] animate-zoom-in-smooth">
+          <div className="w-[70%] h-[40%] animate-zoom-in-smooth">
             <video
               autoPlay
               loop
