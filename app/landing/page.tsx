@@ -8,22 +8,23 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
 export default function LandingPage() {
-  const [showNav, setShowNav] = useState(false)
+  const [showHeader, setShowHeader] = useState(false)
+  const [logoHovered, setLogoHovered] = useState(false)
   const [zoomDuration, setZoomDuration] = useState(20)
   const [isHoveringSlider, setIsHoveringSlider] = useState(false)
-  const sentinelRef = useRef<HTMLDivElement>(null)
+  const heroRowRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setShowNav(!entry.isIntersecting)
+        setShowHeader(!entry.isIntersecting)
       },
       { threshold: 0 }
     )
 
-    if (sentinelRef.current) {
-      observer.observe(sentinelRef.current)
+    if (heroRowRef.current) {
+      observer.observe(heroRowRef.current)
     }
 
     return () => observer.disconnect()
@@ -46,85 +47,105 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Sentinel for nav trigger */}
-      <div ref={sentinelRef} className="absolute top-0 h-20 w-full pointer-events-none" />
-
-      {/* Floating pill nav - appears on scroll */}
+      {/* Fixed header - appears when hero row scrolls out */}
       <AnimatePresence>
-        {showNav && (
-          <motion.nav
-            initial={{ opacity: 0, y: -20 }}
+        {showHeader && (
+          <motion.header
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed top-6 left-1/2 -translate-x-1/2 z-50"
+            className="bg-card/80 backdrop-blur-sm border-b border-border/30 fixed top-0 left-0 right-0 z-50"
           >
-            <div className="bg-card/80 backdrop-blur-md border border-border/30 rounded-full px-1.5 py-1.5 flex items-center gap-0.5 shadow-sm">
-              {["Produto", "Tecnologia", "Seguranca"].map((item) => (
-                <button
-                  key={item}
-                  className="px-5 py-2 text-xl text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted/50 cursor-default"
-                >
-                  {item}
-                </button>
-              ))}
+            <div className="max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 h-[72px] flex items-center justify-between">
+              {/* Logo with hover effect — identical to app header */}
+              <div
+                className="h-6 overflow-hidden cursor-pointer select-none min-w-[140px]"
+                onMouseEnter={() => setLogoHovered(true)}
+                onMouseLeave={() => setLogoHovered(false)}
+              >
+                <AnimatePresence mode="wait">
+                  {!logoHovered ? (
+                    <TextEffect
+                      key="reporter"
+                      preset="blur"
+                      per="word"
+                      as="span"
+                      className="block text-lg font-medium tracking-tight text-foreground"
+                      variants={{
+                        item: {
+                          hidden: { opacity: 0, filter: "blur(4px)" },
+                          visible: { opacity: 1, filter: "blur(0px)", transition: { duration: 0.25 } },
+                          exit: { opacity: 0, filter: "blur(4px)", transition: { duration: 0.25 } },
+                        },
+                      }}
+                    >
+                      Reporter
+                    </TextEffect>
+                  ) : (
+                    <motion.span
+                      key="radiologic"
+                      initial={{ opacity: 0, filter: "blur(4px)" }}
+                      animate={{ opacity: 1, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, filter: "blur(4px)" }}
+                      transition={{ duration: 0.25 }}
+                      className="block text-lg tracking-tight text-foreground"
+                    >
+                      <span className="font-light">by </span>
+                      <span className="font-medium">Radiologic™</span>
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* CTA — same style/size as Sair button in app header */}
               <Link href="/login">
                 <Button
                   size="sm"
-                  className="rounded-full bg-foreground text-background hover:bg-foreground/90 ml-1 px-5"
+                  variant="ghost"
+                  className="gap-2 text-muted-foreground hover:text-foreground"
                 >
-                  Entrar
+                  Comece a laudar
+                  <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
             </div>
-          </motion.nav>
+          </motion.header>
         )}
       </AnimatePresence>
 
-      {/* Hero - full viewport */}
-      <section className="min-h-screen flex flex-col px-8 sm:px-12 lg:px-16 pt-16 sm:pt-20 pb-10">
-        {/* Texto (esq) + CTA (dir) — linha acima do vídeo */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
-          <div className="text-xl font-medium tracking-tight leading-tight max-w-xl">
-            <TextEffect
-              preset="blur"
-              per="word"
-              as="span"
-              className="text-foreground"
-              variants={{
-                item: {
-                  hidden: { opacity: 0, filter: "blur(6px)" },
-                  visible: { opacity: 1, filter: "blur(0px)", transition: { duration: 0.35 } },
-                },
-              }}
-            >
-              Reporter by Radiologic™
-            </TextEffect>
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-              className="text-muted-foreground/70"
-            >
-              <br />
-              Você dita, o Reporter estrutura.
-              <br />
-              IA usada do jeito certo. Interface limpa.
-              <br />
-              Abre, lauda, ponto.
-            </motion.span>
-          </div>
+      {/* Hero */}
+      <section className="min-h-screen flex flex-col pb-10">
+        {/* Hero top row — matches header layout exactly (this is the sentinel) */}
+        <div
+          ref={heroRowRef}
+          className="max-w-6xl lg:max-w-none mx-auto w-full px-8 sm:px-12 lg:px-16 h-[72px] flex items-center justify-between shrink-0"
+        >
+          <TextEffect
+            preset="blur"
+            per="word"
+            as="span"
+            className="text-lg font-medium tracking-tight text-foreground"
+            variants={{
+              item: {
+                hidden: { opacity: 0, filter: "blur(6px)" },
+                visible: { opacity: 1, filter: "blur(0px)", transition: { duration: 0.35 } },
+              },
+            }}
+          >
+            Reporter by Radiologic™
+          </TextEffect>
 
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.3, duration: 0.4 }}
-            className="shrink-0"
+            transition={{ delay: 0.8, duration: 0.4 }}
           >
             <Link href="/login">
               <Button
-                size="lg"
-                className="gap-2 rounded-full px-8 bg-foreground text-background hover:bg-foreground/90 shadow-none"
+                size="sm"
+                variant="ghost"
+                className="gap-2 text-muted-foreground hover:text-foreground"
               >
                 Comece a laudar
                 <ArrowRight className="w-4 h-4" />
@@ -133,12 +154,26 @@ export default function LandingPage() {
           </motion.div>
         </div>
 
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="px-8 sm:px-12 lg:px-16 text-lg font-medium tracking-tight text-muted-foreground/70 leading-relaxed max-w-xl"
+        >
+          Você dita, o Reporter estrutura.
+          <br />
+          IA usada do jeito certo. Interface limpa.
+          <br />
+          Abre, lauda, ponto.
+        </motion.p>
+
         {/* Brain MRI video with subtle zoom-in */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9, duration: 0.7, ease: "easeOut" }}
-          className="mt-10 flex-1 min-h-[85vh] sm:min-h-[90vh] lg:min-h-[95vh] relative rounded-2xl overflow-hidden bg-black flex items-center justify-center"
+          className="mt-8 mx-8 sm:mx-12 lg:mx-16 flex-1 min-h-[85vh] sm:min-h-[90vh] lg:min-h-[95vh] relative rounded-2xl overflow-hidden bg-black flex items-center justify-center"
           onMouseEnter={() => {
             setIsHoveringSlider(true)
             videoRef.current?.pause()
