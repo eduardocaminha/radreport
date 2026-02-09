@@ -183,6 +183,4 @@
   0% { transform: scale(0.5); }
   100% { transform: scale(1.15); }
 }
-.animate-zoom-in-smooth {
-  animation: zoom-in-smooth 20s ease-in-out infinite alternate;
-}
+/* Duração aplicada via JS (vídeo.duration) para sincronizar com o loop */

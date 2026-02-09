@@ -9,7 +9,9 @@ import { ArrowRight } from "lucide-react"
 
 export default function LandingPage() {
   const [showNav, setShowNav] = useState(false)
+  const [zoomDuration, setZoomDuration] = useState(20)
   const sentinelRef = useRef<HTMLDivElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -24,6 +26,21 @@ export default function LandingPage() {
     }
 
     return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    const onLoadedMetadata = () => {
+      if (!Number.isNaN(video.duration) && video.duration > 0) {
+        setZoomDuration(video.duration)
+      }
+    }
+    video.addEventListener("loadedmetadata", onLoadedMetadata)
+    if (video.readyState >= 1 && !Number.isNaN(video.duration)) {
+      setZoomDuration(video.duration)
+    }
+    return () => video.removeEventListener("loadedmetadata", onLoadedMetadata)
   }, [])
 
   return (
@@ -120,10 +137,16 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9, duration: 0.7, ease: "easeOut" }}
-          className="mt-10 flex-1 min-h-[400px] sm:min-h-[480px] lg:min-h-[520px] relative rounded-2xl overflow-hidden bg-black flex items-center justify-center"
+          className="mt-10 flex-1 min-h-[85vh] sm:min-h-[90vh] lg:min-h-[95vh] relative rounded-2xl overflow-hidden bg-black flex items-center justify-center"
         >
-          <div className="w-[45%] h-[28%] animate-zoom-in-smooth">
+          <div
+            className="w-[45%] h-[28%]"
+            style={{
+              animation: `zoom-in-smooth ${zoomDuration}s ease-in-out infinite`,
+            }}
+          >
             <video
+              ref={videoRef}
               autoPlay
               loop
               muted
