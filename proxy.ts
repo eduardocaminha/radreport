@@ -36,7 +36,7 @@ export function proxy(request: NextRequest) {
 
   // Check auth for all other pages
   if (!authCookie?.value) {
-    return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+    return NextResponse.redirect(new URL(`/${locale}/landing`, request.url));
   }
 
   return intlMiddleware(request);
