@@ -55,7 +55,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="bg-card/80 backdrop-blur-sm border-b border-border/30 fixed top-0 left-0 right-0 z-50"
+            className="bg-card border-b border-border/30 fixed top-0 left-0 right-0 z-50"
           >
             <div className="max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 h-[72px] flex items-center justify-between">
               {/* Logo with hover effect — identical to app header */}
@@ -117,8 +117,9 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="min-h-screen flex flex-col px-8 sm:px-12 lg:px-16 pt-16 sm:pt-20 pb-10">
         {/* Texto (esq) + CTA (dir) — linha acima do vídeo */}
-        <div ref={heroRowRef} className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
           <div className="text-xl font-medium tracking-tight leading-tight max-w-xl">
+            <span ref={heroRowRef}>
             <TextEffect
               preset="blur"
               per="word"
@@ -133,6 +134,7 @@ export default function LandingPage() {
             >
               Reporter by Radiologic™
             </TextEffect>
+            </span>
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -156,8 +158,8 @@ export default function LandingPage() {
           >
             <Link href="/login">
               <Button
-                size="lg"
-                className="gap-2 rounded-full px-8 bg-foreground text-background hover:bg-foreground/90 shadow-none"
+                size="sm"
+                className="gap-2 rounded-full px-6 bg-foreground text-background hover:bg-foreground/90 shadow-none"
               >
                 Comece a laudar
                 <ArrowRight className="w-4 h-4" />
