@@ -2,8 +2,6 @@
 
 import { useState } from "react"
 
-const LOGIN_VIDEO_URL =
-  "https://fl1j1x13akrzltef.public.blob.vercel-storage.com/lumbarmri.mp4"
 import { useRouter } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 import { motion } from "motion/react"
@@ -15,6 +13,7 @@ import { Link } from "@/i18n/navigation"
 import { LocaleSwitcher } from "@/components/locale-switcher"
 
 export default function LoginPage() {
+  const LOGIN_VIDEO_URL = "https://fl1j1x13akrzltef.public.blob.vercel-storage.com/lumbarmri.mp4"
   const [senha, setSenha] = useState("")
   const [erro, setErro] = useState("")
   const [carregando, setCarregando] = useState(false)
@@ -151,7 +150,7 @@ export default function LoginPage() {
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-40"
+          className="absolute inset-0 w-full h-full object-cover opacity-25"
         >
           <source src={LOGIN_VIDEO_URL} type="video/mp4" />
         </video>

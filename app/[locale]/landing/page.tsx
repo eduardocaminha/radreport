@@ -1,9 +1,6 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-
-const LANDING_VIDEO_URL =
-  "https://fl1j1x13akrzltef.public.blob.vercel-storage.com/brainmri.mp4"
 import { motion, AnimatePresence, useScroll, useTransform } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { TextEffect } from "@/components/ui/text-effect"
@@ -13,6 +10,7 @@ import { ArrowRight } from "lucide-react"
 import { LocaleSwitcher } from "@/components/locale-switcher"
 
 export default function LandingPage() {
+  const LANDING_VIDEO_URL = "https://fl1j1x13akrzltef.public.blob.vercel-storage.com/brain-mri.mp4"
   const t = useTranslations("Landing")
   const [isStuck, setIsStuck] = useState(false)
   const [logoHovered, setLogoHovered] = useState(false)
