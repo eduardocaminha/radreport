@@ -76,14 +76,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Left — login form */}
-      <div className="w-full lg:w-1/2 flex flex-col px-8 sm:px-16 lg:px-24 py-16">
-        <div className="pt-2 flex items-center justify-between">
+      <div className="w-full lg:w-1/2 flex flex-col px-8 sm:px-12 lg:px-16 py-16">
+        <div className="h-[72px] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Link href="/landing">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-muted-foreground/40 hover:text-muted-foreground"
+                className="h-8 w-8 bg-muted text-muted-foreground/40 hover:text-muted-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
               </Button>
