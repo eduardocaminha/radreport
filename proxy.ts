@@ -1,47 +1,60 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import createMiddleware from 'next-intl/middleware';
-import { routing } from './i18n/routing';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
+import createIntlMiddleware from 'next-intl/middleware'
+import { routing } from './i18n/routing'
 
-const AUTH_COOKIE_NAME = 'radreport_auth';
+const intlMiddleware = createIntlMiddleware(routing)
 
-const intlMiddleware = createMiddleware(routing);
+const isPublicRoute = createRouteMatcher([
+  '/(pt-BR|en-US)/landing',
+  '/(pt-BR|en-US)/login',
+  '/landing',
+  '/login',
+  '/api/webhook(.*)',
+])
 
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+export const proxy = clerkMiddleware(async (auth, request) => {
+  const { pathname } = request.nextUrl
 
-  // Skip locale handling for API routes
+  // API routes — protect non-public ones
   if (pathname.startsWith('/api/')) {
-    return NextResponse.next();
-  }
-
-  // Extract locale-less path for auth checks
-  const localePattern = /^\/(pt-BR|en-US)(\/|$)/;
-  const match = pathname.match(localePattern);
-  const locale = match?.[1] || routing.defaultLocale;
-  const pathWithoutLocale = match ? pathname.replace(localePattern, '/') || '/' : pathname;
-
-  const authCookie = request.cookies.get(AUTH_COOKIE_NAME);
-  const isLoginPage = pathWithoutLocale === '/login';
-  const isLandingPage = pathWithoutLocale === '/landing';
-
-  // Allow access to landing, login without auth
-  if (isLoginPage || isLandingPage) {
-    // If already logged in and trying to access login, redirect to home
-    if (isLoginPage && authCookie?.value) {
-      return NextResponse.redirect(new URL(`/${locale}`, request.url));
+    if (!isPublicRoute(request)) {
+      await auth.protect()
     }
-    return intlMiddleware(request);
+    return
   }
 
-  // Check auth for all other pages
-  if (!authCookie?.value) {
-    return NextResponse.redirect(new URL(`/${locale}/landing`, request.url));
+  const { userId } = await auth()
+
+  // Extract locale
+  const localePattern = /^\/(pt-BR|en-US)(\/|$)/
+  const match = pathname.match(localePattern)
+  const locale = match?.[1] || routing.defaultLocale
+  const pathWithoutLocale = match
+    ? pathname.replace(localePattern, '/') || '/'
+    : pathname
+
+  // Authenticated user visiting login → redirect to home
+  if (userId && pathWithoutLocale === '/login') {
+    return NextResponse.redirect(new URL(`/${locale}`, request.url))
   }
 
-  return intlMiddleware(request);
-}
+  // Public routes — allow access
+  if (isPublicRoute(request)) {
+    return intlMiddleware(request)
+  }
+
+  // Protected routes — redirect to landing if not authenticated
+  if (!userId) {
+    return NextResponse.redirect(new URL(`/${locale}/landing`, request.url))
+  }
+
+  return intlMiddleware(request)
+})
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.svg|.*\\.mp4).*)'],
-};
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.svg|.*\\.mp4).*)',
+    '/(api|trpc)(.*)',
+  ],
+}

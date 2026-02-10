@@ -32,11 +32,26 @@
     "placeholder": "Paste or type dictated text here...\n\nExamples:\n• ct abdomen with contrast, microcalculus left kidney 0.2\n• ct chest without contrast, normal\n• ct head without contrast, ischemic stroke mca territory right"
   },
   "Login": {
-    "title": "Sign in",
+    "titleSignIn": "Sign in",
+    "titleSignUp": "Create account",
+    "titleVerify": "Verify email",
+    "emailPlaceholder": "Email",
     "passwordPlaceholder": "Password",
-    "submit": "Sign in",
-    "submitting": "Signing in...",
+    "codePlaceholder": "Verification code",
+    "signIn": "Sign in",
+    "signUp": "Create account",
+    "verify": "Verify",
+    "signingIn": "Signing in...",
+    "signingUp": "Creating account...",
+    "verifying": "Verifying...",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create account",
+    "hasAccount": "Already have an account?",
+    "signInLink": "Sign in",
+    "verificationSent": "Code sent to {email}",
     "errorDefault": "Login failed",
+    "errorSignUp": "Error creating account",
+    "errorVerify": "Invalid code",
     "errorConnection": "Connection error",
     "termsPrefix": "By signing in, you agree to the",
     "termsLink": "Terms of Use",
@@ -68,6 +83,8 @@
     "invalidApiKey": "Invalid API key",
     "processingError": "Error processing. Please try again",
     "noFile": "No file uploaded",
-    "uploadError": "Error uploading file. Check BLOB_READ_WRITE_TOKEN."
+    "uploadError": "Error uploading file. Check BLOB_READ_WRITE_TOKEN.",
+    "tierLimitReached": "Monthly report limit reached. Upgrade to generate more.",
+    "unauthorized": "Unauthorized"
   }
 }

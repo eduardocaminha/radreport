@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-
+import { useSignIn, useSignUp } from "@clerk/nextjs"
 import { useRouter } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 import { motion } from "motion/react"
@@ -12,40 +12,99 @@ import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import { LocaleSwitcher } from "@/components/locale-switcher"
 
+type Mode = "signIn" | "signUp" | "verify"
+
 export default function LoginPage() {
   const LOGIN_VIDEO_URL = "https://fl1j1x13akrzltef.public.blob.vercel-storage.com/lumbarmri.mp4"
+
+  const [mode, setMode] = useState<Mode>("signIn")
+  const [email, setEmail] = useState("")
   const [senha, setSenha] = useState("")
+  const [code, setCode] = useState("")
   const [erro, setErro] = useState("")
   const [carregando, setCarregando] = useState(false)
   const router = useRouter()
   const t = useTranslations("Login")
 
-  async function handleSubmit(e: React.FormEvent) {
+  const { isLoaded: signInLoaded, signIn, setActive: setSignInActive } = useSignIn()
+  const { isLoaded: signUpLoaded, signUp, setActive: setSignUpActive } = useSignUp()
+
+  async function handleSignIn(e: React.FormEvent) {
     e.preventDefault()
+    if (!signInLoaded) return
     setErro("")
     setCarregando(true)
 
     try {
-      const response = await fetch("/api/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ senha }),
+      const result = await signIn.create({
+        identifier: email,
+        password: senha,
       })
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        setErro(data.erro || t("errorDefault"))
-        return
+      if (result.status === "complete") {
+        await setSignInActive({ session: result.createdSessionId })
+        router.push("/")
       }
-
-      router.push("/")
-      router.refresh()
-    } catch {
-      setErro(t("errorConnection"))
+    } catch (err: unknown) {
+      const clerkErr = err as { errors?: { longMessage?: string }[] }
+      setErro(clerkErr.errors?.[0]?.longMessage || t("errorDefault"))
     } finally {
       setCarregando(false)
     }
+  }
+
+  async function handleSignUp(e: React.FormEvent) {
+    e.preventDefault()
+    if (!signUpLoaded) return
+    setErro("")
+    setCarregando(true)
+
+    try {
+      await signUp.create({
+        emailAddress: email,
+        password: senha,
+      })
+
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" })
+      setMode("verify")
+    } catch (err: unknown) {
+      const clerkErr = err as { errors?: { longMessage?: string }[] }
+      setErro(clerkErr.errors?.[0]?.longMessage || t("errorSignUp"))
+    } finally {
+      setCarregando(false)
+    }
+  }
+
+  async function handleVerify(e: React.FormEvent) {
+    e.preventDefault()
+    if (!signUpLoaded) return
+    setErro("")
+    setCarregando(true)
+
+    try {
+      const result = await signUp.attemptEmailAddressVerification({ code })
+
+      if (result.status === "complete") {
+        await setSignUpActive({ session: result.createdSessionId })
+        router.push("/")
+      }
+    } catch (err: unknown) {
+      const clerkErr = err as { errors?: { longMessage?: string }[] }
+      setErro(clerkErr.errors?.[0]?.longMessage || t("errorVerify"))
+    } finally {
+      setCarregando(false)
+    }
+  }
+
+  const handleSubmit =
+    mode === "signIn" ? handleSignIn : mode === "signUp" ? handleSignUp : handleVerify
+
+  const inputStyle =
+    "h-11 rounded-full bg-muted border-border/50 text-foreground placeholder:text-muted-foreground/40 px-5 shadow-none focus-visible:ring-border/60 focus-visible:border-border selection:bg-border/60 selection:text-foreground"
+
+  function switchMode() {
+    setMode(mode === "signIn" ? "signUp" : "signIn")
+    setErro("")
   }
 
   return (
@@ -90,18 +149,48 @@ export default function LoginPage() {
         >
           <div className="space-y-6">
             <h1 className="text-xl font-medium tracking-tight text-foreground">
-              {t("title")}
+              {mode === "verify"
+                ? t("titleVerify")
+                : mode === "signIn"
+                  ? t("titleSignIn")
+                  : t("titleSignUp")}
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <Input
-                type="password"
-                placeholder={t("passwordPlaceholder")}
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                className="h-11 rounded-full bg-muted border-border/50 text-foreground placeholder:text-muted-foreground/40 px-5 shadow-none focus-visible:ring-border/60 focus-visible:border-border selection:bg-border/60 selection:text-foreground"
-                autoFocus
-              />
+              {mode === "verify" ? (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    {t("verificationSent", { email })}
+                  </p>
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder={t("codePlaceholder")}
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    className={inputStyle}
+                    autoFocus
+                  />
+                </>
+              ) : (
+                <>
+                  <Input
+                    type="email"
+                    placeholder={t("emailPlaceholder")}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={inputStyle}
+                    autoFocus
+                  />
+                  <Input
+                    type="password"
+                    placeholder={t("passwordPlaceholder")}
+                    value={senha}
+                    onChange={(e) => setSenha(e.target.value)}
+                    className={inputStyle}
+                  />
+                </>
+              )}
 
               {erro && (
                 <motion.div
@@ -116,16 +205,36 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 className="w-full gap-2 rounded-full bg-foreground text-background hover:bg-foreground/90 shadow-none"
-                disabled={carregando || !senha}
+                disabled={
+                  carregando ||
+                  (mode === "verify" ? !code : !email || !senha)
+                }
               >
                 {carregando ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <ArrowRight className="w-4 h-4" />
                 )}
-                {carregando ? t("submitting") : t("submit")}
+                {mode === "verify"
+                  ? carregando ? t("verifying") : t("verify")
+                  : mode === "signIn"
+                    ? carregando ? t("signingIn") : t("signIn")
+                    : carregando ? t("signingUp") : t("signUp")}
               </Button>
             </form>
+
+            {mode !== "verify" && (
+              <p className="text-sm text-muted-foreground/60">
+                {mode === "signIn" ? t("noAccount") : t("hasAccount")}{" "}
+                <button
+                  type="button"
+                  onClick={switchMode}
+                  className="underline hover:text-foreground transition-colors"
+                >
+                  {mode === "signIn" ? t("createAccount") : t("signInLink")}
+                </button>
+              </p>
+            )}
 
             <p className="text-xs text-muted-foreground/40 leading-relaxed">
               {t("termsPrefix")}{" "}

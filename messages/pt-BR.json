@@ -32,11 +32,26 @@
     "placeholder": "Cole ou digite o texto ditado aqui...\n\nExemplos:\n• tc abdome com contraste, microcalculo no rim esquerdo 0,2\n• tomo torax sem, normal\n• tc cranio sem contraste, avc isquemico no territorio da acm direita"
   },
   "Login": {
-    "title": "Entrar",
+    "titleSignIn": "Entrar",
+    "titleSignUp": "Criar conta",
+    "titleVerify": "Verificar e-mail",
+    "emailPlaceholder": "E-mail",
     "passwordPlaceholder": "Senha",
-    "submit": "Entrar",
-    "submitting": "Entrando...",
+    "codePlaceholder": "Código de verificação",
+    "signIn": "Entrar",
+    "signUp": "Criar conta",
+    "verify": "Verificar",
+    "signingIn": "Entrando...",
+    "signingUp": "Criando conta...",
+    "verifying": "Verificando...",
+    "noAccount": "Não tem conta?",
+    "createAccount": "Criar conta",
+    "hasAccount": "Já tem conta?",
+    "signInLink": "Entrar",
+    "verificationSent": "Código enviado para {email}",
     "errorDefault": "Erro ao fazer login",
+    "errorSignUp": "Erro ao criar conta",
+    "errorVerify": "Código inválido",
     "errorConnection": "Erro de conexão",
     "termsPrefix": "Ao entrar, você concorda com os",
     "termsLink": "Termos de Uso",
@@ -68,6 +83,8 @@
     "invalidApiKey": "Chave da API inválida",
     "processingError": "Erro ao processar. Tente novamente",
     "noFile": "Nenhum arquivo enviado",
-    "uploadError": "Erro ao enviar arquivo. Verifique BLOB_READ_WRITE_TOKEN."
+    "uploadError": "Erro ao enviar arquivo. Verifique BLOB_READ_WRITE_TOKEN.",
+    "tierLimitReached": "Limite de laudos atingido para este mês. Faça upgrade para gerar mais.",
+    "unauthorized": "Não autorizado"
   }
 }

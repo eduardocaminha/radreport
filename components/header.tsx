@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useRouter } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
+import { useClerk, useUser } from "@clerk/nextjs"
 import { LocaleSwitcher } from "@/components/locale-switcher"
 
 type ReportMode = "ps" | "eletivo" | "comparativo"
@@ -21,10 +22,15 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
   const router = useRouter()
   const t = useTranslations("Header")
   const [logoHovered, setLogoHovered] = useState(false)
+  const { signOut } = useClerk()
+  const { user } = useUser()
+
+  const initials = user
+    ? `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase() || user.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() || "U"
+    : "U"
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      // Ctrl ou Cmd + Shift + tecla
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey) {
         if (e.key.toLowerCase() === "p") {
           e.preventDefault()
@@ -44,16 +50,9 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
   }, [onReportModeChange])
 
   async function handleLogout() {
-    try {
-      await fetch("/api/auth", {
-        method: "DELETE",
-      })
-      router.push("/login")
-      router.refresh()
-    } catch {
-      // Em caso de erro, ainda redireciona para login
-      router.push("/login")
-    }
+    await signOut(() => {
+      router.push("/landing")
+    })
   }
 
   return (
@@ -106,7 +105,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
         <div className="flex items-center gap-2">
           <LocaleSwitcher />
           <Avatar size="default">
-            <AvatarFallback className="bg-background text-muted-foreground">U</AvatarFallback>
+            <AvatarFallback className="bg-background text-muted-foreground">{initials}</AvatarFallback>
           </Avatar>
           <Button
             onClick={handleLogout}

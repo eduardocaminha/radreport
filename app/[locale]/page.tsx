@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { motion } from "motion/react"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Header } from "@/components/header"
 import { DictationInput } from "@/components/dictation-input"
 import { ReportOutput } from "@/components/report-output"
@@ -39,30 +39,60 @@ export default function Home() {
   const abortControllerRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
-    const saved = localStorage.getItem("radreport_historico")
-    if (saved) {
-      setHistorico(JSON.parse(saved))
-    }
+    fetch(`/api/reports?limit=${MAX_HISTORICO}`)
+      .then((res) => res.json())
+      .then((data: { id: number; inputText: string; generatedReport: string; createdAt: string }[]) => {
+        setHistorico(
+          data.map((r) => ({
+            id: r.id.toString(),
+            texto: r.inputText.slice(0, 100),
+            laudo: r.generatedReport,
+            data: new Date(r.createdAt).toLocaleString("pt-BR"),
+          }))
+        )
+      })
+      .catch(() => {})
   }, [])
 
-  const adicionarAoHistorico = (texto: string, laudo: string) => {
-    const novoItem: ItemHistorico = {
-      id: Date.now().toString(),
-      texto: texto.slice(0, 100),
-      laudo,
-      data: new Date().toLocaleString("pt-BR"),
-    }
+  const adicionarAoHistorico = useCallback(
+    async (texto: string, laudo: string) => {
+      try {
+        const res = await fetch("/api/reports", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            inputText: texto,
+            generatedReport: laudo,
+            mode: reportMode,
+          }),
+        })
+        const report = await res.json()
+        const novoItem: ItemHistorico = {
+          id: report.id.toString(),
+          texto: texto.slice(0, 100),
+          laudo,
+          data: new Date(report.createdAt).toLocaleString("pt-BR"),
+        }
+        setHistorico((prev) => [novoItem, ...prev].slice(0, MAX_HISTORICO))
+      } catch {
+        // Fallback: local-only if API fails
+        const novoItem: ItemHistorico = {
+          id: Date.now().toString(),
+          texto: texto.slice(0, 100),
+          laudo,
+          data: new Date().toLocaleString("pt-BR"),
+        }
+        setHistorico((prev) => [novoItem, ...prev].slice(0, MAX_HISTORICO))
+      }
+    },
+    [reportMode]
+  )
 
-    setHistorico((prev) => {
-      const novo = [novoItem, ...prev].slice(0, MAX_HISTORICO)
-      localStorage.setItem("radreport_historico", JSON.stringify(novo))
-      return novo
-    })
-  }
-
-  const limparHistorico = () => {
+  const limparHistorico = async () => {
     setHistorico([])
-    localStorage.removeItem("radreport_historico")
+    try {
+      await fetch("/api/reports", { method: "DELETE" })
+    } catch {}
   }
 
   const handleGenerate = async () => {
