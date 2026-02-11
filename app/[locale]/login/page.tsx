@@ -34,7 +34,7 @@ const floatingInputCls =
   "peer h-12 rounded-full bg-muted border-border/50 text-foreground px-5 pt-5 pb-1 shadow-none transition-all duration-200 focus-visible:border-border focus-visible:ring-[3px] focus-visible:ring-border/30 selection:bg-border/60 selection:text-foreground placeholder:text-transparent"
 
 const floatingLabelCls =
-  "pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground/40 transition-all duration-200 origin-left peer-focus:top-2.5 peer-focus:translate-y-0 peer-focus:text-[11px] peer-[:not(:placeholder-shown)]:top-2.5 peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:text-[11px]"
+  "pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground/40 transition-all duration-200 origin-left peer-focus:top-0 peer-focus:translate-y-0 peer-focus:text-[11px] peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:text-[11px]"
 
 function FloatingField({
   label,
