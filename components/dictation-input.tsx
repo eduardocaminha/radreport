@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
+import { SquircleCard } from "@/components/ui/squircle-card"
 import { Clock, Sparkles, Loader2, X, Search, AudioLines, Check } from "lucide-react"
 import { useTranslations } from "next-intl"
 
@@ -283,16 +284,18 @@ export function DictationInput({
         )}
       </AnimatePresence>
 
-      {/* Textarea auto-grow: comeca com 1 linha, expande com wrap */}
-      <textarea
-        ref={textareaRef}
-        placeholder={animatedPlaceholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={onKeyDown}
-        className="w-full bg-transparent border-none outline-none resize-none text-sm sm:text-base leading-relaxed text-foreground placeholder:text-muted-foreground/30 font-light overflow-hidden"
-        rows={1}
-      />
+      {/* Textarea auto-grow inside squircle card */}
+      <SquircleCard className="p-8">
+        <textarea
+          ref={textareaRef}
+          placeholder={animatedPlaceholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={onKeyDown}
+          className="w-full bg-transparent border-none outline-none resize-none text-sm sm:text-base leading-relaxed text-foreground placeholder:text-muted-foreground/30 font-light overflow-hidden"
+          rows={1}
+        />
+      </SquircleCard>
 
       {/* Botao Gerar Laudo + Kbd animado: canto direito inferior */}
       <div className="flex items-center justify-end mt-4">

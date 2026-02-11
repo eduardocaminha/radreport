@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react"
 import { LogOut } from "lucide-react"
 import { TextEffect } from "@/components/ui/text-effect"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { useRouter } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
@@ -105,6 +105,9 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
         <div className="flex items-center gap-2">
           <LocaleSwitcher />
           <Avatar size="default">
+            {user?.imageUrl && (
+              <AvatarImage src={user.imageUrl} alt={user.fullName ?? "Avatar"} />
+            )}
             <AvatarFallback className="bg-background text-muted-foreground">{initials}</AvatarFallback>
           </Avatar>
           <Button

@@ -11,7 +11,7 @@ import { LocaleSwitcher } from "@/components/locale-switcher"
 import { getSvgPath } from "figma-squircle"
 
 export default function LandingPage() {
-  const LANDING_VIDEO_URL = "https://fl1j1x13akrzltef.public.blob.vercel-storage.com/brain-mri.mp4"
+  const LANDING_VIDEO_URL = "https://fl1j1x13akrzltef.public.blob.vercel-storage.com/brainmri4.mp4"
   const t = useTranslations("Landing")
   const [isStuck, setIsStuck] = useState(false)
   const [logoHovered, setLogoHovered] = useState(false)
