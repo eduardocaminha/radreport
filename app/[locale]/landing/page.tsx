@@ -282,7 +282,7 @@ export default function LandingPage() {
             clipPath: squirclePath ? `path('${squirclePath}')` : undefined,
           }}
           transition={{ delay: 0.9, duration: 0.7, ease: "easeOut" }}
-          className="mt-10 sm:mt-10 mx-8 sm:mx-12 lg:mx-16 flex-1 min-h-0 sm:min-h-[90vh] lg:min-h-[95vh] relative overflow-hidden bg-black flex items-center justify-center"
+          className="mt-16 sm:mt-10 mx-8 sm:mx-12 lg:mx-16 flex-1 min-h-0 sm:min-h-[90vh] lg:min-h-[95vh] relative overflow-hidden bg-black flex items-center justify-center"
           onMouseEnter={() => {
             setIsHoveringSlider(true)
             videoRef.current?.pause()
