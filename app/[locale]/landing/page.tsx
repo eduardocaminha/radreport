@@ -250,7 +250,7 @@ export default function LandingPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.4 }}
-          className="sm:hidden px-8 mt-6"
+          className="sm:hidden px-8 mt-6 shrink-0"
         >
           <Link href="/login">
             <Button
@@ -262,6 +262,9 @@ export default function LandingPage() {
           </Link>
         </motion.div>
 
+        {/* Só mobile: espaçador para centralizar o slider entre CTA e footer */}
+        <div className="flex-1 min-h-0 sm:hidden" aria-hidden />
+
         {/* Brain MRI video with subtle zoom-in */}
         <motion.div
           ref={videoContainerRef}
@@ -272,7 +275,7 @@ export default function LandingPage() {
             clipPath: squirclePath ? `path('${squirclePath}')` : undefined,
           }}
           transition={{ delay: 0.9, duration: 0.7, ease: "easeOut" }}
-          className="mt-4 sm:mt-10 mx-8 sm:mx-12 lg:mx-16 flex-1 min-h-[48vh] sm:min-h-[90vh] lg:min-h-[95vh] relative overflow-hidden bg-black flex items-center justify-center"
+          className="mt-0 sm:mt-10 mx-8 sm:mx-12 lg:mx-16 shrink-0 min-h-[48vh] sm:flex-1 sm:min-h-[90vh] lg:min-h-[95vh] relative overflow-hidden bg-black flex items-center justify-center"
           onMouseEnter={() => {
             setIsHoveringSlider(true)
             videoRef.current?.pause()
@@ -305,14 +308,17 @@ export default function LandingPage() {
           <div className="pointer-events-none absolute inset-0 backdrop-blur-[1px] bg-white/2 dark:bg-black/4" />
           <div className="pointer-events-none absolute inset-0 border border-white/8 dark:border-white/6 rounded-[inherit]" />
         </motion.div>
-      </section>
 
-      {/* Footer */}
-      <footer className="px-8 sm:px-12 lg:px-16 py-12">
-        <p className="text-xl text-muted-foreground/30">
-          {t("footer", { year: new Date().getFullYear() })}
-        </p>
-      </footer>
+        {/* Só mobile: espaçador para centralizar o slider entre CTA e footer */}
+        <div className="flex-1 min-h-0 sm:hidden" aria-hidden />
+
+        {/* Footer (dentro da section no mobile para o slider ficar ao meio entre CTA e footer) */}
+        <footer className="px-8 sm:px-12 lg:px-16 py-12 shrink-0">
+          <p className="text-xl text-muted-foreground/30">
+            {t("footer", { year: new Date().getFullYear() })}
+          </p>
+        </footer>
+      </section>
     </div>
   )
 }
