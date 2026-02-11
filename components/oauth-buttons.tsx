@@ -1,7 +1,7 @@
 "use client"
 
 import { useSignIn, useSignUp } from "@clerk/nextjs"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import { Button } from "@/components/ui/button"
 import type { OAuthStrategy } from "@clerk/types"
 
@@ -54,6 +54,7 @@ export function OAuthButtons({ mode }: { mode: "signIn" | "signUp" }) {
   const { signIn } = useSignIn()
   const { signUp } = useSignUp()
   const t = useTranslations("Login")
+  const locale = useLocale()
 
   async function handleOAuth(strategy: OAuthStrategy) {
     const handler = mode === "signIn" ? signIn : signUp
@@ -62,8 +63,8 @@ export function OAuthButtons({ mode }: { mode: "signIn" | "signUp" }) {
     try {
       await handler.authenticateWithRedirect({
         strategy,
-        redirectUrl: "/login/sso-callback",
-        redirectUrlComplete: "/",
+        redirectUrl: `/${locale}/login/sso-callback`,
+        redirectUrlComplete: `/${locale}`,
       })
     } catch (err) {
       console.error("OAuth error:", err)

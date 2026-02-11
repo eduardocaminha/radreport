@@ -38,7 +38,11 @@ export default async function LocaleLayout({
   const messages = (await import(`../../messages/${locale}.json`)).default
 
   return (
-    <ClerkProvider localization={clerkLocales[locale as keyof typeof clerkLocales]}>
+    <ClerkProvider
+      localization={clerkLocales[locale as keyof typeof clerkLocales]}
+      signInFallbackRedirectUrl={`/${locale}`}
+      signUpFallbackRedirectUrl={`/${locale}`}
+    >
       <NextIntlClientProvider locale={locale} messages={messages}>
         {children}
       </NextIntlClientProvider>
