@@ -35,18 +35,14 @@ export default function LandingPage() {
   })
   const videoY = useTransform(scrollYProgress, [0, 0.5], [450, 0])
 
-  // Compute squircle clip-path (rounded top corners only)
+  // Compute squircle clip-path (all four corners)
   const squirclePath = useMemo(() => {
     if (containerSize.width === 0 || containerSize.height === 0) return undefined
     return getSvgPath({
       width: containerSize.width,
       height: containerSize.height,
-      cornerRadius: 0,
+      cornerRadius: 32,
       cornerSmoothing: 0.6,
-      topLeftCornerRadius: 32,
-      topRightCornerRadius: 32,
-      bottomLeftCornerRadius: 0,
-      bottomRightCornerRadius: 0,
     })
   }, [containerSize])
 
@@ -227,8 +223,6 @@ export default function LandingPage() {
           style={{
             y: videoY,
             clipPath: squirclePath ? `path('${squirclePath}')` : undefined,
-            maskImage: "linear-gradient(to bottom, black 25%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(to bottom, black 25%, transparent 100%)",
           }}
           transition={{ delay: 0.9, duration: 0.7, ease: "easeOut" }}
           className="mt-10 mx-8 sm:mx-12 lg:mx-16 flex-1 min-h-[85vh] sm:min-h-[90vh] lg:min-h-[95vh] relative overflow-hidden bg-black flex items-center justify-center"
