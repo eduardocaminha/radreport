@@ -121,7 +121,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <section className="min-h-screen flex flex-col pb-10">
+      <section className="min-h-dvh flex flex-col pb-0 sm:pb-10">
         {/* Top spacing */}
         <div className="pt-16 sm:pt-20" />
 
@@ -262,8 +262,8 @@ export default function LandingPage() {
           </Link>
         </motion.div>
 
-        {/* Só mobile: espaçador para centralizar o slider entre CTA e footer */}
-        <div className="flex-1 min-h-0 sm:hidden" aria-hidden />
+        {/* Mobile: spacer above slider — larger share so slider sits lower */}
+        <div className="flex-3 min-h-4 sm:hidden" aria-hidden />
 
         {/* Brain MRI video with subtle zoom-in */}
         <motion.div
@@ -275,7 +275,7 @@ export default function LandingPage() {
             clipPath: squirclePath ? `path('${squirclePath}')` : undefined,
           }}
           transition={{ delay: 0.9, duration: 0.7, ease: "easeOut" }}
-          className="mt-0 sm:mt-10 mx-8 sm:mx-12 lg:mx-16 shrink-0 min-h-[48vh] sm:flex-1 sm:min-h-[90vh] lg:min-h-[95vh] relative overflow-hidden bg-black flex items-center justify-center"
+          className="mt-0 sm:mt-10 mx-8 sm:mx-12 lg:mx-16 shrink-0 min-h-[38vh] sm:flex-1 sm:min-h-[90vh] lg:min-h-[95vh] relative overflow-hidden bg-black flex items-center justify-center"
           onMouseEnter={() => {
             setIsHoveringSlider(true)
             videoRef.current?.pause()
@@ -309,11 +309,11 @@ export default function LandingPage() {
           <div className="pointer-events-none absolute inset-0 border border-white/8 dark:border-white/6 rounded-[inherit]" />
         </motion.div>
 
-        {/* Só mobile: espaçador para centralizar o slider entre CTA e footer */}
-        <div className="flex-1 min-h-0 sm:hidden" aria-hidden />
+        {/* Mobile: spacer below slider — smaller share so footer stays visible */}
+        <div className="flex-2 min-h-2 sm:hidden" aria-hidden />
 
-        {/* Footer (dentro da section no mobile para o slider ficar ao meio entre CTA e footer) */}
-        <footer className="px-8 sm:px-12 lg:px-16 py-12 shrink-0">
+        {/* Footer (inside section on mobile so the slider sits between CTA and footer) */}
+        <footer className="px-8 sm:px-12 lg:px-16 py-5 sm:py-12 shrink-0">
           <p className="text-xl text-muted-foreground/30">
             {t("footer", { year: new Date().getFullYear() })}
           </p>
