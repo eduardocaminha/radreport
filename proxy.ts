@@ -6,10 +6,10 @@ import { routing } from './i18n/routing'
 const intlMiddleware = createIntlMiddleware(routing)
 
 const isPublicRoute = createRouteMatcher([
-  '/(pt-BR|en-US)/landing',
-  '/(pt-BR|en-US)/login',
+  '/(pt-BR|en-US|es)/landing',
+  '/(pt-BR|en-US|es)/login(.*)',
   '/landing',
-  '/login',
+  '/login(.*)',
   '/api/webhook(.*)',
 ])
 
@@ -27,7 +27,7 @@ export const proxy = clerkMiddleware(async (auth, request) => {
   const { userId } = await auth()
 
   // Extract locale
-  const localePattern = /^\/(pt-BR|en-US)(\/|$)/
+  const localePattern = /^\/(pt-BR|en-US|es)(\/|$)/
   const match = pathname.match(localePattern)
   const locale = match?.[1] || routing.defaultLocale
   const pathWithoutLocale = match

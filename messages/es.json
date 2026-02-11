@@ -1,0 +1,104 @@
+{
+  "Metadata": {
+    "title": "Reporter by Radiologic™",
+    "description": "Sistema personal para generación de informes de TC"
+  },
+  "Header": {
+    "logout": "Salir"
+  },
+  "DictationInput": {
+    "radiopaedia": "Radiopaedia",
+    "history": "Historial ({count})",
+    "lastReports": "Últimos informes",
+    "clear": "Limpiar",
+    "generateReport": "Generar informe",
+    "placeholder1": "tc abdomen con contraste, microcalculo en riñón izquierdo 0,2",
+    "placeholder2": "tc tórax sin contraste, normal",
+    "placeholder3": "tc cráneo sin contraste, ictus isquémico en territorio de acm derecha"
+  },
+  "ReportOutput": {
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "errorCopyHtml": "Error al copiar HTML formateado"
+  },
+  "Sugestoes": {
+    "title": "Sugerencias de completitud:"
+  },
+  "Resultado": {
+    "generating": "Generando informe...",
+    "placeholder": "El informe generado aparecerá aquí"
+  },
+  "Editor": {
+    "placeholder": "Pegue o escriba el texto dictado aquí...\n\nEjemplos:\n• tc abdomen con contraste, microcalculo en riñón izquierdo 0,2\n• tc tórax sin contraste, normal\n• tc cráneo sin contraste, ictus isquémico en territorio de acm derecha"
+  },
+  "Login": {
+    "titleSignIn": "Iniciar sesión",
+    "titleSignUp": "Crear cuenta",
+    "titleVerify": "Verificar correo",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "codePlaceholder": "Código de verificación",
+    "signIn": "Iniciar sesión",
+    "signUp": "Crear cuenta",
+    "verify": "Verificar",
+    "signingIn": "Iniciando sesión...",
+    "signingUp": "Creando cuenta...",
+    "verifying": "Verificando...",
+    "noAccount": "¿No tienes cuenta?",
+    "createAccount": "Crear cuenta",
+    "hasAccount": "¿Ya tienes cuenta?",
+    "signInLink": "Iniciar sesión",
+    "verificationSent": "Código enviado a {email}",
+    "errorDefault": "Error al iniciar sesión",
+    "errorSignUp": "Error al crear cuenta",
+    "errorVerify": "Código inválido",
+    "errorVerifyIncomplete": "Verificación incompleta. Inténtalo de nuevo.",
+    "errorPasswordMismatch": "Las contraseñas no coinciden",
+    "errorConnection": "Error de conexión",
+    "confirmPasswordPlaceholder": "Confirmar contraseña",
+    "orContinueWith": "o continúa con correo",
+    "continueWithGoogle": "Continuar con Google",
+    "continueWithApple": "Continuar con Apple",
+    "continueWithGithub": "Continuar con GitHub",
+    "resendCode": "Reenviar código",
+    "resending": "Reenviando...",
+    "resendCooldown": "Reenviar en {seconds}s",
+    "reqMin8": "Mínimo 8 caracteres",
+    "reqUppercase": "Una letra mayúscula",
+    "reqLowercase": "Una letra minúscula",
+    "reqNumber": "Un número",
+    "termsPrefix": "Al iniciar sesión, aceptas los",
+    "termsLink": "Términos de Uso",
+    "termsAnd": "y la",
+    "privacyLink": "Política de Privacidad",
+    "tagline1": "Abre,",
+    "tagline2": "informa,",
+    "tagline3": "listo."
+  },
+  "Landing": {
+    "cta": "Empieza a informar",
+    "subtitle1": "Tú dictas, Reporter estructura.",
+    "subtitle2": "IA usada de la forma correcta. Interfaz limpia.",
+    "subtitle3": "Abre, informa, listo.",
+    "footer": "Reporter by Radiologic™ — {year}"
+  },
+  "Dashboard": {
+    "errorDefault": "Error al generar informe",
+    "errorConnection": "Error al conectar con el servidor"
+  },
+  "Api": {
+    "passwordNotProvided": "Contraseña no proporcionada",
+    "incorrectPassword": "Contraseña incorrecta",
+    "loginError": "Error al procesar inicio de sesión",
+    "logoutError": "Error al cerrar sesión",
+    "emptyText": "Escriba o pegue un texto para generar el informe",
+    "apiKeyNotConfigured": "Clave de API no configurada",
+    "timeout": "Tiempo agotado. Inténtelo de nuevo",
+    "invalidApiKey": "Clave de API inválida",
+    "processingError": "Error al procesar. Inténtelo de nuevo",
+    "noFile": "Ningún archivo enviado",
+    "uploadError": "Error al enviar archivo. Verifique BLOB_READ_WRITE_TOKEN.",
+    "tierLimitReached": "Límite de informes alcanzado este mes. Actualice para generar más.",
+    "unauthorized": "No autorizado"
+  }
+}

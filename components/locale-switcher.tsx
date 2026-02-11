@@ -4,10 +4,12 @@ import { useLocale } from "next-intl"
 import { useRouter, usePathname } from "@/i18n/navigation"
 import { routing } from "@/i18n/routing"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
-const localeLabels: Record<string, string> = {
-  "pt-BR": "PT",
-  "en-US": "EN",
+const localeConfig: Record<string, { label: string; hoverClass: string }> = {
+  "pt-BR": { label: "PT", hoverClass: "hover:text-emerald-500" },
+  "en-US": { label: "EN", hoverClass: "hover:text-blue-500" },
+  es: { label: "ES", hoverClass: "hover:text-amber-500" },
 }
 
 export function LocaleSwitcher() {
@@ -15,20 +17,31 @@ export function LocaleSwitcher() {
   const router = useRouter()
   const pathname = usePathname()
 
-  const nextLocale = routing.locales.find((l) => l !== locale) ?? routing.defaultLocale
-
-  function handleSwitch() {
-    router.replace(pathname, { locale: nextLocale })
+  function handleSwitch(targetLocale: string) {
+    router.replace(pathname, { locale: targetLocale })
   }
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={handleSwitch}
-      className="text-muted-foreground hover:text-foreground min-w-[40px]"
-    >
-      {localeLabels[nextLocale] ?? nextLocale}
-    </Button>
+    <div className="flex items-center gap-0.5">
+      {routing.locales
+        .filter((l) => l !== locale)
+        .map((l) => {
+          const config = localeConfig[l]
+          return (
+            <Button
+              key={l}
+              variant="ghost"
+              size="sm"
+              onClick={() => handleSwitch(l)}
+              className={cn(
+                "text-muted-foreground/40 min-w-[36px] px-2 transition-colors",
+                config?.hoverClass
+              )}
+            >
+              {config?.label ?? l}
+            </Button>
+          )
+        })}
+    </div>
   )
 }

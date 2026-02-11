@@ -1,7 +1,11 @@
+import { ClerkProvider } from "@clerk/nextjs"
+import { ptBR, enUS, esES } from "@clerk/localizations"
 import { NextIntlClientProvider, hasLocale } from "next-intl"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { notFound } from "next/navigation"
 import { routing } from "@/i18n/routing"
+
+const clerkLocales = { "pt-BR": ptBR, "en-US": enUS, es: esES } as const
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -34,8 +38,10 @@ export default async function LocaleLayout({
   const messages = (await import(`../../messages/${locale}.json`)).default
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      {children}
-    </NextIntlClientProvider>
+    <ClerkProvider localization={clerkLocales[locale as keyof typeof clerkLocales]}>
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        {children}
+      </NextIntlClientProvider>
+    </ClerkProvider>
   )
 }
