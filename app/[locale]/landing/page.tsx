@@ -28,12 +28,22 @@ export default function LandingPage() {
   const videoContainerRef = useRef<HTMLDivElement>(null)
 
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
+  const [isMobile, setIsMobile] = useState(false)
 
   const { scrollYProgress } = useScroll({
     target: videoContainerRef,
     offset: ["start end", "end start"],
   })
   const videoY = useTransform(scrollYProgress, [0, 0.5], [650, 0])
+
+  // Track mobile breakpoint to disable parallax
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 639px)")
+    setIsMobile(mql.matches)
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mql.addEventListener("change", handler)
+    return () => mql.removeEventListener("change", handler)
+  }, [])
 
   // Compute squircle clip-path (all four corners)
   const squirclePath = useMemo(() => {
@@ -262,20 +272,17 @@ export default function LandingPage() {
           </Link>
         </motion.div>
 
-        {/* Mobile: spacer above slider — larger share so slider sits lower */}
-        <div className="flex-3 min-h-4 sm:hidden" aria-hidden />
-
         {/* Brain MRI video with subtle zoom-in */}
         <motion.div
           ref={videoContainerRef}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           style={{
-            y: videoY,
+            y: isMobile ? 0 : videoY,
             clipPath: squirclePath ? `path('${squirclePath}')` : undefined,
           }}
           transition={{ delay: 0.9, duration: 0.7, ease: "easeOut" }}
-          className="mt-0 sm:mt-10 mx-8 sm:mx-12 lg:mx-16 shrink-0 min-h-[38vh] sm:flex-1 sm:min-h-[90vh] lg:min-h-[95vh] relative overflow-hidden bg-black flex items-center justify-center"
+          className="mt-6 sm:mt-10 mx-8 sm:mx-12 lg:mx-16 flex-1 min-h-0 sm:min-h-[90vh] lg:min-h-[95vh] relative overflow-hidden bg-black flex items-center justify-center"
           onMouseEnter={() => {
             setIsHoveringSlider(true)
             videoRef.current?.pause()
@@ -286,7 +293,7 @@ export default function LandingPage() {
           }}
         >
           <div
-            className="w-[68%] h-[44%]"
+            className="w-[82%] h-[58%] sm:w-[68%] sm:h-[44%]"
             style={{
               animation: `zoom-in-smooth ${zoomDuration}s ease-in-out infinite`,
               animationPlayState: isHoveringSlider ? "paused" : "running",
@@ -308,9 +315,6 @@ export default function LandingPage() {
           <div className="pointer-events-none absolute inset-0 backdrop-blur-[1px] bg-white/2 dark:bg-black/4" />
           <div className="pointer-events-none absolute inset-0 border border-white/8 dark:border-white/6 rounded-[inherit]" />
         </motion.div>
-
-        {/* Mobile: spacer below slider — smaller share so footer stays visible */}
-        <div className="flex-2 min-h-2 sm:hidden" aria-hidden />
 
         {/* Footer (inside section on mobile so the slider sits between CTA and footer) */}
         <footer className="px-8 sm:px-12 lg:px-16 py-5 sm:py-12 shrink-0">
