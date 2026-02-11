@@ -33,7 +33,7 @@ export default function LandingPage() {
     target: videoContainerRef,
     offset: ["start end", "end start"],
   })
-  const videoY = useTransform(scrollYProgress, [0, 0.5], [450, 0])
+  const videoY = useTransform(scrollYProgress, [0, 0.5], [650, 0])
 
   // Compute squircle clip-path (all four corners)
   const squirclePath = useMemo(() => {
