@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useCallback, useId } from "react"
+import React, { useState, useEffect, useCallback, useId, useRef } from "react"
 import { useSignIn, useSignUp } from "@clerk/nextjs"
 import { useRouter } from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
@@ -130,6 +130,7 @@ export default function LoginPage() {
   const [erro, setErro] = useState("")
   const [carregando, setCarregando] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
+  const verifyingRef = useRef(false)
   const router = useRouter()
   const t = useTranslations("Login")
 
@@ -177,8 +178,15 @@ export default function LoginPage() {
       })
 
       if (result.status === "complete") {
-        await setSignInActive({ session: result.createdSessionId })
-        router.push("/")
+        await setSignInActive({
+          session: result.createdSessionId,
+          navigate: async ({ session }) => {
+            if (session?.currentTask) {
+              console.log("Session task pending:", session.currentTask)
+            }
+            router.push("/")
+          },
+        })
         return
       }
 
@@ -209,7 +217,8 @@ export default function LoginPage() {
   }
 
   async function handleSignInOtp(code: string) {
-    if (!signInLoaded || code.length !== 6) return
+    if (!signInLoaded || code.length !== 6 || verifyingRef.current) return
+    verifyingRef.current = true
     setErro("")
     setCarregando(true)
     try {
@@ -218,8 +227,15 @@ export default function LoginPage() {
         code,
       })
       if (result.status === "complete") {
-        await setSignInActive({ session: result.createdSessionId })
-        router.push("/")
+        await setSignInActive({
+          session: result.createdSessionId,
+          navigate: async ({ session }) => {
+            if (session?.currentTask) {
+              console.log("Session task pending:", session.currentTask)
+            }
+            router.push("/")
+          },
+        })
       } else {
         setErro(t("errorVerifyIncomplete"))
       }
@@ -228,6 +244,7 @@ export default function LoginPage() {
       setErro(clerkErr.errors?.[0]?.longMessage || t("errorVerify"))
     } finally {
       setCarregando(false)
+      verifyingRef.current = false
     }
   }
 
@@ -255,7 +272,8 @@ export default function LoginPage() {
 
   const handleVerify = useCallback(
     async (code: string) => {
-      if (!signUpLoaded || code.length !== 6) return
+      if (!signUpLoaded || code.length !== 6 || verifyingRef.current) return
+      verifyingRef.current = true
       setErro("")
       setCarregando(true)
 
@@ -263,10 +281,18 @@ export default function LoginPage() {
         const result = await signUp.attemptEmailAddressVerification({ code })
 
         if (result.status === "complete") {
-          await setSignUpActive({ session: result.createdSessionId })
-          router.push("/")
+          await setSignUpActive({
+            session: result.createdSessionId,
+            navigate: async ({ session }) => {
+              if (session?.currentTask) {
+                console.log("Session task pending:", session.currentTask)
+              }
+              router.push("/")
+            },
+          })
         } else {
-          console.error("Verification status:", result.status)
+          // Status may be "missing_requirements" if captcha or other fields pending
+          console.error("Sign-up status after verify:", result.status, result)
           setErro(t("errorVerifyIncomplete"))
         }
       } catch (err: unknown) {
@@ -274,6 +300,7 @@ export default function LoginPage() {
         setErro(clerkErr.errors?.[0]?.longMessage || t("errorVerify"))
       } finally {
         setCarregando(false)
+        verifyingRef.current = false
       }
     },
     [signUpLoaded, signUp, setSignUpActive, router, t]
@@ -586,6 +613,9 @@ export default function LoginPage() {
                   />
 
                   <PasswordRequirements password={watchedPassword} />
+
+                  {/* Required: Clerk bot sign-up protection (invisible captcha) */}
+                  <div id="clerk-captcha" />
 
                   {signUpForm.formState.errors.confirmPassword && (
                     <p className="text-sm text-destructive">

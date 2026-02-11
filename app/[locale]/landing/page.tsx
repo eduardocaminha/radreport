@@ -206,7 +206,7 @@ export default function LandingPage() {
               )}
             </div>
 
-            {/* CTA button + locale switcher */}
+            {/* Locale switcher (sempre) + CTA (apenas sm+) */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -214,7 +214,7 @@ export default function LandingPage() {
               className="flex items-center gap-2"
             >
               <LocaleSwitcher />
-              <Link href="/login">
+              <Link href="/login" className="hidden sm:inline-flex">
                 <Button
                   variant={isStuck ? "ghost" : undefined}
                   className={`gap-2 transition-all duration-200 ${
@@ -244,6 +244,23 @@ export default function LandingPage() {
           <br />
           {t("subtitle3")}
         </motion.p>
+
+        {/* CTA abaixo do texto só no mobile (à esquerda) */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.4 }}
+          className="sm:hidden px-8 mt-4"
+        >
+          <Link href="/login">
+            <Button
+              className="gap-2 rounded-full px-6 bg-foreground text-background hover:bg-foreground/90 hover:text-background shadow-none"
+            >
+              {t("cta")}
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
+        </motion.div>
 
         {/* Brain MRI video with subtle zoom-in */}
         <motion.div
