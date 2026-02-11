@@ -72,7 +72,7 @@ export default function LandingPage() {
     return () => observer.disconnect()
   }, [])
 
-  // Sync zoom duration with video
+  // Sync zoom duration with video and ensure it can play
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
@@ -81,12 +81,43 @@ export default function LandingPage() {
         setZoomDuration(video.duration)
       }
     }
+    const ensurePlaying = () => {
+      if (video.paused && !isHoveringSlider) {
+        video.play().catch(() => {})
+      }
+    }
     video.addEventListener("loadedmetadata", onLoadedMetadata)
+    video.addEventListener("canplay", ensurePlaying)
+    video.addEventListener("ended", ensurePlaying)
     if (video.readyState >= 1 && !Number.isNaN(video.duration)) {
       setZoomDuration(video.duration)
     }
-    return () => video.removeEventListener("loadedmetadata", onLoadedMetadata)
-  }, [])
+    ensurePlaying()
+    return () => {
+      video.removeEventListener("loadedmetadata", onLoadedMetadata)
+      video.removeEventListener("canplay", ensurePlaying)
+      video.removeEventListener("ended", ensurePlaying)
+    }
+  }, [isHoveringSlider])
+
+  // Play when video section is visible, pause when off-screen (so it runs full duration while visible)
+  useEffect(() => {
+    const container = videoContainerRef.current
+    const video = videoRef.current
+    if (!container || !video) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!isHoveringSlider) video.play().catch(() => {})
+        } else {
+          video.pause()
+        }
+      },
+      { threshold: 0.25 }
+    )
+    observer.observe(container)
+    return () => observer.disconnect()
+  }, [isHoveringSlider])
 
   return (
     <div className="min-h-screen bg-background">
