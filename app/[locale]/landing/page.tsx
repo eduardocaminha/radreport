@@ -227,6 +227,8 @@ export default function LandingPage() {
           style={{
             y: videoY,
             clipPath: squirclePath ? `path('${squirclePath}')` : undefined,
+            maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
           }}
           transition={{ delay: 0.9, duration: 0.7, ease: "easeOut" }}
           className="mt-10 mx-8 sm:mx-12 lg:mx-16 flex-1 min-h-[85vh] sm:min-h-[90vh] lg:min-h-[95vh] relative overflow-hidden bg-black flex items-center justify-center"
@@ -257,15 +259,6 @@ export default function LandingPage() {
               <source src={LANDING_VIDEO_URL} type="video/mp4" />
             </video>
           </div>
-
-          {/* Bottom fade-out gradient */}
-          <div
-            className="absolute bottom-0 left-0 right-0 pointer-events-none"
-            style={{
-              height: "35%",
-              background: "linear-gradient(to bottom, transparent, hsl(var(--background)))",
-            }}
-          />
         </motion.div>
       </section>
 
