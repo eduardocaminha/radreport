@@ -236,7 +236,7 @@ export default function LandingPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
-          className="px-8 sm:px-12 lg:px-16 mt-1 text-xl font-medium tracking-tight text-muted-foreground/70 leading-tight max-w-xl"
+          className="px-8 sm:px-12 lg:px-16 mt-6 sm:mt-1 text-xl font-medium tracking-tight text-muted-foreground/70 leading-tight max-w-xl"
         >
           {t("subtitle1")}
           <br />
@@ -245,12 +245,12 @@ export default function LandingPage() {
           {t("subtitle3")}
         </motion.p>
 
-        {/* CTA abaixo do texto só no mobile (à esquerda) */}
+        {/* CTA abaixo do texto só no mobile (à esquerda); mesmo espaço que entre título e subtítulo */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.4 }}
-          className="sm:hidden px-8 mt-4"
+          className="sm:hidden px-8 mt-6"
         >
           <Link href="/login">
             <Button
@@ -272,7 +272,7 @@ export default function LandingPage() {
             clipPath: squirclePath ? `path('${squirclePath}')` : undefined,
           }}
           transition={{ delay: 0.9, duration: 0.7, ease: "easeOut" }}
-          className="mt-10 mx-8 sm:mx-12 lg:mx-16 flex-1 min-h-[85vh] sm:min-h-[90vh] lg:min-h-[95vh] relative overflow-hidden bg-black flex items-center justify-center"
+          className="mt-4 sm:mt-10 mx-8 sm:mx-12 lg:mx-16 flex-1 min-h-[48vh] sm:min-h-[90vh] lg:min-h-[95vh] relative overflow-hidden bg-black flex items-center justify-center"
           onMouseEnter={() => {
             setIsHoveringSlider(true)
             videoRef.current?.pause()
