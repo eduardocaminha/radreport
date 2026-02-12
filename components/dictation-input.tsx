@@ -14,6 +14,8 @@ import {
   Search,
   AudioLines,
   Check,
+  Minus,
+  Plus,
 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useLocale } from "next-intl"
@@ -53,8 +55,17 @@ export function DictationInput({
   const [historicoAberto, setHistoricoAberto] = useState(false)
   const [isMac, setIsMac] = useState(false)
   const [animatedPlaceholder, setAnimatedPlaceholder] = useState("")
+  const [fontSizeIdx, setFontSizeIdx] = useState(1) // index into FONT_SIZES
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const t = useTranslations("DictationInput")
+
+  // Font size steps (tailwind-like rem values)
+  const FONT_SIZES = [
+    { class: "text-xs", label: "12" },
+    { class: "text-sm sm:text-base", label: "14" },
+    { class: "text-base sm:text-lg", label: "16" },
+    { class: "text-lg sm:text-xl", label: "20" },
+  ] as const
 
   // ---- Transcript accumulation refs (not state → no stale closures) ----
   const preRecordingTextRef = useRef("")
@@ -130,7 +141,7 @@ export function DictationInput({
 
   useEffect(() => {
     adjustHeight()
-  }, [value, adjustHeight])
+  }, [value, fontSizeIdx, adjustHeight])
 
   const typewriterRef = useRef({
     currentPhraseIndex: 0,
@@ -243,23 +254,25 @@ export function DictationInput({
     <section>
       {/* Top bar: Audio à esquerda, Radiopaedia + Historico à direita */}
       <div className="flex items-center justify-between mb-6">
-        {/* Audio button */}
+        {/* Audio / Ditar button */}
         <div className="group/audio relative">
-          <button
+          <Button
+            variant="ghost"
             onClick={toggleRecording}
             disabled={isGenerating}
-            className={`size-11 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+            className={`gap-1.5 ${
               transcription.isRecording
-                ? `bg-foreground/80 text-background ${localePulseClass}`
+                ? `bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background ${localePulseClass}`
                 : "bg-muted text-foreground/70 hover:bg-foreground/80 hover:text-background"
             }`}
           >
-            <AudioLines className="w-5 h-5" />
-          </button>
+            <AudioLines className="w-4 h-4" />
+            <span className="hidden sm:inline">{t("dictate")}</span>
+          </Button>
 
-          {/* Kbd shortcut hint (hidden when recording) */}
+          {/* Kbd shortcut hint (hidden when recording & on mobile) */}
           {!transcription.isRecording && (
-            <div className="absolute left-full top-1/2 -translate-y-1/2 pointer-events-none">
+            <div className="absolute left-full top-1/2 -translate-y-1/2 pointer-events-none hidden sm:block">
               <div className="flex items-center overflow-hidden">
                 <div className="-translate-x-[calc(100%+0.75rem)] opacity-0 group-hover/audio:translate-x-0 group-hover/audio:opacity-100 transition-all duration-300 ease-out ml-3">
                   <KbdGroup>
@@ -288,7 +301,7 @@ export function DictationInput({
             className={`gap-1.5 ${usarPesquisa ? "bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
           >
             <Search className="w-3.5 h-3.5" />
-            {t("radiopaedia")}
+            <span className="hidden sm:inline">{t("radiopaedia")}</span>
           </Button>
 
           {historico.length > 0 && (
@@ -299,7 +312,9 @@ export function DictationInput({
                 className={`gap-1.5 ${historicoAberto ? "bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
               >
                 <Clock className="w-3.5 h-3.5" />
-                {t("history", { count: historico.length })}
+                <span className="hidden sm:inline">
+                  {t("history", { count: historico.length })}
+                </span>
               </Button>
 
               <AnimatePresence>
@@ -447,15 +462,39 @@ export function DictationInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={onKeyDown}
-          className="w-full bg-transparent border-none outline-none resize-none text-sm sm:text-base leading-relaxed text-muted-foreground placeholder:text-muted-foreground/30 font-medium overflow-hidden"
+          className={`w-full bg-transparent border-none outline-none resize-none leading-relaxed text-foreground placeholder:text-muted-foreground/30 font-light overflow-hidden ${FONT_SIZES[fontSizeIdx].class}`}
           rows={1}
         />
       </SquircleCard>
 
-      {/* Botao Gerar Laudo + Kbd animado */}
-      <div className="flex items-center justify-end mt-4">
+      {/* Bottom bar: Font size pill (left) + Gerar Laudo (right) */}
+      <div className="flex items-center justify-between mt-4">
+        {/* Font size pill */}
+        <div className="flex items-center bg-muted rounded-full h-9 overflow-hidden">
+          <button
+            onClick={() => setFontSizeIdx((i) => Math.max(0, i - 1))}
+            disabled={fontSizeIdx === 0}
+            className="h-full px-2.5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors cursor-pointer disabled:cursor-not-allowed"
+          >
+            <Minus className="w-3 h-3" />
+          </button>
+          <span className="text-[11px] font-medium text-muted-foreground/60 select-none tabular-nums min-w-[16px] text-center">
+            A
+          </span>
+          <button
+            onClick={() =>
+              setFontSizeIdx((i) => Math.min(FONT_SIZES.length - 1, i + 1))
+            }
+            disabled={fontSizeIdx === FONT_SIZES.length - 1}
+            className="h-full px-2.5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors cursor-pointer disabled:cursor-not-allowed"
+          >
+            <Plus className="w-3 h-3" />
+          </button>
+        </div>
+
+        {/* Gerar Laudo + Kbd */}
         <div className="group/gerar relative">
-          <div className="absolute right-full top-1/2 -translate-y-1/2 pointer-events-none">
+          <div className="absolute right-full top-1/2 -translate-y-1/2 pointer-events-none hidden sm:block">
             <div className="flex items-center overflow-hidden">
               <div className="translate-x-[calc(100%+0.75rem)] opacity-0 group-hover/gerar:translate-x-0 group-hover/gerar:opacity-100 transition-all duration-300 ease-out mr-3">
                 <KbdGroup>
@@ -497,7 +536,9 @@ export function DictationInput({
             ) : (
               <Sparkles className="w-4 h-4" />
             )}
-            {t("generateReport")}
+            {/* Mobile: short label, Desktop: full label */}
+            <span className="sm:hidden">{t("generateShort")}</span>
+            <span className="hidden sm:inline">{t("generateReport")}</span>
           </Button>
         </div>
       </div>
