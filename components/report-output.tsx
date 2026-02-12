@@ -230,6 +230,12 @@ export function ReportOutput({ report, streamedText, isStreaming, isGenerating, 
     setBlocks(newBlocks)
   }, [])
 
+  const handleBlockUpdate = useCallback((blockId: string, newHtml: string) => {
+    setBlocks((prev) =>
+      prev.map((b) => (b.id === blockId ? { ...b, html: newHtml } : b)),
+    )
+  }, [])
+
   // Extrair texto puro do HTML (respeita ordem reordenada)
   const plainTextFromHtml = useMemo(() => {
     const sourceHtml = reorderedHtml || reportHtml || streamingHtml
@@ -377,7 +383,7 @@ export function ReportOutput({ report, streamedText, isStreaming, isGenerating, 
               } pl-6`}
             >
               {blocks.length > 0 && !isError ? (
-                <DraggableReport blocks={blocks} onReorder={handleReorder} />
+                <DraggableReport blocks={blocks} onReorder={handleReorder} onBlockUpdate={handleBlockUpdate} />
               ) : (
                 <div dangerouslySetInnerHTML={{ __html: reportHtml }} />
               )}
