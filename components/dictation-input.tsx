@@ -474,7 +474,7 @@ export function DictationInput({
           <button
             onClick={() => setFontSizeIdx((i) => Math.max(0, i - 1))}
             disabled={fontSizeIdx === 0}
-            className="h-full px-2.5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors cursor-pointer disabled:cursor-not-allowed"
+            className="h-full px-2.5 flex items-center justify-center text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground transition-colors cursor-pointer disabled:cursor-not-allowed"
           >
             <Minus className="w-3 h-3" />
           </button>
@@ -486,7 +486,7 @@ export function DictationInput({
               setFontSizeIdx((i) => Math.min(FONT_SIZES.length - 1, i + 1))
             }
             disabled={fontSizeIdx === FONT_SIZES.length - 1}
-            className="h-full px-2.5 flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors cursor-pointer disabled:cursor-not-allowed"
+            className="h-full px-2.5 flex items-center justify-center text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground transition-colors cursor-pointer disabled:cursor-not-allowed"
           >
             <Plus className="w-3 h-3" />
           </button>
