@@ -229,7 +229,7 @@ export default function LandingPage() {
                   variant={isStuck ? "ghost" : undefined}
                   className={`gap-2 transition-all duration-200 ${
                     isStuck
-                      ? "bg-background text-muted-foreground hover:text-foreground"
+                      ? "bg-muted text-muted-foreground hover:text-foreground"
                       : "rounded-full px-6 bg-foreground text-background hover:bg-foreground/90 hover:text-background shadow-none"
                   }`}
                 >
