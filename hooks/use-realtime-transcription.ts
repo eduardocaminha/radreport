@@ -86,7 +86,7 @@ export function useRealtimeTranscription({
       // Time-domain values are centred at 128; deviation = amplitude
       const amplitude = Math.abs((raw[i * step] ?? 128) - 128) / 128 // 0..1
       // Power curve: boosts low/mid amplitudes so speech is clearly visible
-      const boosted = Math.pow(amplitude, 0.6) * 255
+      const boosted = Math.pow(amplitude, 1.6) * 255
       bins.push(Math.min(255, Math.round(boosted)))
     }
     setFrequencyData(bins)
