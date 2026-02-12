@@ -70,8 +70,10 @@ export function useRealtimeTranscription({
    *
    * Uses time-domain data (waveform amplitude) instead of frequency data
    * so the bars respond evenly across the whole strip rather than being
-   * bass-heavy on the left.  The deviation from the centre line (128) is
-   * amplified for better visibility with normal speech volume.
+   * bass-heavy on the left.
+   *
+   * A power curve (x^0.6) is applied so that normal speech volumes already
+   * produce tall bars while still leaving headroom for loud sounds.
    */
   const updateFrequency = useCallback(() => {
     if (!analyserRef.current) return
@@ -82,8 +84,10 @@ export function useRealtimeTranscription({
     const bins: number[] = []
     for (let i = 0; i < FREQ_BINS; i++) {
       // Time-domain values are centred at 128; deviation = amplitude
-      const amplitude = Math.abs((raw[i * step] ?? 128) - 128)
-      bins.push(Math.min(255, amplitude * 5))
+      const amplitude = Math.abs((raw[i * step] ?? 128) - 128) / 128 // 0..1
+      // Power curve: boosts low/mid amplitudes so speech is clearly visible
+      const boosted = Math.pow(amplitude, 0.6) * 255
+      bins.push(Math.min(255, Math.round(boosted)))
     }
     setFrequencyData(bins)
     animFrameRef.current = requestAnimationFrame(updateFrequency)
@@ -153,7 +157,8 @@ export function useRealtimeTranscription({
       audioCtxRef.current = audioCtx
       const source = audioCtx.createMediaStreamSource(stream)
       const analyser = audioCtx.createAnalyser()
-      analyser.fftSize = 256
+      analyser.fftSize = 2048
+      analyser.smoothingTimeConstant = 0.3
       source.connect(analyser)
       analyserRef.current = analyser
 
