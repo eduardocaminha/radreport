@@ -11,10 +11,35 @@ import { useState, useRef, useCallback, useEffect } from "react"
 /*    • isRecording / elapsed   – recording state                     */
 /*    • frequencyData           – 80-bin audio level array (0-255)    */
 /*    • error                   – user-facing error message           */
+/*    • audioBlob               – raw audio Blob after stop           */
+/*    • transcriptDeltas        – timestamped delta log               */
+/*    • turnTranscripts         – finalized transcripts per turn      */
 /*                                                                    */
 /*  The hook dispatches "realtime-recording" CustomEvents on window   */
 /*  so sibling components (e.g. LocaleSwitcher) can react.            */
 /* ------------------------------------------------------------------ */
+
+/** A single timestamped transcription delta (for training data) */
+export interface TranscriptDelta {
+  /** Milliseconds since recording started */
+  t: number
+  /** The text delta received */
+  delta: string
+  /** OpenAI item_id for this turn */
+  itemId: string
+}
+
+/** A finalized turn transcript (for training data) */
+export interface TurnTranscript {
+  /** OpenAI item_id */
+  itemId: string
+  /** Final text for this turn */
+  text: string
+  /** Milliseconds since recording started when first delta arrived */
+  startMs?: number
+  /** Milliseconds since recording started when completed */
+  endMs?: number
+}
 
 interface UseRealtimeTranscriptionOptions {
   locale: string
@@ -36,6 +61,11 @@ export function useRealtimeTranscription({
   const [frequencyData, setFrequencyData] = useState<number[]>([])
   const [error, setError] = useState<string | null>(null)
 
+  // ---- Training data state ----
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null)
+  const [transcriptDeltas, setTranscriptDeltas] = useState<TranscriptDelta[]>([])
+  const [turnTranscripts, setTurnTranscripts] = useState<TurnTranscript[]>([])
+
   // Keep callback refs fresh so the data-channel listener always
   // calls the latest version without depending on them as closure deps.
   const onDeltaRef = useRef(onDelta)
@@ -55,6 +85,16 @@ export function useRealtimeTranscription({
   const analyserRef = useRef<AnalyserNode | null>(null)
   const animFrameRef = useRef<number>(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // MediaRecorder refs for raw audio capture
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const audioChunksRef = useRef<Blob[]>([])
+
+  // Training data refs (mutable refs to avoid stale closures in data channel handler)
+  const recordingStartTimeRef = useRef<number>(0)
+  const deltasRef = useRef<TranscriptDelta[]>([])
+  const turnStartTimesRef = useRef<Map<string, number>>(new Map())
+  const turnsRef = useRef<TurnTranscript[]>([])
 
   // ---- helpers ----
 
@@ -115,6 +155,12 @@ export function useRealtimeTranscription({
     audioCtxRef.current = null
     analyserRef.current = null
 
+    // Stop MediaRecorder and build final blob
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop()
+    }
+    mediaRecorderRef.current = null
+
     setFrequencyData([])
     setIsRecording(false)
     setElapsed(0)
@@ -128,6 +174,15 @@ export function useRealtimeTranscription({
 
   const start = useCallback(async () => {
     setError(null)
+    setAudioBlob(null)
+
+    // Reset training data
+    deltasRef.current = []
+    turnsRef.current = []
+    turnStartTimesRef.current = new Map()
+    setTranscriptDeltas([])
+    setTurnTranscripts([])
+    audioChunksRef.current = []
 
     try {
       // 1. Fetch ephemeral client secret from our API
@@ -152,6 +207,34 @@ export function useRealtimeTranscription({
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       streamRef.current = stream
 
+      // 2b. Start MediaRecorder for raw audio capture (parallel recording)
+      const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : "audio/webm"
+
+      const recorder = new MediaRecorder(stream, { mimeType })
+      mediaRecorderRef.current = recorder
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          audioChunksRef.current.push(e.data)
+        }
+      }
+
+      recorder.onstop = () => {
+        // Combine chunks into a single Blob
+        if (audioChunksRef.current.length > 0) {
+          const blob = new Blob(audioChunksRef.current, { type: mimeType })
+          setAudioBlob(blob)
+        }
+        // Snapshot training data to state
+        setTranscriptDeltas([...deltasRef.current])
+        setTurnTranscripts([...turnsRef.current])
+      }
+
+      // Record in 1-second chunks for reliability
+      recorder.start(1000)
+
       // 3. AudioContext → GainNode (boost) → AnalyserNode for waveform
       //    The gain only affects the analyser pipeline used for visualisation;
       //    it does NOT touch the raw mic track sent to the RTCPeerConnection.
@@ -172,6 +255,9 @@ export function useRealtimeTranscription({
       pcRef.current = pc
       pc.addTrack(stream.getTracks()[0])
 
+      // Record the start time for delta timestamps
+      recordingStartTimeRef.current = Date.now()
+
       // 5. Data channel for events
       const dc = pc.createDataChannel("oai-events")
       dcRef.current = dc
@@ -186,16 +272,37 @@ export function useRealtimeTranscription({
             error?: { message?: string }
           }
 
+          const elapsed = Date.now() - recordingStartTimeRef.current
+
           switch (event.type) {
-            case "conversation.item.input_audio_transcription.delta":
-              onDeltaRef.current(event.delta ?? "", event.item_id ?? "")
+            case "conversation.item.input_audio_transcription.delta": {
+              const itemId = event.item_id ?? ""
+              const delta = event.delta ?? ""
+
+              // Track training data
+              deltasRef.current.push({ t: elapsed, delta, itemId })
+              if (!turnStartTimesRef.current.has(itemId)) {
+                turnStartTimesRef.current.set(itemId, elapsed)
+              }
+
+              onDeltaRef.current(delta, itemId)
               break
-            case "conversation.item.input_audio_transcription.completed":
-              onCompleteRef.current(
-                event.transcript ?? "",
-                event.item_id ?? "",
-              )
+            }
+            case "conversation.item.input_audio_transcription.completed": {
+              const itemId = event.item_id ?? ""
+              const transcript = event.transcript ?? ""
+
+              // Track training data
+              turnsRef.current.push({
+                itemId,
+                text: transcript,
+                startMs: turnStartTimesRef.current.get(itemId),
+                endMs: elapsed,
+              })
+
+              onCompleteRef.current(transcript, itemId)
               break
+            }
             case "error":
               console.error("[Realtime] Server error:", event.error)
               setError(event.error?.message ?? "Transcription error")
@@ -256,10 +363,12 @@ export function useRealtimeTranscription({
 
   const stop = useCallback(() => {
     cleanup()
+    // Text stays as-is (user accepted the dictation)
   }, [cleanup])
 
   const cancel = useCallback(() => {
     cleanup()
+    // audioBlob/deltas/turns are still populated, but caller can ignore them
   }, [cleanup])
 
   // Auto-cleanup on unmount
@@ -278,5 +387,9 @@ export function useRealtimeTranscription({
     elapsed,
     frequencyData,
     error,
+    // Training data
+    audioBlob,
+    transcriptDeltas,
+    turnTranscripts,
   }
 }

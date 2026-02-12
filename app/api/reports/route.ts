@@ -31,7 +31,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { inputText, generatedReport, mode } = await request.json()
+  const {
+    inputText,
+    generatedReport,
+    mode,
+    // New optional metadata fields
+    inputTokens,
+    outputTokens,
+    totalTokens,
+    costBrl,
+    costUsd,
+    modelUsed,
+    locale,
+    fontSizeIdx,
+    generationDurationMs,
+    usarPesquisa,
+    templateMascara,
+    templateAchados,
+    audioSessionId,
+  } = await request.json()
 
   const [report] = await db
     .insert(reports)
@@ -40,6 +58,19 @@ export async function POST(request: Request) {
       inputText,
       generatedReport,
       mode,
+      inputTokens: inputTokens ?? null,
+      outputTokens: outputTokens ?? null,
+      totalTokens: totalTokens ?? null,
+      costBrl: costBrl ?? null,
+      costUsd: costUsd ?? null,
+      modelUsed: modelUsed ?? null,
+      locale: locale ?? null,
+      fontSizeIdx: fontSizeIdx ?? null,
+      generationDurationMs: generationDurationMs ?? null,
+      usarPesquisa: usarPesquisa ?? false,
+      templateMascara: templateMascara ?? null,
+      templateAchados: templateAchados ?? null,
+      audioSessionId: audioSessionId ?? null,
     })
     .returning()
 

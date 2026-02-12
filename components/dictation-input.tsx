@@ -38,6 +38,11 @@ interface DictationInputProps {
   onLimparHistorico: () => void
   usarPesquisa: boolean
   onUsarPesquisaChange: (value: boolean) => void
+  /** Controlled font size index (from user preferences) */
+  fontSizeIdx: number
+  onFontSizeIdxChange: (idx: number) => void
+  /** Called when an audio session has been uploaded after recording stops */
+  onAudioSessionReady?: (audioSessionId: number) => void
 }
 
 export function DictationInput({
@@ -50,12 +55,14 @@ export function DictationInput({
   onLimparHistorico,
   usarPesquisa,
   onUsarPesquisaChange,
+  fontSizeIdx,
+  onFontSizeIdxChange,
+  onAudioSessionReady,
 }: DictationInputProps) {
   const locale = useLocale()
   const [historicoAberto, setHistoricoAberto] = useState(false)
   const [isMac, setIsMac] = useState(false)
   const [animatedPlaceholder, setAnimatedPlaceholder] = useState("")
-  const [fontSizeIdx, setFontSizeIdx] = useState(1) // index into FONT_SIZES
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const t = useTranslations("DictationInput")
 
@@ -207,6 +214,53 @@ export function DictationInput({
     // Revert to pre-recording text
     onChange(preRecordingTextRef.current)
   }, [transcription, onChange])
+
+  // Upload audio session data when audioBlob becomes available after recording stops
+  const lastUploadedBlobRef = useRef<Blob | null>(null)
+  useEffect(() => {
+    const blob = transcription.audioBlob
+    if (!blob || blob === lastUploadedBlobRef.current) return
+    lastUploadedBlobRef.current = blob
+
+    // Build the full transcript from all turns
+    const fullTranscript = transcription.turnTranscripts
+      .map((t) => t.text)
+      .filter(Boolean)
+      .join(" ")
+
+    const wordCount = fullTranscript
+      .split(/\s+/)
+      .filter(Boolean).length
+
+    const metadata = {
+      language: locale.startsWith("pt") ? "pt" : locale.startsWith("es") ? "es" : "en",
+      durationSeconds: transcription.elapsed || undefined,
+      transcriptRaw: fullTranscript || undefined,
+      transcriptDeltas: transcription.transcriptDeltas,
+      turnTranscripts: transcription.turnTranscripts,
+      turnCount: transcription.turnTranscripts.length,
+      wordCount,
+      extra: {
+        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+      },
+    }
+
+    const formData = new FormData()
+    formData.append("audio", blob, "recording.webm")
+    formData.append("metadata", JSON.stringify(metadata))
+
+    fetch("/api/audio-sessions", { method: "POST", body: formData })
+      .then((res) => res.json())
+      .then((session: { id?: number }) => {
+        if (session.id && onAudioSessionReady) {
+          onAudioSessionReady(session.id)
+        }
+      })
+      .catch((err) => {
+        console.error("[DictationInput] Failed to upload audio session:", err)
+      })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transcription.audioBlob])
 
   const toggleRecording = useCallback(async () => {
     if (transcription.isRecording) {
@@ -459,7 +513,7 @@ export function DictationInput({
         {/* Font size pill — top-right inside the card */}
         <div className="absolute top-2.5 right-3 flex items-center bg-muted/50 rounded-full h-5 overflow-hidden z-10">
           <button
-            onClick={() => setFontSizeIdx((i) => Math.max(0, i - 1))}
+            onClick={() => onFontSizeIdxChange(Math.max(0, fontSizeIdx - 1))}
             disabled={fontSizeIdx === 0}
             className="h-full px-1.5 flex items-center justify-center text-muted-foreground/50 hover:bg-accent hover:text-accent-foreground disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground transition-colors cursor-pointer disabled:cursor-not-allowed"
           >
@@ -470,7 +524,7 @@ export function DictationInput({
           </span>
           <button
             onClick={() =>
-              setFontSizeIdx((i) => Math.min(FONT_SIZES.length - 1, i + 1))
+              onFontSizeIdxChange(Math.min(FONT_SIZES.length - 1, fontSizeIdx + 1))
             }
             disabled={fontSizeIdx === FONT_SIZES.length - 1}
             className="h-full px-1.5 flex items-center justify-center text-muted-foreground/50 hover:bg-accent hover:text-accent-foreground disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground transition-colors cursor-pointer disabled:cursor-not-allowed"

@@ -10,6 +10,8 @@ import { Sugestoes } from "@/components/sugestoes"
 import { formatarLaudoHTML } from "@/lib/formatador"
 import type { TokenUsage } from "@/lib/tokens"
 import { useTranslations } from "next-intl"
+import { useLocale } from "next-intl"
+import { useUserPreferences } from "@/hooks/use-user-preferences"
 
 type ReportMode = "ps" | "eletivo" | "comparativo"
 
@@ -20,10 +22,20 @@ interface ItemHistorico {
   data: string
 }
 
+/** Metadata captured during generation for persisting with the report */
+interface GenerationMeta {
+  generationDurationMs?: number
+  costBrl?: number
+  costUsd?: number
+}
+
 const MAX_HISTORICO = 5
 
 export default function Home() {
   const t = useTranslations("Dashboard")
+  const locale = useLocale()
+  const { preferences, isLoaded, updatePreference } = useUserPreferences()
+
   const [dictatedText, setDictatedText] = useState("")
   const [generatedReport, setGeneratedReport] = useState("")
   const [streamedText, setStreamedText] = useState("")
@@ -37,6 +49,47 @@ export default function Home() {
   const [tokenUsage, setTokenUsage] = useState<TokenUsage | undefined>()
   const [model, setModel] = useState<string | undefined>()
   const abortControllerRef = useRef<AbortController | null>(null)
+
+  // Generation metadata captured from the stream
+  const generationMetaRef = useRef<GenerationMeta>({})
+
+  // Audio session ID from the last recording upload
+  const audioSessionIdRef = useRef<number | null>(null)
+
+  // Apply user preferences once loaded
+  useEffect(() => {
+    if (!isLoaded) return
+    setReportMode(preferences.defaultReportMode)
+    setUsarPesquisa(preferences.usarPesquisa)
+  }, [isLoaded, preferences.defaultReportMode, preferences.usarPesquisa])
+
+  // Persist preference changes
+  const handleReportModeChange = useCallback(
+    (mode: ReportMode) => {
+      setReportMode(mode)
+      updatePreference("defaultReportMode", mode)
+    },
+    [updatePreference],
+  )
+
+  const handleUsarPesquisaChange = useCallback(
+    (value: boolean) => {
+      setUsarPesquisa(value)
+      updatePreference("usarPesquisa", value)
+    },
+    [updatePreference],
+  )
+
+  const handleFontSizeIdxChange = useCallback(
+    (idx: number) => {
+      updatePreference("fontSizeIdx", idx)
+    },
+    [updatePreference],
+  )
+
+  const handleAudioSessionReady = useCallback((audioSessionId: number) => {
+    audioSessionIdRef.current = audioSessionId
+  }, [])
 
   useEffect(() => {
     fetch(`/api/reports?limit=${MAX_HISTORICO}`)
@@ -55,7 +108,10 @@ export default function Home() {
   }, [])
 
   const adicionarAoHistorico = useCallback(
-    async (texto: string, laudo: string) => {
+    async (texto: string, laudo: string, eventTokenUsage?: TokenUsage, eventModel?: string) => {
+      // Capture all metadata for the report
+      const meta = generationMetaRef.current
+
       try {
         const res = await fetch("/api/reports", {
           method: "POST",
@@ -64,6 +120,20 @@ export default function Home() {
             inputText: texto,
             generatedReport: laudo,
             mode: reportMode,
+            // Cost & token metadata
+            inputTokens: eventTokenUsage?.inputTokens,
+            outputTokens: eventTokenUsage?.outputTokens,
+            totalTokens: eventTokenUsage?.totalTokens,
+            costBrl: meta.costBrl,
+            costUsd: meta.costUsd,
+            modelUsed: eventModel,
+            // Context metadata
+            locale,
+            fontSizeIdx: preferences.fontSizeIdx,
+            generationDurationMs: meta.generationDurationMs,
+            usarPesquisa,
+            // Audio link
+            audioSessionId: audioSessionIdRef.current,
           }),
         })
         const report = await res.json()
@@ -83,9 +153,13 @@ export default function Home() {
           data: new Date().toLocaleString("pt-BR"),
         }
         setHistorico((prev) => [novoItem, ...prev].slice(0, MAX_HISTORICO))
+      } finally {
+        // Reset audio session ID after saving
+        audioSessionIdRef.current = null
+        generationMetaRef.current = {}
       }
     },
-    [reportMode]
+    [reportMode, locale, preferences.fontSizeIdx, usarPesquisa]
   )
 
   const limparHistorico = async () => {
@@ -113,6 +187,7 @@ export default function Home() {
     setStreamedText("")
     setTokenUsage(undefined)
     setModel(undefined)
+    generationMetaRef.current = {}
 
     try {
       const response = await fetch("/api/gerar", {
@@ -123,6 +198,7 @@ export default function Home() {
           modoPS: reportMode === "ps",
           modoComparativo: reportMode === "comparativo",
           usarPesquisa,
+          locale,
         }),
         signal: abortController.signal,
       })
@@ -166,7 +242,14 @@ export default function Home() {
               if (event.erro) setErro(event.erro)
               setTokenUsage(event.tokenUsage)
               setModel(event.model)
-              adicionarAoHistorico(dictatedText, laudoHTML)
+              adicionarAoHistorico(dictatedText, laudoHTML, event.tokenUsage, event.model)
+            } else if (event.type === "generation_meta") {
+              // Capture cost and timing metadata from the server
+              generationMetaRef.current = {
+                generationDurationMs: event.generationDurationMs,
+                costBrl: event.costBrl,
+                costUsd: event.costUsd,
+              }
             } else if (event.type === "error") {
               setErro(event.message)
             }
@@ -187,7 +270,13 @@ export default function Home() {
             if (event.erro) setErro(event.erro)
             setTokenUsage(event.tokenUsage)
             setModel(event.model)
-            adicionarAoHistorico(dictatedText, laudoHTML)
+            adicionarAoHistorico(dictatedText, laudoHTML, event.tokenUsage, event.model)
+          } else if (event.type === "generation_meta") {
+            generationMetaRef.current = {
+              generationDurationMs: event.generationDurationMs,
+              costBrl: event.costBrl,
+              costUsd: event.costUsd,
+            }
           } else if (event.type === "error") {
             setErro(event.message)
           }
@@ -218,7 +307,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header reportMode={reportMode} onReportModeChange={setReportMode} />
+      <Header reportMode={reportMode} onReportModeChange={handleReportModeChange} />
 
       <motion.main
         initial="hidden"
@@ -250,7 +339,10 @@ export default function Home() {
               historico={historico}
               onLimparHistorico={limparHistorico}
               usarPesquisa={usarPesquisa}
-              onUsarPesquisaChange={setUsarPesquisa}
+              onUsarPesquisaChange={handleUsarPesquisaChange}
+              fontSizeIdx={preferences.fontSizeIdx}
+              onFontSizeIdxChange={handleFontSizeIdxChange}
+              onAudioSessionReady={handleAudioSessionReady}
             />
           </motion.div>
 
