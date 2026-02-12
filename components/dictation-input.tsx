@@ -465,7 +465,7 @@ export function DictationInput({
           >
             <Minus className="w-2.5 h-2.5" />
           </button>
-          <span className="text-[9px] font-medium text-muted-foreground/30 select-none px-0.5">
+          <span className="text-[9px] font-medium text-muted-foreground/60 select-none px-0.5">
             A
           </span>
           <button
