@@ -14,7 +14,15 @@
     "generateReport": "Generate report",
     "placeholder1": "ct abdomen with contrast, microcalculus left kidney 0.2",
     "placeholder2": "ct chest without contrast, normal",
-    "placeholder3": "ct head without contrast, ischemic stroke mca territory right"
+    "placeholder3": "ct head without contrast, ischemic stroke mca territory right",
+    "langPT": "Portuguese",
+    "langEN": "English",
+    "langES": "Spanish",
+    "voiceLangHint": "Recognizing speech in {lang}. To change, click the language button above.",
+    "micPermissionDenied": "Microphone permission denied. Enable it in your browser settings."
+  },
+  "LocaleSwitcher": {
+    "voiceActive": "Dictation active in English. Click to change the voice recognition language."
   },
   "ReportOutput": {
     "copy": "Copy",

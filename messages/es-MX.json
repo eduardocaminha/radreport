@@ -14,7 +14,15 @@
     "generateReport": "Generar informe",
     "placeholder1": "tc abdomen con contraste, microcalculo en riñón izquierdo 0,2",
     "placeholder2": "tc tórax sin contraste, normal",
-    "placeholder3": "tc cráneo sin contraste, ACV isquémico en territorio de acm derecha"
+    "placeholder3": "tc cráneo sin contraste, ACV isquémico en territorio de acm derecha",
+    "langPT": "Portugués",
+    "langEN": "Inglés",
+    "langES": "Español",
+    "voiceLangHint": "Reconociendo voz en {lang}. Para cambiar, haz clic en el botón de idioma arriba.",
+    "micPermissionDenied": "Permiso de micrófono denegado. Habilítalo en la configuración del navegador."
+  },
+  "LocaleSwitcher": {
+    "voiceActive": "Dictado activo en Español. Haz clic para cambiar el idioma del reconocimiento de voz."
   },
   "ReportOutput": {
     "copy": "Copiar",

@@ -6,8 +6,23 @@ import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { SquircleCard } from "@/components/ui/squircle-card"
-import { Clock, Sparkles, Loader2, X, Search, AudioLines, Check } from "lucide-react"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
+import {
+  Clock,
+  Sparkles,
+  Loader2,
+  X,
+  Search,
+  AudioLines,
+  Check,
+} from "lucide-react"
 import { useTranslations } from "next-intl"
+import { useLocale } from "next-intl"
+import { useRealtimeTranscription } from "@/hooks/use-realtime-transcription"
 
 interface ItemHistorico {
   id: string
@@ -39,14 +54,63 @@ export function DictationInput({
   usarPesquisa,
   onUsarPesquisaChange,
 }: DictationInputProps) {
+  const locale = useLocale()
   const [historicoAberto, setHistoricoAberto] = useState(false)
-  const [audioGravando, setAudioGravando] = useState(false)
-  const [audioTempo, setAudioTempo] = useState(0)
   const [isMac, setIsMac] = useState(false)
   const [animatedPlaceholder, setAnimatedPlaceholder] = useState("")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const t = useTranslations("DictationInput")
 
+  // ---- Transcript accumulation refs (not state → no stale closures) ----
+  const preRecordingTextRef = useRef("")
+  const turnTextsRef = useRef(new Map<string, string>())
+  const turnOrderRef = useRef<string[]>([])
+
+  /**
+   * Reconstruct the textarea value from base text + all turn texts.
+   * Called on every delta and completion.
+   */
+  const reconstructText = useCallback(() => {
+    const parts = turnOrderRef.current.map(
+      (id) => turnTextsRef.current.get(id) ?? "",
+    )
+    const allTurns = parts.join(" ")
+    const base = preRecordingTextRef.current
+    const sep = base && allTurns ? " " : ""
+    onChange(base + sep + allTurns)
+  }, [onChange])
+
+  const handleDelta = useCallback(
+    (delta: string, itemId: string) => {
+      if (!turnTextsRef.current.has(itemId)) {
+        turnTextsRef.current.set(itemId, "")
+        turnOrderRef.current.push(itemId)
+      }
+      const current = turnTextsRef.current.get(itemId) ?? ""
+      turnTextsRef.current.set(itemId, current + delta)
+      reconstructText()
+    },
+    [reconstructText],
+  )
+
+  const handleComplete = useCallback(
+    (transcript: string, itemId: string) => {
+      if (!turnTextsRef.current.has(itemId)) {
+        turnOrderRef.current.push(itemId)
+      }
+      turnTextsRef.current.set(itemId, transcript)
+      reconstructText()
+    },
+    [reconstructText],
+  )
+
+  const transcription = useRealtimeTranscription({
+    locale,
+    onDelta: handleDelta,
+    onComplete: handleComplete,
+  })
+
+  // ---- Placeholder typewriter ----
   const placeholderPhrases = [
     t("placeholder1"),
     t("placeholder2"),
@@ -54,22 +118,13 @@ export function DictationInput({
   ]
 
   useEffect(() => {
-    setIsMac(navigator.platform.toUpperCase().indexOf('MAC') >= 0 || navigator.userAgent.toUpperCase().indexOf('MAC') >= 0)
+    setIsMac(
+      navigator.platform.toUpperCase().indexOf("MAC") >= 0 ||
+        navigator.userAgent.toUpperCase().indexOf("MAC") >= 0,
+    )
   }, [])
 
-  // Timer para gravação de áudio
-  useEffect(() => {
-    if (!audioGravando) {
-      setAudioTempo(0)
-      return
-    }
-    const interval = setInterval(() => {
-      setAudioTempo((prev) => prev + 1)
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [audioGravando])
-
-  // Auto-resize textarea to fit content
+  // Auto-resize textarea
   const adjustHeight = useCallback(() => {
     const textarea = textareaRef.current
     if (textarea) {
@@ -102,12 +157,15 @@ export function DictationInput({
       const currentPhrase = placeholderPhrases[state.currentPhraseIndex]
 
       if (state.currentCharIndex < currentPhrase.length) {
-        setAnimatedPlaceholder(currentPhrase.substring(0, state.currentCharIndex + 1))
+        setAnimatedPlaceholder(
+          currentPhrase.substring(0, state.currentCharIndex + 1),
+        )
         state.currentCharIndex++
         state.timeoutId = setTimeout(typeWriter, 30)
       } else {
         state.timeoutId = setTimeout(() => {
-          state.currentPhraseIndex = (state.currentPhraseIndex + 1) % placeholderPhrases.length
+          state.currentPhraseIndex =
+            (state.currentPhraseIndex + 1) % placeholderPhrases.length
           state.currentCharIndex = 0
           typeWriter()
         }, 2000)
@@ -118,10 +176,61 @@ export function DictationInput({
 
     return () => {
       if (typewriterRef.current.timeoutId) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         clearTimeout(typewriterRef.current.timeoutId)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
+
+  // ---- Recording controls ----
+  const handleStartRecording = useCallback(async () => {
+    preRecordingTextRef.current = value
+    turnTextsRef.current.clear()
+    turnOrderRef.current = []
+    await transcription.start()
+  }, [value, transcription])
+
+  const handleStopRecording = useCallback(() => {
+    transcription.stop()
+    // Text stays as-is (user accepted the dictation)
+  }, [transcription])
+
+  const handleCancelRecording = useCallback(() => {
+    transcription.cancel()
+    // Revert to pre-recording text
+    onChange(preRecordingTextRef.current)
+  }, [transcription, onChange])
+
+  const toggleRecording = useCallback(async () => {
+    if (transcription.isRecording) {
+      handleStopRecording()
+    } else {
+      await handleStartRecording()
+    }
+  }, [transcription.isRecording, handleStopRecording, handleStartRecording])
+
+  // Keyboard shortcut: Cmd/Ctrl + G
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "g") {
+        e.preventDefault()
+        toggleRecording()
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [toggleRecording])
+
+  // ---- Language label for locale alert ----
+  const langLabel =
+    locale.startsWith("pt")
+      ? "PT"
+      : locale.startsWith("es")
+        ? "ES"
+        : "EN"
+
+  const langFullName = t(`lang${langLabel}`)
 
   return (
     <section>
@@ -129,20 +238,42 @@ export function DictationInput({
       <div className="flex items-center justify-between mb-6">
         {/* Audio button */}
         <div className="group/audio relative">
-          <button
-            onClick={() => setAudioGravando(!audioGravando)}
-            className={`size-11 rounded-full flex items-center justify-center transition-colors cursor-pointer ${audioGravando ? "bg-foreground/80 text-background" : "bg-muted text-foreground/70 hover:bg-foreground/80 hover:text-background"}`}
-          >
-            <AudioLines className="w-5 h-5" />
-          </button>
-          {!audioGravando && (
+          <Tooltip open={transcription.isRecording ? true : undefined}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={toggleRecording}
+                disabled={isGenerating}
+                className={`size-11 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+                  transcription.isRecording
+                    ? "bg-foreground/80 text-background animate-locale-pulse"
+                    : "bg-muted text-foreground/70 hover:bg-foreground/80 hover:text-background"
+                }`}
+              >
+                <AudioLines className="w-5 h-5" />
+              </button>
+            </TooltipTrigger>
+            {transcription.isRecording && (
+              <TooltipContent side="bottom" className="max-w-[220px]">
+                {t("voiceLangHint", { lang: langFullName })}
+              </TooltipContent>
+            )}
+          </Tooltip>
+
+          {/* Kbd shortcut hint (hidden when recording) */}
+          {!transcription.isRecording && (
             <div className="absolute left-full top-1/2 -translate-y-1/2 pointer-events-none">
               <div className="flex items-center overflow-hidden">
                 <div className="-translate-x-[calc(100%+0.75rem)] opacity-0 group-hover/audio:translate-x-0 group-hover/audio:opacity-100 transition-all duration-300 ease-out ml-3">
                   <KbdGroup>
-                    <Kbd className="group-hover/audio:bg-foreground/80 group-hover/audio:text-background">{isMac ? '⌘' : 'Ctrl'}</Kbd>
-                    <span className="text-xs text-foreground/30 group-hover/audio:text-foreground">+</span>
-                    <Kbd className="group-hover/audio:bg-foreground/80 group-hover/audio:text-background">G</Kbd>
+                    <Kbd className="group-hover/audio:bg-foreground/80 group-hover/audio:text-background">
+                      {isMac ? "⌘" : "Ctrl"}
+                    </Kbd>
+                    <span className="text-xs text-foreground/30 group-hover/audio:text-foreground">
+                      +
+                    </span>
+                    <Kbd className="group-hover/audio:bg-foreground/80 group-hover/audio:text-background">
+                      G
+                    </Kbd>
                   </KbdGroup>
                 </div>
               </div>
@@ -152,82 +283,88 @@ export function DictationInput({
 
         {/* Radiopaedia + Historico */}
         <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          onClick={() => onUsarPesquisaChange(!usarPesquisa)}
-          disabled={isGenerating}
-          className={`gap-1.5 ${usarPesquisa ? "bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background" : "text-muted-foreground hover:text-foreground"}`}
-        >
-          <Search className="w-3.5 h-3.5" />
-          {t("radiopaedia")}
-        </Button>
+          <Button
+            variant="ghost"
+            onClick={() => onUsarPesquisaChange(!usarPesquisa)}
+            disabled={isGenerating}
+            className={`gap-1.5 ${usarPesquisa ? "bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            <Search className="w-3.5 h-3.5" />
+            {t("radiopaedia")}
+          </Button>
 
-        {historico.length > 0 && (
-          <div className="relative">
-            <Button
-              variant="ghost"
-              onClick={() => setHistoricoAberto(!historicoAberto)}
-              className={`gap-1.5 ${historicoAberto ? "bg-foreground/5 text-muted-foreground" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              <Clock className="w-3.5 h-3.5" />
-              {t("history", { count: historico.length })}
-            </Button>
+          {historico.length > 0 && (
+            <div className="relative">
+              <Button
+                variant="ghost"
+                onClick={() => setHistoricoAberto(!historicoAberto)}
+                className={`gap-1.5 ${historicoAberto ? "bg-foreground/5 text-muted-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <Clock className="w-3.5 h-3.5" />
+                {t("history", { count: historico.length })}
+              </Button>
 
-            <AnimatePresence>
-              {historicoAberto && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute top-full right-0 mt-2 w-80 bg-card border border-border/50 rounded-2xl z-50"
-                >
-                  <div className="p-4 border-b border-border/50 flex items-center justify-between">
-                    <span className="text-xs font-medium text-muted-foreground">{t("lastReports")}</span>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        onClick={onLimparHistorico}
-                        className="text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      >
-                        {t("clear")}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setHistoricoAberto(false)}
-                        className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </Button>
+              <AnimatePresence>
+                {historicoAberto && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full right-0 mt-2 w-80 bg-card border border-border/50 rounded-2xl z-50"
+                  >
+                    <div className="p-4 border-b border-border/50 flex items-center justify-between">
+                      <span className="text-xs font-medium text-muted-foreground">
+                        {t("lastReports")}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          onClick={onLimparHistorico}
+                          className="text-xs text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                        >
+                          {t("clear")}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setHistoricoAberto(false)}
+                          className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="max-h-60 overflow-y-auto scrollbar-none">
-                    {historico.map((item) => (
-                      <button
-                        key={item.id}
-                        onClick={() => {
-                          onChange(item.texto)
-                          setHistoricoAberto(false)
-                        }}
-                        className="w-full text-left p-4 hover:bg-muted/50 border-b border-border/30 last:border-0 transition-colors"
-                      >
-                        <p className="text-sm text-foreground truncate">{item.texto}</p>
-                        <p className="text-xs text-muted-foreground mt-1.5">{item.data}</p>
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        )}
+                    <div className="max-h-60 overflow-y-auto scrollbar-none">
+                      {historico.map((item) => (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            onChange(item.texto)
+                            setHistoricoAberto(false)
+                          }}
+                          className="w-full text-left p-4 hover:bg-muted/50 border-b border-border/30 last:border-0 transition-colors"
+                        >
+                          <p className="text-sm text-foreground truncate">
+                            {item.texto}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1.5">
+                            {item.data}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Waveform bar: linha full-width quando gravando */}
+      {/* Waveform bar — real frequency data or error */}
       <AnimatePresence>
-        {audioGravando && (
+        {transcription.isRecording && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -236,47 +373,73 @@ export function DictationInput({
             className="overflow-hidden mb-6"
           >
             <div className="flex items-center gap-4 bg-muted/40 rounded-full px-5 py-2 h-11">
-              {/* Waveform: barras preenchem a largura disponível (min-w-0 permite shrink) */}
+              {/* Waveform bars driven by AnalyserNode frequency data */}
               <div className="flex items-center justify-end gap-[1.5px] h-6 flex-1 min-w-0 overflow-hidden">
-                {Array.from({ length: 80 }).map((_, i) => {
-                  const seed = [3, 6, 4, 10, 14, 8, 18, 12, 5, 20, 16, 7, 22, 9, 4, 15, 11, 6, 19, 13, 3, 8, 17, 10, 5, 14, 21, 7, 12, 6, 16, 9, 4, 18, 11, 8, 3, 13, 20, 6]
-                  const h = seed[i % seed.length]
-                  return (
-                    <motion.div
-                      key={i}
-                      className="flex-1 min-w-0 rounded-full bg-foreground/60"
-                      style={{ maxWidth: 4 }}
-                      initial={{ height: 2 }}
-                      animate={{ height: h }}
-                      transition={{ duration: 0.4, delay: i * 0.005 }}
-                    />
-                  )
-                })}
+                {transcription.frequencyData.length > 0
+                  ? transcription.frequencyData.map((val, i) => (
+                      <div
+                        key={i}
+                        className="flex-1 min-w-0 rounded-full bg-foreground/60 transition-[height] duration-75"
+                        style={{
+                          maxWidth: 4,
+                          height: Math.max(2, (val / 255) * 24),
+                        }}
+                      />
+                    ))
+                  : /* Static placeholder bars while connection is establishing */
+                    Array.from({ length: 80 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="flex-1 min-w-0 rounded-full bg-foreground/20 animate-pulse"
+                        style={{ maxWidth: 4, height: 2 }}
+                      />
+                    ))}
               </div>
 
-              {/* Timer + botões */}
+              {/* Timer + language badge + buttons */}
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-xs text-muted-foreground font-medium tabular-nums min-w-[40px]">
-                  {Math.floor(audioTempo / 60).toString().padStart(1, '0')}:{(audioTempo % 60).toString().padStart(2, '0')}
+                {/* Language badge */}
+                <span className="text-[10px] font-semibold text-muted-foreground/60 bg-muted rounded px-1.5 py-0.5">
+                  {langLabel}
                 </span>
+
+                <span className="text-xs text-muted-foreground font-medium tabular-nums min-w-[40px]">
+                  {Math.floor(transcription.elapsed / 60)
+                    .toString()
+                    .padStart(1, "0")}
+                  :{(transcription.elapsed % 60).toString().padStart(2, "0")}
+                </span>
+
+                {/* Cancel */}
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setAudioGravando(false)}
+                  onClick={handleCancelRecording}
                   className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                 >
                   <X className="w-3.5 h-3.5" />
                 </Button>
+
+                {/* Confirm / stop */}
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setAudioGravando(false)}
+                  onClick={handleStopRecording}
                   className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 >
                   <Check className="w-3.5 h-3.5" />
                 </Button>
               </div>
             </div>
+
+            {/* Error message */}
+            {transcription.error && (
+              <p className="text-xs text-destructive mt-2 px-2">
+                {transcription.error === "micPermissionDenied"
+                  ? t("micPermissionDenied")
+                  : transcription.error}
+              </p>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -294,16 +457,36 @@ export function DictationInput({
         />
       </SquircleCard>
 
-      {/* Botao Gerar Laudo + Kbd animado: canto direito inferior */}
+      {/* Botao Gerar Laudo + Kbd animado */}
       <div className="flex items-center justify-end mt-4">
         <div className="group/gerar relative">
           <div className="absolute right-full top-1/2 -translate-y-1/2 pointer-events-none">
             <div className="flex items-center overflow-hidden">
               <div className="translate-x-[calc(100%+0.75rem)] opacity-0 group-hover/gerar:translate-x-0 group-hover/gerar:opacity-100 transition-all duration-300 ease-out mr-3">
                 <KbdGroup>
-                  <Kbd className={value.trim() ? "bg-accent text-accent-foreground" : ""}>{isMac ? '⌘' : 'Ctrl'}</Kbd>
-                  <span className={`text-xs ${value.trim() ? "text-accent-foreground/50" : "text-foreground/30"}`}>+</span>
-                  <Kbd className={value.trim() ? "bg-accent text-accent-foreground" : ""}>{isMac ? 'Return' : 'Enter'}</Kbd>
+                  <Kbd
+                    className={
+                      value.trim()
+                        ? "bg-accent text-accent-foreground"
+                        : ""
+                    }
+                  >
+                    {isMac ? "⌘" : "Ctrl"}
+                  </Kbd>
+                  <span
+                    className={`text-xs ${value.trim() ? "text-accent-foreground/50" : "text-foreground/30"}`}
+                  >
+                    +
+                  </span>
+                  <Kbd
+                    className={
+                      value.trim()
+                        ? "bg-accent text-accent-foreground"
+                        : ""
+                    }
+                  >
+                    {isMac ? "Return" : "Enter"}
+                  </Kbd>
                 </KbdGroup>
               </div>
             </div>
@@ -314,7 +497,11 @@ export function DictationInput({
             size="lg"
             className="gap-2 bg-muted text-foreground/70 hover:bg-accent hover:text-accent-foreground shadow-none"
           >
-            {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+            {isGenerating ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Sparkles className="w-4 h-4" />
+            )}
             {t("generateReport")}
           </Button>
         </div>

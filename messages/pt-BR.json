@@ -14,7 +14,15 @@
     "generateReport": "Gerar laudo",
     "placeholder1": "tc abdome com contraste, microcalculo no rim esquerdo 0,2",
     "placeholder2": "tomo torax sem, normal",
-    "placeholder3": "tc cranio sem contraste, avc isquemico no territorio da acm direita"
+    "placeholder3": "tc cranio sem contraste, avc isquemico no territorio da acm direita",
+    "langPT": "Português",
+    "langEN": "Inglês",
+    "langES": "Espanhol",
+    "voiceLangHint": "Reconhecendo voz em {lang}. Para mudar, clique no botão de idioma acima.",
+    "micPermissionDenied": "Permissão do microfone negada. Habilite nas configurações do navegador."
+  },
+  "LocaleSwitcher": {
+    "voiceActive": "Ditado ativo em Português. Clique para mudar o idioma do reconhecimento de voz."
   },
   "ReportOutput": {
     "copy": "Copiar",
