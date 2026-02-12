@@ -341,7 +341,7 @@ export function ReportOutput({ report, streamedText, isStreaming, isGenerating, 
             variant="ghost"
             onClick={handleCopyHtml}
             disabled={!hasContent || isError}
-            className="gap-2 text-muted-foreground hover:text-foreground disabled:opacity-30"
+            className="gap-2 bg-muted text-muted-foreground hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
           >
             {copiedHtml ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
             {copiedHtml ? t("copied") : t("copy")}

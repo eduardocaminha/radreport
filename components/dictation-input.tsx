@@ -278,7 +278,7 @@ export function DictationInput({
             variant="ghost"
             onClick={() => onUsarPesquisaChange(!usarPesquisa)}
             disabled={isGenerating}
-            className={`gap-1.5 ${usarPesquisa ? "bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background" : "text-muted-foreground hover:text-foreground"}`}
+            className={`gap-1.5 ${usarPesquisa ? "bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
           >
             <Search className="w-3.5 h-3.5" />
             {t("radiopaedia")}
@@ -289,7 +289,7 @@ export function DictationInput({
               <Button
                 variant="ghost"
                 onClick={() => setHistoricoAberto(!historicoAberto)}
-                className={`gap-1.5 ${historicoAberto ? "bg-foreground/5 text-muted-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                className={`gap-1.5 ${historicoAberto ? "bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
               >
                 <Clock className="w-3.5 h-3.5" />
                 {t("history", { count: historico.length })}
@@ -443,7 +443,7 @@ export function DictationInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={onKeyDown}
-          className="w-full bg-transparent border-none outline-none resize-none text-sm sm:text-base leading-relaxed text-foreground placeholder:text-muted-foreground/30 font-light overflow-hidden"
+          className="w-full bg-transparent border-none outline-none resize-none text-sm sm:text-base leading-relaxed text-muted-foreground placeholder:text-muted-foreground/30 font-medium overflow-hidden"
           rows={1}
         />
       </SquircleCard>
