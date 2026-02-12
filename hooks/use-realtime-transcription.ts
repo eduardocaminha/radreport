@@ -130,10 +130,14 @@ export function useRealtimeTranscription({
       })
 
       if (!tokenRes.ok) {
-        const err = await tokenRes.json().catch(() => ({}))
-        throw new Error(
-          (err as { error?: string }).error ?? `Server error ${tokenRes.status}`,
-        )
+        const err = await tokenRes.json().catch(() => ({})) as {
+          error?: string
+          detail?: string
+        }
+        const msg = err.detail
+          ? `${err.error}: ${err.detail}`
+          : err.error ?? `Server error ${tokenRes.status}`
+        throw new Error(msg)
       }
 
       const { clientSecret } = (await tokenRes.json()) as {

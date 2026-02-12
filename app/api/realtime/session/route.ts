@@ -91,6 +91,17 @@ export async function POST(req: NextRequest) {
 
     const prompt = MEDICAL_PROMPTS[language] ?? MEDICAL_PROMPTS.pt
 
+    // ----------------------------------------------------------------
+    // Official format from the WebRTC docs:
+    //   body: { session: { model, type, audio, ... } }
+    //
+    // We use a standard "realtime" session with:
+    //   - audio.input.transcription  → enables STT via gpt-4o-transcribe
+    //   - turn_detection.create_response: false → no model responses
+    //
+    // This is the cheapest setup: the mini realtime model is only used
+    // for session orchestration; actual transcription runs on gpt-4o-transcribe.
+    // ----------------------------------------------------------------
     const response = await fetch(
       "https://api.openai.com/v1/realtime/client_secrets",
       {
@@ -101,7 +112,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           session: {
-            type: "transcription",
+            model: "gpt-4o-mini-realtime-preview",
             audio: {
               input: {
                 noise_reduction: { type: "near_field" },
@@ -119,6 +130,8 @@ export async function POST(req: NextRequest) {
                   // split turns prematurely. 1500ms lets them breathe
                   // without losing streaming feedback.
                   silence_duration_ms: 1500,
+                  // Don't auto-generate model responses; we only want STT.
+                  create_response: false,
                 },
               },
             },
@@ -131,13 +144,26 @@ export async function POST(req: NextRequest) {
       const errorText = await response.text()
       console.error("OpenAI Realtime API error:", response.status, errorText)
       return NextResponse.json(
-        { error: `OpenAI API error: ${response.status}` },
+        { error: `OpenAI API error: ${response.status}`, detail: errorText },
         { status: response.status },
       )
     }
 
     const data = await response.json()
-    return NextResponse.json({ clientSecret: data.value })
+
+    // The docs browser example reads `data.value` directly.
+    // The API reference shows `data.client_secret.value`. Handle both.
+    const token =
+      data?.client_secret?.value ?? data?.value ?? null
+    if (!token) {
+      console.error("Unexpected response shape:", JSON.stringify(data))
+      return NextResponse.json(
+        { error: "No client secret in response" },
+        { status: 500 },
+      )
+    }
+
+    return NextResponse.json({ clientSecret: token })
   } catch (error) {
     console.error("Realtime session error:", error)
     return NextResponse.json(
