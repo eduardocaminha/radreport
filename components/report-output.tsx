@@ -188,9 +188,11 @@ interface ReportOutputProps {
   isGenerating: boolean
   tokenUsage?: TokenUsage
   model?: string
+  /** Called when the user edits the report (drag-and-drop reorder or inline text edit) */
+  onReportChange?: (html: string) => void
 }
 
-export function ReportOutput({ report, streamedText, isStreaming, isGenerating, tokenUsage, model }: ReportOutputProps) {
+export function ReportOutput({ report, streamedText, isStreaming, isGenerating, tokenUsage, model, onReportChange }: ReportOutputProps) {
   const t = useTranslations("ReportOutput")
   const [copiedHtml, setCopiedHtml] = useState(false)
   const [blocks, setBlocks] = useState<ReportBlock[]>([])
@@ -228,13 +230,20 @@ export function ReportOutput({ report, streamedText, isStreaming, isGenerating, 
 
   const handleReorder = useCallback((newBlocks: ReportBlock[]) => {
     setBlocks(newBlocks)
-  }, [])
+    if (onReportChange) {
+      onReportChange(blocksToHtml(newBlocks))
+    }
+  }, [onReportChange])
 
   const handleBlockUpdate = useCallback((blockId: string, newHtml: string) => {
-    setBlocks((prev) =>
-      prev.map((b) => (b.id === blockId ? { ...b, html: newHtml } : b)),
-    )
-  }, [])
+    setBlocks((prev) => {
+      const updated = prev.map((b) => (b.id === blockId ? { ...b, html: newHtml } : b))
+      if (onReportChange) {
+        onReportChange(blocksToHtml(updated))
+      }
+      return updated
+    })
+  }, [onReportChange])
 
   // Extrair texto puro do HTML (respeita ordem reordenada)
   const plainTextFromHtml = useMemo(() => {

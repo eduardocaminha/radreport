@@ -155,7 +155,7 @@ export async function POST(request: Request) {
                 usarPesquisa: usarPesquisa ?? false,
                 success: true,
               }).catch((err: unknown) => {
-                console.error('[gerar] Failed to log generation:', err);
+                console.error('[generate] Failed to log generation:', err);
               });
             } else if (event.type === 'error') {
               // Log failed generation
@@ -169,7 +169,7 @@ export async function POST(request: Request) {
                 errorMessage: event.message,
                 generationDurationMs: Date.now() - startTime,
               }).catch((err: unknown) => {
-                console.error('[gerar] Failed to log generation error:', err);
+                console.error('[generate] Failed to log generation error:', err);
               });
             }
           }
@@ -187,28 +187,28 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error('Erro ao gerar laudo:', error);
+    console.error('Error generating report:', error);
 
-    const mensagem = error instanceof Error ? error.message : 'Erro desconhecido';
+    const message = error instanceof Error ? error.message : 'Unknown error';
 
     // Log the error to report_generations (fire-and-forget)
     db.insert(reportGenerations).values({
       clerkUserId: userId,
       success: false,
-      errorMessage: mensagem,
+      errorMessage: message,
       generationDurationMs: Date.now() - startTime,
     }).catch((err: unknown) => {
-      console.error('[gerar] Failed to log generation error:', err);
+      console.error('[generate] Failed to log generation error:', err);
     });
 
-    if (mensagem.includes('timeout') || mensagem.includes('ETIMEDOUT')) {
+    if (message.includes('timeout') || message.includes('ETIMEDOUT')) {
       return NextResponse.json(
         { erro: t('timeout'), laudo: null, sugestoes: [] },
         { status: 504 }
       );
     }
 
-    if (mensagem.includes('401') || mensagem.includes('authentication')) {
+    if (message.includes('401') || message.includes('authentication')) {
       return NextResponse.json(
         { erro: t('invalidApiKey'), laudo: null, sugestoes: [] },
         { status: 401 }

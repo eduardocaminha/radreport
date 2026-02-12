@@ -18,6 +18,7 @@ type ReportMode = "ps" | "eletivo" | "comparativo"
 interface ItemHistorico {
   id: string
   texto: string
+  textoCompleto: string
   laudo: string
   data: string
 }
@@ -56,6 +57,12 @@ export default function Home() {
   // Audio session ID from the last recording upload
   const audioSessionIdRef = useRef<number | null>(null)
 
+  // Currently active report ID (from history or freshly generated)
+  const [activeReportId, setActiveReportId] = useState<string | null>(null)
+
+  // Debounce timer for saving report edits
+  const saveEditTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   // Apply user preferences once loaded
   useEffect(() => {
     if (!isLoaded) return
@@ -91,6 +98,56 @@ export default function Home() {
     audioSessionIdRef.current = audioSessionId
   }, [])
 
+  /** Restore both dictated text and generated report when selecting a history item */
+  const handleHistoricoSelect = useCallback(
+    (item: ItemHistorico) => {
+      setDictatedText(item.textoCompleto)
+      setGeneratedReport(item.laudo)
+      setActiveReportId(item.id)
+      // Clear streaming state so report-output shows the restored report
+      setStreamedText("")
+      setIsStreaming(false)
+      setSugestoes([])
+      setErro(null)
+    },
+    [],
+  )
+
+  /** Debounced save of edited report HTML back to the DB */
+  const handleReportChange = useCallback(
+    (html: string) => {
+      // Update the local generated report state
+      setGeneratedReport(html)
+
+      // Update the local history entry so it stays in sync
+      if (activeReportId) {
+        setHistorico((prev) =>
+          prev.map((item) =>
+            item.id === activeReportId ? { ...item, laudo: html } : item
+          )
+        )
+      }
+
+      // Debounced PATCH to the server
+      if (saveEditTimerRef.current) {
+        clearTimeout(saveEditTimerRef.current)
+      }
+      if (activeReportId) {
+        const reportId = activeReportId
+        saveEditTimerRef.current = setTimeout(() => {
+          fetch(`/api/reports/${reportId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ generatedReport: html }),
+          }).catch((err) => {
+            console.error("[page] Failed to save report edit:", err)
+          })
+        }, 1500)
+      }
+    },
+    [activeReportId],
+  )
+
   useEffect(() => {
     fetch(`/api/reports?limit=${MAX_HISTORICO}`)
       .then((res) => res.json())
@@ -99,6 +156,7 @@ export default function Home() {
           data.map((r) => ({
             id: r.id.toString(),
             texto: r.inputText.slice(0, 100),
+            textoCompleto: r.inputText,
             laudo: r.generatedReport,
             data: new Date(r.createdAt).toLocaleString("pt-BR"),
           }))
@@ -140,15 +198,18 @@ export default function Home() {
         const novoItem: ItemHistorico = {
           id: report.id.toString(),
           texto: texto.slice(0, 100),
+          textoCompleto: texto,
           laudo,
           data: new Date(report.createdAt).toLocaleString("pt-BR"),
         }
         setHistorico((prev) => [novoItem, ...prev].slice(0, MAX_HISTORICO))
+        setActiveReportId(report.id.toString())
       } catch {
         // Fallback: local-only if API fails
         const novoItem: ItemHistorico = {
           id: Date.now().toString(),
           texto: texto.slice(0, 100),
+          textoCompleto: texto,
           laudo,
           data: new Date().toLocaleString("pt-BR"),
         }
@@ -187,10 +248,11 @@ export default function Home() {
     setStreamedText("")
     setTokenUsage(undefined)
     setModel(undefined)
+    setActiveReportId(null)
     generationMetaRef.current = {}
 
     try {
-      const response = await fetch("/api/gerar", {
+      const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -338,6 +400,7 @@ export default function Home() {
               isGenerating={isGenerating}
               historico={historico}
               onLimparHistorico={limparHistorico}
+              onHistoricoSelect={handleHistoricoSelect}
               usarPesquisa={usarPesquisa}
               onUsarPesquisaChange={handleUsarPesquisaChange}
               fontSizeIdx={preferences.fontSizeIdx}
@@ -373,6 +436,7 @@ export default function Home() {
                 isGenerating={isGenerating}
                 tokenUsage={tokenUsage}
                 model={model}
+                onReportChange={handleReportChange}
               />
             </motion.div>
 

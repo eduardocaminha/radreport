@@ -24,6 +24,7 @@ import { useRealtimeTranscription } from "@/hooks/use-realtime-transcription"
 interface ItemHistorico {
   id: string
   texto: string
+  textoCompleto: string
   laudo: string
   data: string
 }
@@ -36,6 +37,8 @@ interface DictationInputProps {
   isGenerating: boolean
   historico: ItemHistorico[]
   onLimparHistorico: () => void
+  /** Called when a history item is selected — restores full text + report */
+  onHistoricoSelect?: (item: ItemHistorico) => void
   usarPesquisa: boolean
   onUsarPesquisaChange: (value: boolean) => void
   /** Controlled font size index (from user preferences) */
@@ -53,6 +56,7 @@ export function DictationInput({
   isGenerating,
   historico,
   onLimparHistorico,
+  onHistoricoSelect,
   usarPesquisa,
   onUsarPesquisaChange,
   fontSizeIdx,
@@ -406,7 +410,11 @@ export function DictationInput({
                         <button
                           key={item.id}
                           onClick={() => {
-                            onChange(item.texto)
+                            if (onHistoricoSelect) {
+                              onHistoricoSelect(item)
+                            } else {
+                              onChange(item.texto)
+                            }
                             setHistoricoAberto(false)
                           }}
                           className="w-full text-left p-4 hover:bg-muted/50 border-b border-border/30 last:border-0 transition-colors"
