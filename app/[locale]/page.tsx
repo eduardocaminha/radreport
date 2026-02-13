@@ -12,6 +12,8 @@ import type { TokenUsage } from "@/lib/tokens"
 import { useTranslations } from "next-intl"
 import { useLocale } from "next-intl"
 import { useUserPreferences } from "@/hooks/use-user-preferences"
+import { useRouter, usePathname } from "@/i18n/navigation"
+import { routing, type Locale } from "@/i18n/routing"
 
 type ReportMode = "ps" | "eletivo" | "comparativo"
 
@@ -35,6 +37,8 @@ const MAX_HISTORICO = 5
 export default function Home() {
   const t = useTranslations("Dashboard")
   const locale = useLocale()
+  const router = useRouter()
+  const pathname = usePathname()
   const { preferences, isLoaded, updatePreference } = useUserPreferences()
 
   const [dictatedText, setDictatedText] = useState("")
@@ -63,12 +67,41 @@ export default function Home() {
   // Debounce timer for saving report edits
   const saveEditTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Track whether the saved locale has been restored on initial load
+  const localeRestoredRef = useRef(false)
+
   // Apply user preferences once loaded
   useEffect(() => {
     if (!isLoaded) return
     setReportMode(preferences.defaultReportMode)
     setUsarPesquisa(preferences.usarPesquisa)
   }, [isLoaded, preferences.defaultReportMode, preferences.usarPesquisa])
+
+  // Locale sync: restore saved locale on first load, then persist changes
+  useEffect(() => {
+    if (!isLoaded) return
+
+    if (!localeRestoredRef.current) {
+      localeRestoredRef.current = true
+      const savedLocale = preferences.locale
+
+      // On first load: redirect to saved locale if it's valid and different
+      if (
+        savedLocale &&
+        savedLocale !== locale &&
+        routing.locales.includes(savedLocale as Locale)
+      ) {
+        router.replace(pathname, { locale: savedLocale as Locale })
+        return
+      }
+    }
+
+    // After initial restore: sync URL locale changes to DB
+    // (e.g. when user clicks LocaleSwitcher, the URL locale changes)
+    if (preferences.locale !== locale) {
+      updatePreference("locale", locale)
+    }
+  }, [isLoaded, locale, preferences.locale, updatePreference, router, pathname])
 
   // Persist preference changes
   const handleReportModeChange = useCallback(
