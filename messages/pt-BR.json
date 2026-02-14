@@ -110,6 +110,19 @@
     "formatadorCard2": "Exportar",
     "formatadorCard2Desc": "Exporte laudos formatados para diferentes formatos."
   },
+  "Settings": {
+    "title": "Configurações de LLM",
+    "reportModel": "Modelo de laudo",
+    "reportModelDesc": "Modelo de IA usado para estruturar o laudo.",
+    "anthropicKey": "Chave Anthropic",
+    "anthropicKeyPlaceholder": "sk-ant-...",
+    "anthropicKeyDesc": "Sua chave pessoal da Anthropic. Opcional — caso não preenchida, a chave padrão será usada.",
+    "openaiKey": "Chave OpenAI (transcrição)",
+    "openaiKeyPlaceholder": "sk-...",
+    "openaiKeyDesc": "Sua chave pessoal da OpenAI para transcrição por voz (Whisper/Realtime).",
+    "saved": "Salvo",
+    "back": "Voltar"
+  },
   "Dashboard": {
     "errorDefault": "Erro ao gerar laudo",
     "errorConnection": "Erro ao conectar com o servidor"

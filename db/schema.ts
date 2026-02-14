@@ -27,6 +27,9 @@ export const userPreferences = pgTable('user_preferences', {
   locale: text('locale').default('pt-BR').notNull(),
   defaultReportMode: text('default_report_mode', { enum: ['ps', 'eletivo', 'comparativo'] }).default('ps').notNull(),
   usarPesquisa: boolean('usar_pesquisa').default(false).notNull(),
+  anthropicApiKey: text('anthropic_api_key'),
+  openaiApiKey: text('openai_api_key'),
+  preferredModel: text('preferred_model').default('claude-sonnet-4-5-20250929'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

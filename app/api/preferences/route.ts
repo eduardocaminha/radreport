@@ -43,7 +43,7 @@ export async function PUT(request: Request) {
   const body = await request.json()
 
   // Only allow known preference fields
-  const allowedFields = ['fontSizeIdx', 'locale', 'defaultReportMode', 'usarPesquisa'] as const
+  const allowedFields = ['fontSizeIdx', 'locale', 'defaultReportMode', 'usarPesquisa', 'anthropicApiKey', 'openaiApiKey', 'preferredModel'] as const
   const updates: Record<string, unknown> = {}
 
   for (const field of allowedFields) {

@@ -3,7 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import { gerarLaudoStream } from '@/lib/claude';
 import { getTranslations } from 'next-intl/server';
 import { db } from '@/db';
-import { userProfiles, reportGenerations } from '@/db/schema';
+import { userProfiles, userPreferences, reportGenerations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { calcularCusto } from '@/lib/tokens';
 
@@ -38,7 +38,14 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!process.env.ANTHROPIC_API_KEY) {
+    // Load user preferences for API key / model overrides
+    const prefs = await db.query.userPreferences.findFirst({
+      where: eq(userPreferences.clerkUserId, userId),
+    });
+    const userAnthropicKey = prefs?.anthropicApiKey || undefined;
+    const userModel = prefs?.preferredModel || undefined;
+
+    if (!userAnthropicKey && !process.env.ANTHROPIC_API_KEY) {
       return NextResponse.json(
         { erro: t('apiKeyNotConfigured'), laudo: null, sugestoes: [] },
         { status: 500 }
@@ -93,7 +100,8 @@ export async function POST(request: Request) {
       .where(eq(userProfiles.clerkUserId, userId));
 
     const innerStream = await gerarLaudoStream(
-      texto.trim(), modoPS ?? false, modoComparativo ?? false, usarPesquisa ?? false
+      texto.trim(), modoPS ?? false, modoComparativo ?? false, usarPesquisa ?? false,
+      { apiKey: userAnthropicKey, model: userModel }
     );
 
     // Wrap the stream to intercept the 'done' event and log to report_generations

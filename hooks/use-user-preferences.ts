@@ -16,6 +16,9 @@ export interface UserPreferences {
   locale: string
   defaultReportMode: ReportMode
   usarPesquisa: boolean
+  anthropicApiKey: string
+  openaiApiKey: string
+  preferredModel: string
 }
 
 const DEFAULT_PREFS: UserPreferences = {
@@ -23,6 +26,9 @@ const DEFAULT_PREFS: UserPreferences = {
   locale: "pt-BR",
   defaultReportMode: "ps",
   usarPesquisa: false,
+  anthropicApiKey: "",
+  openaiApiKey: "",
+  preferredModel: "claude-sonnet-4-5-20250929",
 }
 
 const DEBOUNCE_MS = 500
@@ -47,6 +53,9 @@ export function useUserPreferences() {
             locale: data.locale ?? DEFAULT_PREFS.locale,
             defaultReportMode: data.defaultReportMode ?? DEFAULT_PREFS.defaultReportMode,
             usarPesquisa: data.usarPesquisa ?? DEFAULT_PREFS.usarPesquisa,
+            anthropicApiKey: data.anthropicApiKey ?? DEFAULT_PREFS.anthropicApiKey,
+            openaiApiKey: data.openaiApiKey ?? DEFAULT_PREFS.openaiApiKey,
+            preferredModel: data.preferredModel ?? DEFAULT_PREFS.preferredModel,
           })
           setIsLoaded(true)
         }

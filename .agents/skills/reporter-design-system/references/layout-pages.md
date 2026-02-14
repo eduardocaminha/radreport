@@ -128,6 +128,55 @@ The menu expands below the header bar when hamburger is clicked:
 
 `pl-11` aligns items under the logo (past the hamburger button + gap).
 
+## Full-Page Settings Panel (`components/settings-panel.tsx`)
+
+A full-viewport overlay triggered from the header menu, without route change.
+
+```tsx
+<AnimatePresence mode="wait">
+  {activePanel === "configLLM" && (
+    <SettingsPanel key="configLLM" onClose={() => setActivePanel(null)} />
+  )}
+</AnimatePresence>
+```
+
+Panel structure:
+
+```tsx
+<motion.div
+  initial={{ opacity: 0, y: -20 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: -20 }}
+  transition={{ duration: 0.3, ease: "easeOut" }}
+  className="fixed inset-0 z-50 bg-background overflow-y-auto"
+>
+  {/* Top bar — h-[72px], back button + title */}
+  <div className="max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 h-[72px] flex items-center justify-between border-b border-border/30">
+    <div className="flex items-center gap-3">
+      <Button variant="ghost" size="icon" className="h-8 w-8 bg-muted text-muted-foreground/40 hover:text-muted-foreground">
+        <ArrowLeft className="w-4 h-4" />
+      </Button>
+      <span className="text-xl font-medium tracking-tight text-foreground">{title}</span>
+    </div>
+  </div>
+
+  {/* Content — centered, max-w-3xl */}
+  <div className="max-w-3xl mx-auto px-8 sm:px-12 lg:px-16 py-10">
+    <SquircleCard className="p-8">
+      {/* Form fields with space-y-8 */}
+    </SquircleCard>
+  </div>
+</motion.div>
+```
+
+Key patterns:
+- `fixed inset-0 z-50 bg-background` covers everything
+- Top bar matches header height (`h-[72px]`) with icon button back arrow
+- Content in `SquircleCard` centered at `max-w-3xl`
+- Fields use `space-y-8` with `border-t border-border/30` dividers
+- Auto-save on blur (API keys) or on change (select) with flash "Saved" indicator
+- Close on Escape key
+
 ## New Page Template
 
 When creating a new page, follow this scaffold:

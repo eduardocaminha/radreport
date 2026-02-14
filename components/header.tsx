@@ -5,6 +5,7 @@ import { LogOut, ChevronDown, Settings, FileText, Paintbrush, User } from "lucid
 import { TextEffect } from "@/components/ui/text-effect"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { SettingsPanel } from "@/components/settings-panel"
 import { useRouter, usePathname } from "@/i18n/navigation"
 import { useTranslations, useLocale } from "next-intl"
 import { useEffect, useState, useRef } from "react"
@@ -49,6 +50,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
   const [logoHovered, setLogoHovered] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false)
+  const [activePanel, setActivePanel] = useState<string | null>(null)
   const avatarMenuRef = useRef<HTMLDivElement>(null)
   const { signOut } = useClerk()
   const { user } = useUser()
@@ -106,13 +108,23 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
     }
   }, [avatarMenuOpen])
 
+  // Close active panel on Escape
+  useEffect(() => {
+    if (!activePanel) return
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setActivePanel(null)
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [activePanel])
+
   async function handleLogout() {
     await signOut(() => {
       router.push("/landing")
     })
   }
 
-  return (
+  return (<>
     <motion.header
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -279,7 +291,10 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setMenuOpen(false)}
+                  onClick={() => {
+                    setMenuOpen(false)
+                    setActivePanel("configLLM")
+                  }}
                   className="w-fit sm:w-auto justify-start sm:justify-center gap-1.5 bg-foreground text-background hover:bg-foreground/90 hover:text-background shadow-none"
                 >
                   <Settings className="w-3.5 h-3.5 shrink-0" />
@@ -309,5 +324,16 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
         )}
       </AnimatePresence>
     </motion.header>
+
+    {/* Full-page panels */}
+    <AnimatePresence mode="wait">
+      {activePanel === "configLLM" && (
+        <SettingsPanel
+          key="configLLM"
+          onClose={() => setActivePanel(null)}
+        />
+      )}
+    </AnimatePresence>
+  </>
   )
 }

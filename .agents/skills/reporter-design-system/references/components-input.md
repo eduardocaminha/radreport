@@ -84,6 +84,47 @@ In `dictation-input.tsx`, the textarea is inside a SquircleCard with no border/b
 </SquircleCard>
 ```
 
+## Select
+
+Source: `components/ui/select.tsx`
+
+Radix-based dropdown select, adapted to the design system.
+
+### Trigger
+
+```
+rounded-full h-11 bg-input/50 border-input px-4 py-2.5
+text-base md:text-sm shadow-none
+focus-visible:border-ring focus-visible:ring-ring/30 focus-visible:ring-[3px] focus-visible:bg-background
+```
+
+### Content Panel
+
+```
+rounded-2xl bg-card border-border/50 shadow-none
+```
+
+### Items
+
+```
+rounded-full py-1.5 pl-3 pr-8
+focus:bg-muted focus:text-foreground
+```
+
+### Usage
+
+```tsx
+<Select value={value} onValueChange={onChange}>
+  <SelectTrigger>
+    <SelectValue />
+  </SelectTrigger>
+  <SelectContent position="popper" sideOffset={8}>
+    <SelectItem value="option-1">Option 1</SelectItem>
+    <SelectItem value="option-2">Option 2</SelectItem>
+  </SelectContent>
+</Select>
+```
+
 ## Focus Pattern (Universal)
 
 All focusable inputs use:

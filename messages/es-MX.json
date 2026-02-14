@@ -110,6 +110,19 @@
     "formatadorCard2": "Exportar",
     "formatadorCard2Desc": "Exporta informes formateados a diferentes formatos."
   },
+  "Settings": {
+    "title": "Configuraciones de LLM",
+    "reportModel": "Modelo de informe",
+    "reportModelDesc": "Modelo de IA utilizado para estructurar el informe.",
+    "anthropicKey": "Clave Anthropic",
+    "anthropicKeyPlaceholder": "sk-ant-...",
+    "anthropicKeyDesc": "Tu clave personal de Anthropic. Opcional — si no se completa, se usará la clave predeterminada.",
+    "openaiKey": "Clave OpenAI (transcripción)",
+    "openaiKeyPlaceholder": "sk-...",
+    "openaiKeyDesc": "Tu clave personal de OpenAI para transcripción por voz (Whisper/Realtime).",
+    "saved": "Guardado",
+    "back": "Volver"
+  },
   "Dashboard": {
     "errorDefault": "Error al generar informe",
     "errorConnection": "Error al conectar con el servidor"

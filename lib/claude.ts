@@ -4,9 +4,19 @@ import { formatarLaudoHTML } from './formatador';
 import type { TokenUsage } from './tokens';
 import { criarCatalogoResumido, buscarTemplatesPorArquivos, identificarContextoExame } from './templates';
 
-const client = new Anthropic({
+// Default client using env var; per-user clients created on demand
+const defaultClient = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
+
+function getClient(userApiKey?: string): Anthropic {
+  if (userApiKey) {
+    return new Anthropic({ apiKey: userApiKey });
+  }
+  return defaultClient;
+}
+
+const DEFAULT_MODEL = 'claude-sonnet-4-5-20250929';
 
 export interface ResultadoLaudo {
   laudo: string | null;
@@ -96,9 +106,11 @@ async function resolveToolsNonStreaming(
   systemPrompt: string,
   messages: Anthropic.MessageParam[],
   tools: Anthropic.Tool[],
-  maxRetries = 3
+  maxRetries = 3,
+  config?: { apiKey?: string; model?: string }
 ): Promise<void> {
-  const model = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5-20250929';
+  const client = getClient(config?.apiKey);
+  const model = config?.model || process.env.ANTHROPIC_MODEL || DEFAULT_MODEL;
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
@@ -208,8 +220,8 @@ ${catalogoTexto}
 Retorne APENAS o JSON, sem explicações adicionais.`;
 
   try {
-    const message = await client.messages.create({
-      model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5-20250929',
+    const message = await defaultClient.messages.create({
+      model: process.env.ANTHROPIC_MODEL || DEFAULT_MODEL,
       max_tokens: 1024,
       system: 'Você é um assistente que retorna apenas JSON válido, sem explicações.',
       messages: [
@@ -317,8 +329,11 @@ async function chamarClaudeComRetry(
   systemPrompt: string, 
   texto: string, 
   usarPesquisa: boolean,
-  maxRetries = 3
+  maxRetries = 3,
+  config?: { apiKey?: string; model?: string }
 ): Promise<Anthropic.Message> {
+  const client = getClient(config?.apiKey);
+  const modelId = config?.model || process.env.ANTHROPIC_MODEL || DEFAULT_MODEL;
   let lastError: Error | null = null;
   
   // Tool para pesquisa no Radiopaedia
@@ -346,11 +361,8 @@ async function chamarClaudeComRetry(
       ];
 
       let currentMessage = await client.messages.create({
-        model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5-20250929',
-        max_tokens: 4096,
-        system: systemPrompt,
-        messages,
-        tools,
+        model: modelId, max_tokens: 4096, system: systemPrompt,
+        messages, tools,
       });
 
       // Processar tool calls se houver
@@ -361,42 +373,23 @@ async function chamarClaudeComRetry(
 
         if (toolUses.length === 0) break;
 
-        // Adicionar tool use à conversa
-        messages.push({
-          role: 'assistant',
-          content: currentMessage.content,
-        });
+        messages.push({ role: 'assistant', content: currentMessage.content });
 
-        // Preparar resultados das tools
         const toolResults: Anthropic.ToolResultBlockParam[] = [];
-
         for (const toolUse of toolUses) {
           if (toolUse.name === 'pesquisar_radiopaedia') {
             const termo = toolUse.input.termo as string;
             console.log(`Pesquisando Radiopaedia para: ${termo}`);
-            
             const resultado = await pesquisarRadiopaedia(termo);
-            
-            toolResults.push({
-              type: 'tool_result',
-              tool_use_id: toolUse.id,
-              content: resultado,
-            });
+            toolResults.push({ type: 'tool_result', tool_use_id: toolUse.id, content: resultado });
           }
         }
 
-        messages.push({
-          role: 'user',
-          content: toolResults,
-        });
+        messages.push({ role: 'user', content: toolResults });
 
-        // Continuar a conversa
         currentMessage = await client.messages.create({
-          model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5-20250929',
-          max_tokens: 4096,
-          system: systemPrompt,
-          messages,
-          tools,
+          model: modelId, max_tokens: 4096, system: systemPrompt,
+          messages, tools,
         });
       }
 
@@ -427,7 +420,8 @@ export async function gerarLaudoStream(
   texto: string,
   modoPS: boolean,
   modoComparativo: boolean = false,
-  usarPesquisa: boolean = false
+  usarPesquisa: boolean = false,
+  config?: { apiKey?: string; model?: string }
 ): Promise<ReadableStream<Uint8Array>> {
   const usarOtimizacao = process.env.ENABLE_TEMPLATE_OPTIMIZATION === 'true';
 
@@ -446,17 +440,20 @@ export async function gerarLaudoStream(
   const messages: Anthropic.MessageParam[] = [{ role: 'user', content: texto }];
   const encoder = new TextEncoder();
 
+  const streamClient = getClient(config?.apiKey);
+  const streamModel = config?.model || process.env.ANTHROPIC_MODEL || DEFAULT_MODEL;
+
   // Resolver tools se necessário (non-streaming)
   if (usarPesquisa) {
     const tools = getRadiopaediaTools();
-    await resolveToolsNonStreaming(systemPrompt, messages, tools);
+    await resolveToolsNonStreaming(systemPrompt, messages, tools, 3, config);
   }
 
   return new ReadableStream({
     async start(controller) {
       try {
-        const messageStream = client.messages.stream({
-          model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5-20250929',
+        const messageStream = streamClient.messages.stream({
+          model: streamModel,
           max_tokens: 4096,
           system: systemPrompt,
           messages,
@@ -549,7 +546,8 @@ export async function gerarLaudo(
   texto: string, 
   modoPS: boolean, 
   modoComparativo: boolean = false,
-  usarPesquisa: boolean = false
+  usarPesquisa: boolean = false,
+  config?: { apiKey?: string; model?: string }
 ): Promise<ResultadoLaudo> {
   const usarOtimizacao = process.env.ENABLE_TEMPLATE_OPTIMIZATION === 'true';
   
@@ -578,7 +576,7 @@ export async function gerarLaudo(
   }
   
   try {
-    const message = await chamarClaudeComRetry(systemPrompt, texto, usarPesquisa);
+    const message = await chamarClaudeComRetry(systemPrompt, texto, usarPesquisa, 3, config);
     
     // Extrair texto da resposta final
     let respostaRaw = '';

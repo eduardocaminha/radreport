@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
+import { db } from "@/db"
+import { userPreferences } from "@/db/schema"
+import { eq } from "drizzle-orm"
 
 /**
  * POST /api/realtime/session
@@ -11,7 +15,19 @@ import { NextRequest, NextResponse } from "next/server"
  * Returns: { clientSecret: string }
  */
 export async function POST(req: NextRequest) {
-  const apiKey = process.env.OPENAI_API_KEY
+  const { userId } = await auth()
+
+  // Try user-provided key first, then fall back to env var
+  let apiKey = process.env.OPENAI_API_KEY
+  if (userId) {
+    const prefs = await db.query.userPreferences.findFirst({
+      where: eq(userPreferences.clerkUserId, userId),
+    })
+    if (prefs?.openaiApiKey) {
+      apiKey = prefs.openaiApiKey
+    }
+  }
+
   if (!apiKey) {
     return NextResponse.json(
       { error: "OPENAI_API_KEY not configured" },

@@ -110,6 +110,19 @@
     "formatadorCard2": "Export",
     "formatadorCard2Desc": "Export formatted reports to different formats."
   },
+  "Settings": {
+    "title": "LLM Settings",
+    "reportModel": "Report model",
+    "reportModelDesc": "AI model used to structure the report.",
+    "anthropicKey": "Anthropic key",
+    "anthropicKeyPlaceholder": "sk-ant-...",
+    "anthropicKeyDesc": "Your personal Anthropic key. Optional — if left blank, the default key will be used.",
+    "openaiKey": "OpenAI key (transcription)",
+    "openaiKeyPlaceholder": "sk-...",
+    "openaiKeyDesc": "Your personal OpenAI key for voice transcription (Whisper/Realtime).",
+    "saved": "Saved",
+    "back": "Back"
+  },
   "Dashboard": {
     "errorDefault": "Error generating report",
     "errorConnection": "Error connecting to server"
