@@ -514,15 +514,15 @@ export function DictationInput({
       {/* Textarea auto-grow inside squircle card */}
       <SquircleCard className="relative p-8">
         {/* Font size pill — top-right inside the card */}
-        <div className="absolute top-2.5 right-3 flex items-center bg-muted/50 rounded-full h-5 overflow-hidden z-10">
+        <div className="absolute top-2.5 right-3 flex items-stretch bg-muted/50 rounded-full h-5 overflow-hidden z-10">
           <button
             onClick={() => onFontSizeIdxChange(Math.max(0, fontSizeIdx - 1))}
             disabled={fontSizeIdx === 0}
-            className="h-full px-1.5 flex items-center justify-center text-muted-foreground/50 hover:bg-accent hover:text-accent-foreground disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground transition-colors cursor-pointer disabled:cursor-not-allowed"
+            className="h-full flex-1 min-w-0 flex items-center justify-center text-muted-foreground/50 hover:bg-accent hover:text-accent-foreground disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground transition-colors cursor-pointer disabled:cursor-not-allowed"
           >
             <Minus className="w-2.5 h-2.5" />
           </button>
-          <span className="text-[9px] font-medium text-muted-foreground/60 select-none px-0.5">
+          <span className="flex-1 min-w-0 flex items-center justify-center text-[9px] font-medium text-muted-foreground/60 select-none">
             A
           </span>
           <button
@@ -530,7 +530,7 @@ export function DictationInput({
               onFontSizeIdxChange(Math.min(FONT_SIZES.length - 1, fontSizeIdx + 1))
             }
             disabled={fontSizeIdx === FONT_SIZES.length - 1}
-            className="h-full px-1.5 flex items-center justify-center text-muted-foreground/50 hover:bg-accent hover:text-accent-foreground disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground transition-colors cursor-pointer disabled:cursor-not-allowed"
+            className="h-full flex-1 min-w-0 flex items-center justify-center text-muted-foreground/50 hover:bg-accent hover:text-accent-foreground disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground transition-colors cursor-pointer disabled:cursor-not-allowed"
           >
             <Plus className="w-2.5 h-2.5" />
           </button>
