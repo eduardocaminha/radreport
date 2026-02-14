@@ -67,10 +67,10 @@ export function SettingsInline() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       {/* Saved indicator */}
       <div
-        className={`flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-opacity duration-200 ${
+        className={`flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-opacity duration-200 ${
           showSaved ? "opacity-100" : "opacity-0"
         }`}
       >
@@ -79,11 +79,11 @@ export function SettingsInline() {
       </div>
 
       {/* Model selection */}
-      <div className="space-y-2">
-        <Label htmlFor="report-model" className="text-xs">
+      <div className="space-y-3">
+        <Label htmlFor="report-model" className="text-sm font-medium text-foreground">
           {t("reportModel")}
         </Label>
-        <p className="text-[10px] font-medium text-muted-foreground/60 leading-relaxed">
+        <p className="text-xs font-medium text-muted-foreground/80 leading-relaxed">
           {t("reportModelDesc")}
         </p>
         <Select
@@ -104,11 +104,11 @@ export function SettingsInline() {
       </div>
 
       {/* Anthropic API key */}
-      <div className="space-y-2">
-        <Label htmlFor="anthropic-key" className="text-xs">
+      <div className="space-y-3">
+        <Label htmlFor="anthropic-key" className="text-sm font-medium text-foreground">
           {t("anthropicKey")}
         </Label>
-        <p className="text-[10px] font-medium text-muted-foreground/60 leading-relaxed">
+        <p className="text-xs font-medium text-muted-foreground/80 leading-relaxed">
           {t("anthropicKeyDesc")}
         </p>
         <PasswordInput
@@ -123,11 +123,11 @@ export function SettingsInline() {
       </div>
 
       {/* OpenAI API key */}
-      <div className="space-y-2">
-        <Label htmlFor="openai-key" className="text-xs">
+      <div className="space-y-3">
+        <Label htmlFor="openai-key" className="text-sm font-medium text-foreground">
           {t("openaiKey")}
         </Label>
-        <p className="text-[10px] font-medium text-muted-foreground/60 leading-relaxed">
+        <p className="text-xs font-medium text-muted-foreground/80 leading-relaxed">
           {t("openaiKeyDesc")}
         </p>
         <PasswordInput

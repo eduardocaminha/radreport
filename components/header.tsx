@@ -352,31 +352,14 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
     </motion.header>
 
     {/* White overlay — covers entire page below header when panel is active */}
-    <AnimatePresence>
-      {activePanel !== null && (
-        <motion.div
-          key={activePanel}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-40 bg-card overflow-y-auto"
-        >
-          {/* Animated vertical border line descending from header */}
-          <motion.div
-            initial={{ scaleY: 0 }}
-            animate={{ scaleY: 1 }}
-            exit={{ scaleY: 0 }}
-            transition={{ duration: 2, ease: [0.45, 0.05, 0.55, 0.95], delay: 0.1 }}
-            className="absolute top-0 left-0 w-px h-full bg-border/30 origin-top"
-          />
-          <div className="pt-32 max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 pb-16">
-            <div className="pl-4 sm:pl-11 max-w-md">
-              {activePanel === "configLLM" && <SettingsInline />}
-            </div>
+    {activePanel !== null && (
+      <div className="fixed inset-0 z-40 bg-card overflow-y-auto">
+        <div className="pt-32 max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 pb-16">
+          <div className="pl-4 sm:pl-11 max-w-md">
+            {activePanel === "configLLM" && <SettingsInline />}
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        </div>
+      </div>
+    )}
   </>)
 }
