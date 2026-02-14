@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from "motion/react"
-import { LogOut, ChevronDown, Settings, FileText, Paintbrush, User, ArrowLeft } from "lucide-react"
+import { LogOut, ChevronDown, Settings, FileText, Paintbrush, User } from "lucide-react"
 import { TextEffect } from "@/components/ui/text-effect"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
@@ -283,9 +283,9 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
         </div>
       </div>
 
-      {/* Expanding menu — slides down from header (menu items only) */}
+      {/* Expanding menu — slides down from header */}
       <AnimatePresence>
-        {menuOpen && !activePanel && (
+        {isExpanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
@@ -299,10 +299,20 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    setMenuOpen(false)
-                    setActivePanel("configLLM")
+                    if (activePanel === "configLLM") {
+                      setActivePanel(null)
+                      setMenuOpen(true)
+                    } else {
+                      setMenuOpen(false)
+                      setActivePanel("configLLM")
+                    }
                   }}
-                  className="w-fit sm:w-auto justify-start sm:justify-center gap-1.5 bg-foreground text-background hover:bg-foreground/90 hover:text-background shadow-none"
+                  className={cn(
+                    "w-fit sm:w-auto justify-start sm:justify-center gap-1.5 shadow-none",
+                    activePanel === "configLLM"
+                      ? "bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background"
+                      : "bg-foreground text-background hover:bg-foreground/90 hover:text-background"
+                  )}
                 >
                   <Settings className="w-3.5 h-3.5 shrink-0" />
                   <span>{tMenu("configLLM")}</span>
@@ -310,7 +320,10 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setMenuOpen(false)}
+                  onClick={() => {
+                    setActivePanel(null)
+                    setMenuOpen(false)
+                  }}
                   className="w-fit sm:w-auto justify-start sm:justify-center gap-1.5 bg-foreground text-background hover:bg-foreground/90 hover:text-background shadow-none"
                 >
                   <FileText className="w-3.5 h-3.5 shrink-0" />
@@ -319,7 +332,10 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setMenuOpen(false)}
+                  onClick={() => {
+                    setActivePanel(null)
+                    setMenuOpen(false)
+                  }}
                   className="w-fit sm:w-auto justify-start sm:justify-center gap-1.5 bg-foreground text-background hover:bg-foreground/90 hover:text-background shadow-none"
                 >
                   <Paintbrush className="w-3.5 h-3.5 shrink-0" />
@@ -332,33 +348,19 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
       </AnimatePresence>
     </motion.header>
 
-    {/* Full-page overlay below header — covers page content */}
+    {/* White overlay — covers entire page below header when panel is active */}
     <AnimatePresence>
       {activePanel !== null && (
         <motion.div
           key={activePanel}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-          className="fixed top-[72px] inset-x-0 bottom-0 z-40 bg-background overflow-y-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-40 bg-background overflow-y-auto"
         >
-          <div className="max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 py-6">
+          <div className="pt-32 max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 pb-16">
             <div className="pl-4 sm:pl-11 max-w-md">
-              {/* Back to menu */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setActivePanel(null)
-                  setMenuOpen(true)
-                }}
-                className="mb-6 gap-1.5 bg-muted text-muted-foreground hover:text-foreground"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>{tMenu("configLLM")}</span>
-              </Button>
-
               {activePanel === "configLLM" && <SettingsInline />}
             </div>
           </div>
