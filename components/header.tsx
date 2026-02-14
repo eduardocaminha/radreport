@@ -11,7 +11,6 @@ import { useEffect, useState, useRef } from "react"
 import { useClerk, useUser } from "@clerk/nextjs"
 import { routing } from "@/i18n/routing"
 import { cn } from "@/lib/utils"
-import { SquircleCard } from "@/components/ui/squircle-card"
 
 const localeConfig: Record<
   string,
@@ -200,14 +199,9 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className="absolute top-full right-0 mt-2 z-50 w-max min-w-0"
+                className="absolute top-full right-0 mt-2 w-max min-w-0 bg-card border border-border/50 rounded-2xl z-50"
               >
-                <SquircleCard
-                  cornerRadius={20}
-                  cornerSmoothing={0.6}
-                  className="border border-border/50 overflow-hidden"
-                >
-                  <div className="p-3 border-b border-border/50">
+                <div className="p-3 border-b border-border/50">
                   <div className="flex items-center gap-1.5">
                     {[...routing.locales].map((loc) => {
                       const config = localeConfig[loc]
@@ -263,7 +257,6 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                     <span className="hidden sm:inline">{t("logout")}</span>
                   </Button>
                 </div>
-                </SquircleCard>
               </motion.div>
             )}
           </AnimatePresence>
