@@ -323,13 +323,13 @@ export function DictationInput({
             variant="ghost"
             onClick={toggleRecording}
             disabled={isGenerating}
-            className={`gap-2 sm:gap-1.5 h-14 min-w-14 px-6 rounded-full sm:h-9 sm:min-w-0 sm:px-3 ${
+            className={`gap-2 sm:gap-1.5 h-14 min-w-14 px-6 rounded-full sm:h-11 sm:min-w-0 sm:px-6 ${
               transcription.isRecording
                 ? `bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background ${localePulseClass}`
                 : "bg-muted text-foreground/70 hover:bg-foreground/80 hover:text-background"
             }`}
           >
-            <AudioLines className="w-6 h-6 sm:w-4 sm:h-4 shrink-0" />
+            <AudioLines className="w-6 h-6 sm:w-3.5 sm:h-3.5 shrink-0" />
             <span>{t("dictate")}</span>
           </Button>
 
