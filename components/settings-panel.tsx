@@ -84,105 +84,111 @@ export function SettingsInline() {
       </div>
 
       {/* Model selection */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-1.5">
-          <Label htmlFor="report-model" className="text-sm font-medium text-foreground">
-            {t("reportModel")}
-          </Label>
-          <Tooltip delayDuration={1000}>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="rounded-full p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                aria-label={t("reportModelDesc")}
-              >
-                <Info className="w-3.5 h-3.5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="top" sideOffset={8}>
-              {t("reportModelDesc")}
-            </TooltipContent>
-          </Tooltip>
+      <div className="flex flex-col items-center md:items-center">
+        <div className="w-full md:max-w-[220px] space-y-3">
+          <div className="flex items-center gap-1.5">
+            <Label htmlFor="report-model" className="text-sm font-medium text-foreground">
+              {t("reportModel")}
+            </Label>
+            <Tooltip delayDuration={1000}>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className="rounded-full p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border/30 focus-visible:ring-offset-2"
+                  aria-label={t("reportModelDesc")}
+                >
+                  <Info className="w-3.5 h-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={8}>
+                {t("reportModelDesc")}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <Select
+            value={preferences.preferredModel}
+            onValueChange={handleModelChange}
+          >
+            <SelectTrigger id="report-model" size="sm" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent position="popper" sideOffset={8}>
+              {AVAILABLE_MODELS.map((model) => (
+                <SelectItem key={model.value} value={model.value}>
+                  {model.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-        <Select
-          value={preferences.preferredModel}
-          onValueChange={handleModelChange}
-        >
-          <SelectTrigger id="report-model" size="sm">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent position="popper" sideOffset={8}>
-            {AVAILABLE_MODELS.map((model) => (
-              <SelectItem key={model.value} value={model.value}>
-                {model.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Anthropic API key */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-1.5">
-          <Label htmlFor="anthropic-key" className="text-sm font-medium text-foreground">
-            {t("anthropicKey")}
-          </Label>
-          <Tooltip delayDuration={1000}>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="rounded-full p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                aria-label={t("anthropicKeyDesc")}
-              >
-                <Info className="w-3.5 h-3.5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="top" sideOffset={8}>
-              {t("anthropicKeyDesc")}
-            </TooltipContent>
-          </Tooltip>
+      <div className="flex flex-col items-center md:items-center">
+        <div className="w-full md:max-w-[220px] space-y-3">
+          <div className="flex items-center gap-1.5">
+            <Label htmlFor="anthropic-key" className="text-sm font-medium text-foreground">
+              {t("anthropicKey")}
+            </Label>
+            <Tooltip delayDuration={1000}>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className="rounded-full p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border/30 focus-visible:ring-offset-2"
+                  aria-label={t("anthropicKeyDesc")}
+                >
+                  <Info className="w-3.5 h-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={8}>
+                {t("anthropicKeyDesc")}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <PasswordInput
+            id="anthropic-key"
+            placeholder={t("anthropicKeyPlaceholder")}
+            value={anthropicKey}
+            onChange={(e) => setAnthropicKey(e.target.value)}
+            onBlur={handleAnthropicKeyBlur}
+            autoComplete="off"
+            className="h-9 w-full text-sm rounded-full"
+          />
         </div>
-        <PasswordInput
-          id="anthropic-key"
-          placeholder={t("anthropicKeyPlaceholder")}
-          value={anthropicKey}
-          onChange={(e) => setAnthropicKey(e.target.value)}
-          onBlur={handleAnthropicKeyBlur}
-          autoComplete="off"
-          className="h-9 text-sm rounded-full"
-        />
       </div>
 
       {/* OpenAI API key */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-1.5">
-          <Label htmlFor="openai-key" className="text-sm font-medium text-foreground">
-            {t("openaiKey")}
-          </Label>
-          <Tooltip delayDuration={1000}>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="rounded-full p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                aria-label={t("openaiKeyDesc")}
-              >
-                <Info className="w-3.5 h-3.5" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="top" sideOffset={8}>
-              {t("openaiKeyDesc")}
-            </TooltipContent>
-          </Tooltip>
+      <div className="flex flex-col items-center md:items-center">
+        <div className="w-full md:max-w-[220px] space-y-3">
+          <div className="flex items-center gap-1.5">
+            <Label htmlFor="openai-key" className="text-sm font-medium text-foreground">
+              {t("openaiKey")}
+            </Label>
+            <Tooltip delayDuration={1000}>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className="rounded-full p-0.5 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border/30 focus-visible:ring-offset-2"
+                  aria-label={t("openaiKeyDesc")}
+                >
+                  <Info className="w-3.5 h-3.5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={8}>
+                {t("openaiKeyDesc")}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <PasswordInput
+            id="openai-key"
+            placeholder={t("openaiKeyPlaceholder")}
+            value={openaiKey}
+            onChange={(e) => setOpenaiKey(e.target.value)}
+            onBlur={handleOpenaiKeyBlur}
+            autoComplete="off"
+            className="h-9 w-full text-sm rounded-full"
+          />
         </div>
-        <PasswordInput
-          id="openai-key"
-          placeholder={t("openaiKeyPlaceholder")}
-          value={openaiKey}
-          onChange={(e) => setOpenaiKey(e.target.value)}
-          onBlur={handleOpenaiKeyBlur}
-          autoComplete="off"
-          className="h-9 text-sm rounded-full"
-        />
       </div>
     </div>
   )

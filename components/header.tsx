@@ -203,7 +203,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
           <button
             type="button"
             onClick={() => setAvatarMenuOpen((prev) => !prev)}
-            className="rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
+            className="rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border/30 focus-visible:ring-offset-2 cursor-pointer"
             aria-expanded={avatarMenuOpen}
             aria-haspopup="true"
           >
@@ -354,7 +354,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
     {/* White overlay — covers entire page below header when panel is active */}
     {activePanel !== null && (
       <div className="fixed inset-0 z-40 bg-card overflow-y-auto">
-        <div className="pt-44 sm:pt-32 max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 pb-16">
+        <div className="pt-56 sm:pt-44 max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 pb-16">
           <div className="pl-4 sm:pl-11 w-full">
             {activePanel === "configLLM" && <SettingsInline />}
           </div>
