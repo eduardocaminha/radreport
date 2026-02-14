@@ -297,7 +297,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
             className="overflow-hidden"
           >
             <div className="max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 pb-5">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 pl-4 sm:pl-11">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 pl-9">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -355,7 +355,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
     {activePanel !== null && (
       <div className="fixed inset-0 z-40 bg-card overflow-y-auto">
         <div className="pt-56 sm:pt-44 max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 pb-16">
-          <div className="pl-4 sm:pl-11 w-full">
+          <div className="pl-9 w-full">
             {activePanel === "configLLM" && <SettingsInline />}
           </div>
         </div>
