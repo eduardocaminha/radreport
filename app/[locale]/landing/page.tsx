@@ -227,6 +227,7 @@ export default function LandingPage() {
               <Link href="/login" className="hidden sm:inline-flex">
                 <Button
                   variant={isStuck ? "ghost" : undefined}
+                  size="sm"
                   className={`gap-2 transition-all duration-200 ${
                     isStuck
                       ? "bg-muted text-muted-foreground hover:text-foreground"

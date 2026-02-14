@@ -79,9 +79,9 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
-            size="icon"
+            size="icon-sm"
             onClick={() => setMenuOpen((prev) => !prev)}
-            className="h-8 w-8 bg-muted text-muted-foreground/40 hover:text-muted-foreground shrink-0"
+            className="bg-muted text-muted-foreground/40 hover:text-muted-foreground shrink-0"
           >
             <AnimatePresence mode="wait" initial={false}>
               {menuOpen ? (
@@ -149,7 +149,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
 
         <div className="flex items-center gap-2">
           <LocaleSwitcher />
-          <Avatar size="default">
+          <Avatar size="sm">
             {user?.imageUrl && (
               <AvatarImage src={user.imageUrl} alt={user.fullName ?? "Avatar"} />
             )}
@@ -158,7 +158,8 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
           <Button
             onClick={handleLogout}
             variant="ghost"
-            className="min-w-11 sm:min-w-0 gap-2 bg-muted text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+            size="sm"
+            className="min-w-9 sm:min-w-0 gap-2 bg-muted text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
           >
             <LogOut className="w-4 h-4" />
             <span className="hidden sm:inline">{t("logout")}</span>
@@ -181,6 +182,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
               <div className="flex items-center gap-2 pl-11">
                 <Button
                   variant="ghost"
+                  size="sm"
                   onClick={() => setMenuOpen(false)}
                   className="gap-1.5 bg-muted text-muted-foreground hover:text-foreground"
                 >
@@ -189,6 +191,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                 </Button>
                 <Button
                   variant="ghost"
+                  size="sm"
                   onClick={() => setMenuOpen(false)}
                   className="gap-1.5 bg-muted text-muted-foreground hover:text-foreground"
                 >
@@ -197,6 +200,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                 </Button>
                 <Button
                   variant="ghost"
+                  size="sm"
                   onClick={() => setMenuOpen(false)}
                   className="gap-1.5 bg-muted text-muted-foreground hover:text-foreground"
                 >

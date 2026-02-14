@@ -350,8 +350,8 @@ export default function LoginPage() {
             <Link href="/landing">
               <Button
                 variant="ghost"
-                size="icon"
-                className="h-8 w-8 bg-muted text-muted-foreground/40 hover:text-muted-foreground"
+                size="icon-sm"
+                className="bg-muted text-muted-foreground/40 hover:text-muted-foreground"
               >
                 <ArrowLeft className="w-4 h-4" />
               </Button>
