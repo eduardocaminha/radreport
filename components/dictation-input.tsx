@@ -7,6 +7,11 @@ import { Button } from "@/components/ui/button"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { SquircleCard } from "@/components/ui/squircle-card"
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
   Clock,
   Sparkles,
   Loader2,
@@ -310,7 +315,7 @@ export function DictationInput({
 
   return (
     <section>
-      {/* Top bar: Audio à esquerda, Radiopaedia + Historico à direita */}
+      {/* Top bar: Audio à esquerda, Historico à direita */}
       <div className="flex items-center justify-between mb-6">
         {/* Audio / Ditar button */}
         <div className="group/audio relative">
@@ -350,18 +355,8 @@ export function DictationInput({
           )}
         </div>
 
-        {/* Radiopaedia + Historico */}
+        {/* Historico */}
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            onClick={() => onUsarPesquisaChange(!usarPesquisa)}
-            disabled={isGenerating}
-            className={`gap-1.5 ${usarPesquisa ? "bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
-          >
-            <Search className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{t("radiopaedia")}</span>
-          </Button>
-
           {historico.length > 0 && (
             <div className="relative">
               <Button
@@ -552,8 +547,24 @@ export function DictationInput({
         />
       </SquircleCard>
 
-      {/* Bottom bar: Gerar Laudo (right) */}
-      <div className="flex items-center justify-end mt-4">
+      {/* Bottom bar: Radiopaedia (left) + Gerar Laudo (right) */}
+      <div className="flex items-center justify-end gap-3 mt-4">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              onClick={() => onUsarPesquisaChange(!usarPesquisa)}
+              disabled={isGenerating}
+              className={`gap-1.5 ${usarPesquisa ? "bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background" : "bg-muted text-muted-foreground hover:text-foreground"}`}
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{t("radiopaedia")}</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="top" sideOffset={8}>
+            Clique para ativar sugestões com Radiopaedia
+          </TooltipContent>
+        </Tooltip>
         {/* Gerar Laudo + Kbd */}
         <div className="group/gerar relative">
           <div className="absolute right-full top-1/2 -translate-y-1/2 pointer-events-none hidden sm:block">
