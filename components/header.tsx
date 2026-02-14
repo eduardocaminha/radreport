@@ -206,7 +206,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                     {t("language")}
                   </span>
                   <div className="flex items-center gap-1.5">
-                    {(routing.locales as string[]).map((loc) => {
+                    {[...routing.locales].map((loc) => {
                       const config = localeConfig[loc]
                       const isActive = locale === loc
                       return (
