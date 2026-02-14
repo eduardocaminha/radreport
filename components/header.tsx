@@ -203,7 +203,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
           <button
             type="button"
             onClick={() => setAvatarMenuOpen((prev) => !prev)}
-            className="rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="rounded-full ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
             aria-expanded={avatarMenuOpen}
             aria-haspopup="true"
           >
