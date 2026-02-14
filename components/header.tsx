@@ -184,7 +184,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full sm:w-auto justify-start sm:justify-center gap-1.5 bg-muted text-muted-foreground hover:text-foreground"
+                  className="w-fit sm:w-auto justify-start sm:justify-center gap-1.5 bg-muted text-muted-foreground hover:text-foreground"
                 >
                   <Settings className="w-3.5 h-3.5 shrink-0" />
                   <span>{tMenu("configLLM")}</span>
@@ -193,7 +193,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full sm:w-auto justify-start sm:justify-center gap-1.5 bg-muted text-muted-foreground hover:text-foreground"
+                  className="w-fit sm:w-auto justify-start sm:justify-center gap-1.5 bg-muted text-muted-foreground hover:text-foreground"
                 >
                   <FileText className="w-3.5 h-3.5 shrink-0" />
                   <span>{tMenu("geradorMascaras")}</span>
@@ -202,7 +202,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full sm:w-auto justify-start sm:justify-center gap-1.5 bg-muted text-muted-foreground hover:text-foreground"
+                  className="w-fit sm:w-auto justify-start sm:justify-center gap-1.5 bg-muted text-muted-foreground hover:text-foreground"
                 >
                   <Paintbrush className="w-3.5 h-3.5 shrink-0" />
                   <span>{tMenu("formatadorMascaras")}</span>
