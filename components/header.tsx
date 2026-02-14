@@ -313,8 +313,8 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                   className={cn(
                     "w-fit sm:w-auto justify-start sm:justify-center gap-1.5 shadow-none",
                     activePanel === "configLLM"
-                      ? "bg-foreground/80 text-background hover:bg-foreground/70 hover:text-background"
-                      : "bg-foreground text-background hover:bg-foreground/90 hover:text-background"
+                      ? "bg-foreground text-background hover:bg-foreground/90 hover:text-background"
+                      : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground"
                   )}
                 >
                   <Settings className="w-3.5 h-3.5 shrink-0" />
@@ -327,7 +327,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                     setActivePanel(null)
                     setMenuOpen(false)
                   }}
-                  className="w-fit sm:w-auto justify-start sm:justify-center gap-1.5 bg-foreground text-background hover:bg-foreground/90 hover:text-background shadow-none"
+                  className="w-fit sm:w-auto justify-start sm:justify-center gap-1.5 bg-muted text-muted-foreground hover:bg-accent hover:text-foreground shadow-none"
                 >
                   <FileText className="w-3.5 h-3.5 shrink-0" />
                   <span>{tMenu("geradorMascaras")}</span>
@@ -339,7 +339,7 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
                     setActivePanel(null)
                     setMenuOpen(false)
                   }}
-                  className="w-fit sm:w-auto justify-start sm:justify-center gap-1.5 bg-foreground text-background hover:bg-foreground/90 hover:text-background shadow-none"
+                  className="w-fit sm:w-auto justify-start sm:justify-center gap-1.5 bg-muted text-muted-foreground hover:bg-accent hover:text-foreground shadow-none"
                 >
                   <Paintbrush className="w-3.5 h-3.5 shrink-0" />
                   <span>{tMenu("formatadorMascaras")}</span>

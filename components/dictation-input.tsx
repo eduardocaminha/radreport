@@ -548,7 +548,7 @@ export function DictationInput({
       </SquircleCard>
 
       {/* Bottom bar: Radiopaedia (start) + Gerar Laudo (end) — space between so kbd hint doesn’t overlap */}
-      <div className="flex items-center justify-between mt-4">
+      <div className="flex items-center justify-between mt-6">
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <Button
