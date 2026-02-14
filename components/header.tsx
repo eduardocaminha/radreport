@@ -137,7 +137,10 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="bg-card/80 backdrop-blur-sm border-b border-border/30 sticky top-0 z-50"
+      className={cn(
+        "border-b border-border/30 sticky top-0 z-50",
+        activePanel ? "bg-card" : "bg-card/80 backdrop-blur-sm"
+      )}
     >
       {/* Main header bar */}
       <div className="max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 h-[72px] flex items-center justify-between">
@@ -356,9 +359,17 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-40 bg-background overflow-y-auto"
+          transition={{ duration: 0.15 }}
+          className="fixed inset-0 z-40 bg-card overflow-y-auto"
         >
+          {/* Animated vertical border line descending from header */}
+          <motion.div
+            initial={{ height: 0 }}
+            animate={{ height: "100%" }}
+            exit={{ height: 0 }}
+            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+            className="absolute top-0 left-0 w-px bg-border/30 origin-top"
+          />
           <div className="pt-32 max-w-6xl lg:max-w-none mx-auto px-8 sm:px-12 lg:px-16 pb-16">
             <div className="pl-4 sm:pl-11 max-w-md">
               {activePanel === "configLLM" && <SettingsInline />}
