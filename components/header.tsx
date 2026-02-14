@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from "motion/react"
-import { LogOut, Menu, X, Settings, FileText, Paintbrush } from "lucide-react"
+import { LogOut, ChevronDown, Settings, FileText, Paintbrush } from "lucide-react"
 import { TextEffect } from "@/components/ui/text-effect"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
@@ -83,29 +83,13 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
             onClick={() => setMenuOpen((prev) => !prev)}
             className="h-6 w-6 p-0 bg-muted text-muted-foreground/40 hover:text-muted-foreground shrink-0"
           >
-            <AnimatePresence mode="wait" initial={false}>
-              {menuOpen ? (
-                <motion.span
-                  key="close"
-                  initial={{ opacity: 0, rotate: -90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: 90 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  <X className="w-4 h-4" />
-                </motion.span>
-              ) : (
-                <motion.span
-                  key="menu"
-                  initial={{ opacity: 0, rotate: 90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: -90 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  <Menu className="w-4 h-4" />
-                </motion.span>
-              )}
-            </AnimatePresence>
+            <motion.span
+              animate={{ rotate: menuOpen ? 180 : 0 }}
+              transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+              className="inline-flex"
+            >
+              <ChevronDown className="w-4 h-4" />
+            </motion.span>
           </Button>
           <div
             className="h-7 overflow-hidden cursor-pointer select-none min-w-[140px]"
