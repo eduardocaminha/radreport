@@ -70,6 +70,16 @@ export default function Home() {
   // Track whether the saved locale has been restored on initial load
   const localeRestoredRef = useRef(false)
 
+  // Mobile layout (< lg): hide report block until generate is triggered
+  const [isMobileLayout, setIsMobileLayout] = useState(true)
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 1023px)")
+    const handle = () => setIsMobileLayout(mql.matches)
+    handle()
+    mql.addEventListener("change", handle)
+    return () => mql.removeEventListener("change", handle)
+  }, [])
+
   // Apply user preferences once loaded
   useEffect(() => {
     if (!isLoaded) return
@@ -442,7 +452,8 @@ export default function Home() {
             />
           </motion.div>
 
-          {/* Coluna direita - Output */}
+          {/* Coluna direita - Output — no mobile, só após gerar laudo */}
+          {(generatedReport || isGenerating || erro || !isMobileLayout) && (
           <div className="mt-12 lg:mt-0 lg:w-1/2 flex flex-col gap-6">
             {/* Erro essencial */}
             {erro && (
@@ -484,6 +495,7 @@ export default function Home() {
               </motion.div>
             )}
           </div>
+          )}
         </div>
       </motion.main>
     </div>
