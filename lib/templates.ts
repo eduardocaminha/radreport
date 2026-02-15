@@ -1,6 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import { db } from '@/db';
+import { templates, templateFindings, templateRegions } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import type { FieldRule } from '@/db/schema';
 
 export interface Mascara {
   arquivo: string;
@@ -319,6 +323,56 @@ export function criarCatalogoResumido(contexto?: ContextoExame): CatalogoResumid
       opcional: a.opcional,
     })),
   };
+}
+
+/**
+ * Load a template from the database and convert to Mascara/Achado interfaces
+ * for seamless integration with the existing prompt system.
+ */
+export async function loadTemplateFromDB(templateId: number): Promise<{
+  mascaras: Mascara[];
+  achados: Achado[];
+}> {
+  const template = await db.query.templates.findFirst({
+    where: eq(templates.id, templateId),
+  });
+
+  if (!template) {
+    throw new Error(`Template ${templateId} not found`);
+  }
+
+  const findings = await db.query.templateFindings.findMany({
+    where: eq(templateFindings.templateId, templateId),
+  });
+
+  const mascara: Mascara = {
+    arquivo: template.slug + '.md',
+    tipo: template.examType,
+    subtipo: template.examSubtype || undefined,
+    contraste: template.contrast,
+    urgencia_padrao: template.urgencyDefault,
+    palavras_chave: template.keywords || undefined,
+    conteudo: template.bodyContent,
+  };
+
+  const achados: Achado[] = findings.map(f => {
+    const rules = (f.fieldRules || {}) as Record<string, FieldRule>;
+    return {
+      arquivo: f.slug + '.md',
+      regiao: f.regionSlug,
+      palavras_chave: f.keywords,
+      requer: Object.entries(rules)
+        .filter(([, v]) => v.rule === 'required')
+        .map(([k]) => k),
+      opcional: Object.entries(rules)
+        .filter(([, v]) => v.rule === 'optional')
+        .map(([k]) => k),
+      medida_default: f.measureDefault || undefined,
+      conteudo: f.bodyContent,
+    };
+  });
+
+  return { mascaras: [mascara], achados };
 }
 
 export function buscarTemplatesPorArquivos(arquivos: string[]): {

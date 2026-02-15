@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { texto, modoPS, modoComparativo, usarPesquisa, locale } = await request.json();
+    const { texto, usarPesquisa, locale, templateId } = await request.json();
 
     if (!texto || typeof texto !== 'string' || texto.trim() === '') {
       return NextResponse.json(
@@ -51,9 +51,6 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-
-    // Determine mode for logging
-    const mode = modoComparativo ? 'comparativo' : (modoPS ? 'ps' : 'eletivo');
 
     // Auto-provision user profile
     let profile = await db.query.userProfiles.findFirst({
@@ -100,8 +97,9 @@ export async function POST(request: Request) {
       .where(eq(userProfiles.clerkUserId, userId));
 
     const innerStream = await gerarLaudoStream(
-      texto.trim(), modoPS ?? false, modoComparativo ?? false, usarPesquisa ?? false,
-      { apiKey: userAnthropicKey, model: userModel }
+      texto.trim(), usarPesquisa ?? false,
+      { apiKey: userAnthropicKey, model: userModel },
+      templateId ? Number(templateId) : undefined
     );
 
     // Wrap the stream to intercept the 'done' event and log to report_generations
@@ -158,7 +156,7 @@ export async function POST(request: Request) {
                 costBrl: String(costInfo.totalCost),
                 model: event.model,
                 generationDurationMs: durationMs,
-                mode,
+                mode: null,
                 locale: locale ?? null,
                 usarPesquisa: usarPesquisa ?? false,
                 success: true,
@@ -170,7 +168,7 @@ export async function POST(request: Request) {
               db.insert(reportGenerations).values({
                 clerkUserId: userId,
                 inputTextLength: texto.trim().length,
-                mode,
+                mode: null,
                 locale: locale ?? null,
                 usarPesquisa: usarPesquisa ?? false,
                 success: false,

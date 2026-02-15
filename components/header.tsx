@@ -34,14 +34,7 @@ const localeConfig: Record<
   },
 }
 
-type ReportMode = "ps" | "eletivo" | "comparativo"
-
-interface HeaderProps {
-  reportMode: ReportMode
-  onReportModeChange: (value: ReportMode) => void
-}
-
-export function Header({ reportMode, onReportModeChange }: HeaderProps) {
+export function Header() {
   const router = useRouter()
   const pathname = usePathname()
   const locale = useLocale()
@@ -62,26 +55,6 @@ export function Header({ reportMode, onReportModeChange }: HeaderProps) {
 
   // The expanding section is open when menuOpen OR activePanel is set
   const isExpanded = menuOpen || activePanel !== null
-
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey) {
-        if (e.key.toLowerCase() === "p") {
-          e.preventDefault()
-          onReportModeChange("ps")
-        } else if (e.key.toLowerCase() === "e") {
-          e.preventDefault()
-          onReportModeChange("eletivo")
-        } else if (e.key.toLowerCase() === "o") {
-          e.preventDefault()
-          onReportModeChange("comparativo")
-        }
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [onReportModeChange])
 
   // Close everything on Escape
   useEffect(() => {

@@ -14,8 +14,7 @@ import { useLocale } from "next-intl"
 import { useUserPreferences } from "@/hooks/use-user-preferences"
 import { useRouter, usePathname } from "@/i18n/navigation"
 import { routing, type Locale } from "@/i18n/routing"
-
-type ReportMode = "ps" | "eletivo" | "comparativo"
+import { TemplateSelector } from "@/components/templates/template-selector"
 
 interface ItemHistorico {
   id: string
@@ -48,7 +47,6 @@ export default function Home() {
   const [sugestoes, setSugestoes] = useState<string[]>([])
   const [erro, setErro] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
-  const [reportMode, setReportMode] = useState<ReportMode>("ps")
   const [usarPesquisa, setUsarPesquisa] = useState(false)
   const [historico, setHistorico] = useState<ItemHistorico[]>([])
   const [tokenUsage, setTokenUsage] = useState<TokenUsage | undefined>()
@@ -63,6 +61,7 @@ export default function Home() {
 
   // Currently active report ID (from history or freshly generated)
   const [activeReportId, setActiveReportId] = useState<string | null>(null)
+  const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(null)
 
   // Debounce timer for saving report edits
   const saveEditTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -83,9 +82,8 @@ export default function Home() {
   // Apply user preferences once loaded
   useEffect(() => {
     if (!isLoaded) return
-    setReportMode(preferences.defaultReportMode)
     setUsarPesquisa(preferences.usarPesquisa)
-  }, [isLoaded, preferences.defaultReportMode, preferences.usarPesquisa])
+  }, [isLoaded, preferences.usarPesquisa])
 
   // Locale sync: restore saved locale on first load, then persist changes
   useEffect(() => {
@@ -114,14 +112,6 @@ export default function Home() {
   }, [isLoaded, locale, preferences.locale, updatePreference, router, pathname])
 
   // Persist preference changes
-  const handleReportModeChange = useCallback(
-    (mode: ReportMode) => {
-      setReportMode(mode)
-      updatePreference("defaultReportMode", mode)
-    },
-    [updatePreference],
-  )
-
   const handleUsarPesquisaChange = useCallback(
     (value: boolean) => {
       setUsarPesquisa(value)
@@ -220,7 +210,6 @@ export default function Home() {
           body: JSON.stringify({
             inputText: texto,
             generatedReport: laudo,
-            mode: reportMode,
             // Cost & token metadata
             inputTokens: eventTokenUsage?.inputTokens,
             outputTokens: eventTokenUsage?.outputTokens,
@@ -263,7 +252,7 @@ export default function Home() {
         generationMetaRef.current = {}
       }
     },
-    [reportMode, locale, preferences.fontSizeIdx, usarPesquisa]
+    [locale, preferences.fontSizeIdx, usarPesquisa]
   )
 
   const limparHistorico = async () => {
@@ -300,10 +289,9 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           texto: dictatedText,
-          modoPS: reportMode === "ps",
-          modoComparativo: reportMode === "comparativo",
           usarPesquisa,
           locale,
+          templateId: selectedTemplateId,
         }),
         signal: abortController.signal,
       })
@@ -412,7 +400,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header reportMode={reportMode} onReportModeChange={handleReportModeChange} />
+      <Header />
 
       <motion.main
         initial="hidden"
@@ -435,6 +423,12 @@ export default function Home() {
               visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
             }}
           >
+            <div className="mb-3 flex items-center">
+              <TemplateSelector
+                value={selectedTemplateId}
+                onChange={setSelectedTemplateId}
+              />
+            </div>
             <DictationInput
               value={dictatedText}
               onChange={setDictatedText}

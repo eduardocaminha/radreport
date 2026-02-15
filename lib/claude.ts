@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { montarSystemPrompt } from './prompts';
 import { formatarLaudoHTML } from './formatador';
 import type { TokenUsage } from './tokens';
-import { criarCatalogoResumido, buscarTemplatesPorArquivos, identificarContextoExame } from './templates';
+import { criarCatalogoResumido, buscarTemplatesPorArquivos, identificarContextoExame, loadTemplateFromDB } from './templates';
 
 // Default client using env var; per-user clients created on demand
 const defaultClient = new Anthropic({
@@ -162,9 +162,62 @@ async function resolveToolsNonStreaming(
   }
 }
 
+type ReportMode = 'ps' | 'eletivo' | 'comparativo';
+
+const CLASSIFIER_MODEL = 'claude-haiku-4-5-20251001';
+
+/**
+ * Classify report mode from user text using regex first, Haiku LLM fallback.
+ * Returns: 'ps' | 'eletivo' | 'comparativo'
+ */
+export async function classificarModo(texto: string): Promise<ReportMode> {
+  const lower = texto.toLowerCase();
+
+  // Layer A: regex — high-confidence patterns
+  if (/\b(ps|pronto.?socorro|urg[eê]ncia|emerg[eê]ncia)\b/.test(lower)) {
+    return 'ps';
+  }
+  if (/\b(comparativ[oa]|compar[ae]|controle)\b/.test(lower)) {
+    return 'comparativo';
+  }
+
+  // Short text with no mode keywords → eletivo (most common case)
+  if (texto.length < 500) {
+    return 'eletivo';
+  }
+
+  // Layer B: Long text without explicit keywords — could be a pasted prior report.
+  // Use cheap LLM to classify.
+  try {
+    const msg = await defaultClient.messages.create({
+      model: CLASSIFIER_MODEL,
+      max_tokens: 10,
+      system: 'Responda APENAS com uma palavra: ps, eletivo, ou comparativo.',
+      messages: [{
+        role: 'user',
+        content: `Classifique o modo deste texto de laudo radiológico:
+- "ps" se mencionar urgência, pronto-socorro, emergência
+- "comparativo" se contiver um laudo anterior colado para comparação
+- "eletivo" caso contrário (padrão)
+
+Texto:
+${texto.slice(0, 1000)}`,
+      }],
+    });
+
+    const raw = (msg.content[0] as { type: 'text'; text: string }).text.trim().toLowerCase();
+    if (raw === 'ps' || raw === 'comparativo') return raw;
+    return 'eletivo';
+  } catch (err) {
+    console.error('[classificarModo] Haiku fallback failed:', err);
+    return 'eletivo';
+  }
+}
+
 interface SelecaoTemplates {
   mascara: string;
   achados: string[];
+  modo?: ReportMode;
 }
 
 async function selecionarTemplates(
@@ -198,12 +251,13 @@ ${catalogo.achados.map((a, i) => {
 }).join('\n')}
 `;
 
-  const promptSelecao = `Você é um assistente que analisa texto ditado de laudos de tomografia e seleciona quais templates usar.
+  const promptSelecao = `Você é um assistente que analisa texto ditado de laudos de tomografia e seleciona quais templates usar, e também classifica o modo do laudo.
 
 Analise o texto abaixo e retorne APENAS um JSON válido no formato:
 {
   "mascara": "nome-do-arquivo.md",
-  "achados": ["achado1.md", "achado2.md"]
+  "achados": ["achado1.md", "achado2.md"],
+  "modo": "eletivo"
 }
 
 REGRAS:
@@ -211,6 +265,10 @@ REGRAS:
 2. Escolha zero ou mais achados baseados nas alterações mencionadas
 3. Use apenas os arquivos listados no catálogo
 4. Se não encontrar achado relevante, deixe o array "achados" vazio
+5. Classifique o "modo":
+   - "ps" se o texto mencionar urgência, pronto-socorro, emergência, ps
+   - "comparativo" se o texto contiver um laudo anterior colado ou mencionar comparativo/controle
+   - "eletivo" caso contrário (padrão)
 
 TEXTO DITADO:
 ${texto}
@@ -221,7 +279,7 @@ Retorne APENAS o JSON, sem explicações adicionais.`;
 
   try {
     const message = await defaultClient.messages.create({
-      model: process.env.ANTHROPIC_MODEL || DEFAULT_MODEL,
+      model: CLASSIFIER_MODEL,
       max_tokens: 1024,
       system: 'Você é um assistente que retorna apenas JSON válido, sem explicações.',
       messages: [
@@ -418,23 +476,33 @@ async function chamarClaudeComRetry(
 
 export async function gerarLaudoStream(
   texto: string,
-  modoPS: boolean,
-  modoComparativo: boolean = false,
   usarPesquisa: boolean = false,
-  config?: { apiKey?: string; model?: string }
+  config?: { apiKey?: string; model?: string },
+  templateId?: number
 ): Promise<ReadableStream<Uint8Array>> {
   const usarOtimizacao = process.env.ENABLE_TEMPLATE_OPTIMIZATION === 'true';
 
   let systemPrompt: string;
+  let modo: ReportMode;
 
-  if (usarOtimizacao) {
+  if (templateId) {
+    // Load template from database + classify mode separately
+    const [dbTemplates, inferredMode] = await Promise.all([
+      loadTemplateFromDB(templateId),
+      classificarModo(texto),
+    ]);
+    modo = inferredMode;
+    systemPrompt = montarSystemPrompt(modo === 'ps', modo === 'comparativo', usarPesquisa, texto, dbTemplates);
+  } else if (usarOtimizacao) {
     const contexto = identificarContextoExame(texto);
     const catalogo = criarCatalogoResumido(contexto);
     const selecao = await selecionarTemplates(texto, catalogo);
+    modo = selecao.modo || await classificarModo(texto);
     const templatesEscolhidos = buscarTemplatesPorArquivos([selecao.mascara, ...selecao.achados]);
-    systemPrompt = montarSystemPrompt(modoPS, modoComparativo, usarPesquisa, texto, templatesEscolhidos);
+    systemPrompt = montarSystemPrompt(modo === 'ps', modo === 'comparativo', usarPesquisa, texto, templatesEscolhidos);
   } else {
-    systemPrompt = montarSystemPrompt(modoPS, modoComparativo, usarPesquisa, texto);
+    modo = await classificarModo(texto);
+    systemPrompt = montarSystemPrompt(modo === 'ps', modo === 'comparativo', usarPesquisa, texto);
   }
 
   const messages: Anthropic.MessageParam[] = [{ role: 'user', content: texto }];
@@ -543,36 +611,39 @@ export async function gerarLaudoStream(
 }
 
 export async function gerarLaudo(
-  texto: string, 
-  modoPS: boolean, 
-  modoComparativo: boolean = false,
+  texto: string,
   usarPesquisa: boolean = false,
-  config?: { apiKey?: string; model?: string }
+  config?: { apiKey?: string; model?: string },
+  templateId?: number
 ): Promise<ResultadoLaudo> {
   const usarOtimizacao = process.env.ENABLE_TEMPLATE_OPTIMIZATION === 'true';
-  
+
   let systemPrompt: string;
   let templatesEscolhidos: { mascaras: any[], achados: any[] } | null = null;
-  
-  if (usarOtimizacao) {
-    // Etapa 1: Regex identifica contexto
+  let modo: ReportMode;
+
+  if (templateId) {
+    const [dbTemplates, inferredMode] = await Promise.all([
+      loadTemplateFromDB(templateId),
+      classificarModo(texto),
+    ]);
+    modo = inferredMode;
+    systemPrompt = montarSystemPrompt(modo === 'ps', modo === 'comparativo', usarPesquisa, texto, dbTemplates);
+  } else if (usarOtimizacao) {
     const contexto = identificarContextoExame(texto);
     const catalogo = criarCatalogoResumido(contexto);
-    
-    // Etapa 2: LLM seleciona templates
     const selecao = await selecionarTemplates(texto, catalogo);
-    
-    // Etapa 3: Buscar conteúdo completo dos templates escolhidos
+    modo = selecao.modo || await classificarModo(texto);
+
     templatesEscolhidos = buscarTemplatesPorArquivos([
       selecao.mascara,
       ...selecao.achados,
     ]);
-    
-    // Montar prompt apenas com templates escolhidos
-    systemPrompt = montarSystemPrompt(modoPS, modoComparativo, usarPesquisa, texto, templatesEscolhidos);
+
+    systemPrompt = montarSystemPrompt(modo === 'ps', modo === 'comparativo', usarPesquisa, texto, templatesEscolhidos);
   } else {
-    // Fluxo original
-    systemPrompt = montarSystemPrompt(modoPS, modoComparativo, usarPesquisa, texto);
+    modo = await classificarModo(texto);
+    systemPrompt = montarSystemPrompt(modo === 'ps', modo === 'comparativo', usarPesquisa, texto);
   }
   
   try {

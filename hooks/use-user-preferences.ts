@@ -9,12 +9,9 @@ import { useState, useEffect, useRef, useCallback } from "react"
 /*  provides a debounced save function that persists changes.         */
 /* ------------------------------------------------------------------ */
 
-type ReportMode = "ps" | "eletivo" | "comparativo"
-
 export interface UserPreferences {
   fontSizeIdx: number
   locale: string
-  defaultReportMode: ReportMode
   usarPesquisa: boolean
   anthropicApiKey: string
   openaiApiKey: string
@@ -24,7 +21,6 @@ export interface UserPreferences {
 const DEFAULT_PREFS: UserPreferences = {
   fontSizeIdx: 1,
   locale: "pt-BR",
-  defaultReportMode: "ps",
   usarPesquisa: false,
   anthropicApiKey: "",
   openaiApiKey: "",
@@ -51,7 +47,6 @@ export function useUserPreferences() {
           setPreferences({
             fontSizeIdx: data.fontSizeIdx ?? DEFAULT_PREFS.fontSizeIdx,
             locale: data.locale ?? DEFAULT_PREFS.locale,
-            defaultReportMode: data.defaultReportMode ?? DEFAULT_PREFS.defaultReportMode,
             usarPesquisa: data.usarPesquisa ?? DEFAULT_PREFS.usarPesquisa,
             anthropicApiKey: data.anthropicApiKey ?? DEFAULT_PREFS.anthropicApiKey,
             openaiApiKey: data.openaiApiKey ?? DEFAULT_PREFS.openaiApiKey,
